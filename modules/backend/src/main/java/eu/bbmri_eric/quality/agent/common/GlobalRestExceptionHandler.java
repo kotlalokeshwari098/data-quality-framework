@@ -32,9 +32,8 @@ public class GlobalRestExceptionHandler {
               mediaType = "application/problem+json",
               schema = @Schema(implementation = ProblemDetail.class)))
   public ProblemDetail handleIllegalArgument(IllegalArgumentException ex) {
-    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-        HttpStatus.BAD_REQUEST,
-        ex.getMessage());
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     problemDetail.setTitle("Bad Request");
     return problemDetail;
   }
