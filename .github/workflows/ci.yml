@@ -139,7 +139,7 @@ jobs:
       - uses: docker/build-push-action@v6
         name: Build new image
         with:
-          context: .
+          context: ./agent
           tags: ghcr.io/bbmri-cz/data-quality-agent:latest
           load: true
           outputs: type=docker,dest=/tmp/agent-image.tar
