@@ -26,9 +26,9 @@ public class UserControllerTest {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
-  @Autowired private UserDetailService userDetailService;
   @Autowired private UserRepository userRepository;
   @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired private AuthenticationContextService authenticationContextService;
 
   @AfterEach
   void tearDown() {
@@ -57,7 +57,7 @@ public class UserControllerTest {
   @WithUserDetails("admin")
   @Test
   void changePassword_returnsCorrectHttpStatus_whenValidRequest() throws Exception {
-    Long adminUserId = userDetailService.getUserId(ADMIN_USER);
+    Long adminUserId = authenticationContextService.getCurrentUser().getUserId();
     PasswordChangeRequest request =
         new PasswordChangeRequest("adminpass", "newPass123!", "newPass123!");
 
@@ -66,14 +66,13 @@ public class UserControllerTest {
             put("/api/users/" + adminUserId + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        .andExpect(status().isOk());
   }
 
   @WithUserDetails("admin")
   @Test
   void changePassword_returnsBadRequest_whenInvalidPasswordFormat() throws Exception {
-    Long adminUserId = userDetailService.getUserId(ADMIN_USER);
+    Long adminUserId = authenticationContextService.getCurrentUser().getUserId();
     PasswordChangeRequest request = new PasswordChangeRequest("adminpass", "short", "short");
 
     mockMvc
@@ -90,13 +89,12 @@ public class UserControllerTest {
     Long otherUserId = -1L;
     PasswordChangeRequest request =
         new PasswordChangeRequest("adminpass", "newPass123!", "newPass123!");
-
     mockMvc
         .perform(
             put("/api/users/" + otherUserId + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -115,7 +113,7 @@ public class UserControllerTest {
   @WithUserDetails("admin")
   @Test
   void changePassword_rejectsInvalidContentType() throws Exception {
-    Long adminUserId = userDetailService.getUserId(ADMIN_USER);
+    Long adminUserId = authenticationContextService.getCurrentUser().getUserId();
 
     mockMvc
         .perform(

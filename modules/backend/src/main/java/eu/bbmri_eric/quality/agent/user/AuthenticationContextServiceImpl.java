@@ -25,7 +25,8 @@ public class AuthenticationContextServiceImpl implements AuthenticationContextSe
   private final ModelMapper modelMapper;
   private final PasswordEncoder passwordEncoder;
 
-  AuthenticationContextServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+  AuthenticationContextServiceImpl(
+      UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.modelMapper = modelMapper;
     this.passwordEncoder = passwordEncoder;
@@ -56,11 +57,9 @@ public class AuthenticationContextServiceImpl implements AuthenticationContextSe
 
   private boolean isUsingDefaultPassword(String username, User user) {
     String defaultPassword = "admin".equals(username) ? "adminpass" : null;
-
     if (defaultPassword == null) {
       return false;
     }
-
     return passwordEncoder.matches(defaultPassword, user.getPassword());
   }
 }

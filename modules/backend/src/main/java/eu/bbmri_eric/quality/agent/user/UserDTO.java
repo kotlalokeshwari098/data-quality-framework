@@ -15,6 +15,10 @@ public class UserDTO {
   @Schema(description = "Flag indicating if the user is using default password", example = "true")
   private boolean defaultPassword;
 
+  public UserDTO() {
+    // No-argument constructor for ModelMapper
+  }
+
   public UserDTO(String username, Long userId) {
     this.userId = userId;
     this.username = username;

@@ -6,14 +6,20 @@ import jakarta.validation.constraints.Pattern;
 @Schema(description = "Request object for changing user password")
 public class PasswordChangeRequest {
 
-  @Schema(description = "Current password of the user", example = "oldPassword123", required = true)
+  @Schema(
+      description = "Current password of the user",
+      example = "oldPassword123",
+      requiredMode = Schema.RequiredMode.REQUIRED)
   private String currentPassword;
 
   @Pattern(
       regexp = "^[a-zA-Z0-9!@#$%^&*(),.?\":{}|<>_-]{8,}$",
       message =
           "Password must be at least 8 characters long and contain only letters, digits or special characters")
-  @Schema(description = "New password for the user", example = "newPassword123!", required = true)
+  @Schema(
+      description = "New password for the user",
+      example = "newPassword123!",
+      requiredMode = Schema.RequiredMode.REQUIRED)
   private String newPassword;
 
   @Pattern(
@@ -23,7 +29,7 @@ public class PasswordChangeRequest {
   @Schema(
       description = "Confirmation of the new password",
       example = "newPassword123!",
-      required = true)
+      requiredMode = Schema.RequiredMode.REQUIRED)
   private String confirmPassword;
 
   public PasswordChangeRequest(String currentPassword, String newPassword, String confirmPassword) {
@@ -54,5 +60,11 @@ public class PasswordChangeRequest {
 
   public void setConfirmPassword(String confirmPassword) {
     this.confirmPassword = confirmPassword;
+  }
+
+  public void validate() {
+    if (!newPassword.equals(confirmPassword)) {
+      throw new IllegalArgumentException("New password and confirmation do not match");
+    }
   }
 }
