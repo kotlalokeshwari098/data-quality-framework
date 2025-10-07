@@ -33,8 +33,10 @@ const currentYear = computed(() => new Date().getFullYear())
   color: white;
   padding: 2rem 0;
   margin-top: auto;
-  position: relative;
+  width: 100%;
   overflow: hidden;
+  z-index: 800;
+  position: relative;
 }
 
 .app-footer::before {
@@ -45,7 +47,6 @@ const currentYear = computed(() => new Date().getFullYear())
   right: 0;
   bottom: 0;
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
   pointer-events: none;
 }
 
@@ -159,9 +160,10 @@ const currentYear = computed(() => new Date().getFullYear())
   }
 }
 
-@media (max-width: 480px) {
-  .footer-content {
-    padding: 0 1rem;
+/* Tablet Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .app-footer {
+    left: 0;
   }
 }
 </style>
