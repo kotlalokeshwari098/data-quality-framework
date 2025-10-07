@@ -31,13 +31,13 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.m2/wrapper
-          key: ${{ runner.os }}-maven-agent-${{ hashFiles('modules/backend/pom.xml', '**/pom.xml') }}
+          key: ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml', '**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-agent-${{ hashFiles('modules/backend/pom.xml') }}
+            ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml') }}
             ${{ runner.os }}-maven-agent-
             ${{ runner.os }}-maven-
 
-      - working-directory: modules/backend
+      - working-directory: agent/backend
         run: mvn --quiet clean com.spotify.fmt:fmt-maven-plugin:check
 
   lint-server:
@@ -84,13 +84,13 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.m2/wrapper
-          key: ${{ runner.os }}-maven-agent-${{ hashFiles('modules/backend/pom.xml', '**/pom.xml') }}
+          key: ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml', '**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-agent-${{ hashFiles('modules/backend/pom.xml') }}
+            ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml') }}
             ${{ runner.os }}-maven-agent-
             ${{ runner.os }}-maven-
 
-      - working-directory: modules/backend
+      - working-directory: agent/backend
         run: mvn --quiet test
 
   test-server:
@@ -305,13 +305,13 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.m2/wrapper
-          key: ${{ runner.os }}-maven-agent-${{ hashFiles('modules/backend/pom.xml', '**/pom.xml') }}
+          key: ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml', '**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-agent-${{ hashFiles('modules/backend/pom.xml') }}
+            ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml') }}
             ${{ runner.os }}-maven-agent-
             ${{ runner.os }}-maven-
 
-      - working-directory: modules/backend
+      - working-directory: agent/backend
         run: mvn --quiet clean package -DskipTests
 
       - uses: docker/setup-buildx-action@v3
