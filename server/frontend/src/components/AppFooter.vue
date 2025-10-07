@@ -33,8 +33,12 @@ const currentYear = computed(() => new Date().getFullYear())
   color: white;
   padding: 2rem 0;
   margin-top: auto;
-  position: relative;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   overflow: hidden;
+  z-index: 800;
 }
 
 .app-footer::before {
@@ -159,9 +163,10 @@ const currentYear = computed(() => new Date().getFullYear())
   }
 }
 
-@media (max-width: 480px) {
-  .footer-content {
-    padding: 0 1rem;
+/* Tablet Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .app-footer {
+    left: 0;
   }
 }
 </style>
