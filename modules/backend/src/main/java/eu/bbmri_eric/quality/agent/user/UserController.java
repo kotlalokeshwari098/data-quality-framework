@@ -34,23 +34,16 @@ public class UserController {
 
   @Operation(
       summary = "Change user password",
-      description =
-          "Changes the password for a specific user. Users can only change their own password. Requires valid current password and new password confirmation.")
+      description = "Changes the password for a specific user.")
   @PutMapping("/api/users/{userId}/password")
   public void changePassword(
       @Parameter(
-              description =
-                  "ID of the user whose password should be changed. Must match the current user's ID.",
+              description = "ID of the user whose password should be changed.",
               required = true,
               example = "1")
           @PathVariable
           Long userId,
-      @Parameter(
-              description =
-                  "Password change request containing current password, new password, and confirmation",
-              required = true)
-          @Valid
-          @RequestBody
+      @Parameter(description = "Password change request", required = true) @Valid @RequestBody
           PasswordChangeRequest request) {
     userService.changePassword(userId, request);
   }
