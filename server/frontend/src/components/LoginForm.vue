@@ -5,7 +5,7 @@
         <div class="card shadow-lg border-0 overflow-hidden mobile-card">
           <div class="row g-0 min-vh-75">
             <!-- Left side - Info panel (hidden on small screens) -->
-            <div class="col-lg-7 d-none d-lg-flex">
+            <div class="col-lg-6 d-none d-lg-flex">
               <div class="info-panel p-4 p-xl-5 d-flex flex-column justify-content-center w-100">
                 <div>
                   <h1 class="display-5 fw-bold mb-3">Data Quality Metrics Server</h1>
@@ -49,7 +49,7 @@
             </div>
 
             <!-- Right side - Login form -->
-            <div class="col-lg-5 col-12">
+            <div class="col-lg-6 col-12">
               <div class="p-3 p-sm-4 p-lg-5 d-flex flex-column justify-content-center h-100">
                 <div class="w-100 login-form-container">
                   <!-- Mobile header (visible only on small screens) -->
