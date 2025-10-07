@@ -33,12 +33,10 @@ const currentYear = computed(() => new Date().getFullYear())
   color: white;
   padding: 2rem 0;
   margin-top: auto;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   overflow: hidden;
   z-index: 800;
+  position: relative;
 }
 
 .app-footer::before {
@@ -49,7 +47,6 @@ const currentYear = computed(() => new Date().getFullYear())
   right: 0;
   bottom: 0;
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
   pointer-events: none;
 }
 

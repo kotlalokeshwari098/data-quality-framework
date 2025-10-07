@@ -53,7 +53,7 @@ body {
 #app {
   min-height: 100vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   /* Ensure app takes full width on mobile */
   width: 100%;
 }
