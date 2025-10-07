@@ -1,47 +1,32 @@
 <template>
-  <aside class="sidebar" :class="{ collapsed: isCollapsed, show: showMobileMenu }">
+  <aside class="sidebar" :class="{ show: showMobileMenu }">
     <div class="sidebar-container">
       <!-- Brand -->
       <router-link to="/" class="sidebar-brand">
         <div class="brand-icon">
           <i class="bi bi-bar-chart-fill"></i>
         </div>
-        <transition name="fade">
-          <div class="brand-text" v-if="!isCollapsed">
-            <h4>Data Quality</h4>
-            <small>Dashboard</small>
-          </div>
-        </transition>
+        <div class="brand-text">
+          <h4>Data Quality</h4>
+          <small>Dashboard</small>
+        </div>
       </router-link>
 
       <!-- Navigation Menu -->
       <nav class="sidebar-nav">
         <router-link to="/dashboard" class="nav-link" :class="{ active: $route.name === 'Dashboard' }" @click="closeMobileMenu">
           <i class="bi bi-grid-3x3-gap-fill"></i>
-          <transition name="fade">
-            <span v-if="!isCollapsed">Dashboard</span>
-          </transition>
+          <span>Dashboard</span>
         </router-link>
         <router-link to="/reports" class="nav-link" :class="{ active: $route.name === 'Reports' }" @click="closeMobileMenu">
           <i class="bi bi-bar-chart-fill"></i>
-          <transition name="fade">
-            <span v-if="!isCollapsed">Reports</span>
-          </transition>
+          <span>Reports</span>
         </router-link>
         <router-link to="/settings" class="nav-link" :class="{ active: $route.name === 'Settings' }" @click="closeMobileMenu">
           <i class="bi bi-gear-fill"></i>
-          <transition name="fade">
-            <span v-if="!isCollapsed">Settings</span>
-          </transition>
+          <span>Settings</span>
         </router-link>
       </nav>
-
-      <!-- Collapse Toggle at bottom -->
-      <div class="sidebar-footer">
-        <button @click="toggleCollapse" class="collapse-btn" :title="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-          <i class="bi" :class="isCollapsed ? 'bi-chevron-right' : 'bi-chevron-left'"></i>
-        </button>
-      </div>
     </div>
   </aside>
 
@@ -55,33 +40,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 const showMobileMenu = ref(false)
-const isCollapsed = ref(false)
-
-// Load collapsed state from localStorage
-onMounted(() => {
-  const saved = localStorage.getItem('sidebarCollapsed')
-  if (saved !== null) {
-    isCollapsed.value = JSON.parse(saved)
-  }
-})
 
 const toggleMobileMenu = () => {
   showMobileMenu.value = !showMobileMenu.value
-  if (showMobileMenu.value) {
-    isCollapsed.value = false
-  }
 }
 
 const closeMobileMenu = () => {
   showMobileMenu.value = false
-}
-
-const toggleCollapse = () => {
-  isCollapsed.value = !isCollapsed.value
-  localStorage.setItem('sidebarCollapsed', JSON.stringify(isCollapsed.value))
 }
 </script>
 
@@ -95,14 +63,9 @@ const toggleCollapse = () => {
   width: 260px;
   background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
   display: flex;
   flex-direction: column;
-}
-
-.sidebar.collapsed {
-  width: 80px;
 }
 
 .sidebar-container {
@@ -122,11 +85,6 @@ const toggleCollapse = () => {
   color: white;
   text-decoration: none;
   transition: all 0.2s ease;
-}
-
-.sidebar.collapsed .sidebar-brand {
-  padding: 0 1.25rem;
-  justify-content: center;
 }
 
 .sidebar-brand:hover {
@@ -187,11 +145,6 @@ const toggleCollapse = () => {
   overflow: hidden;
 }
 
-.sidebar.collapsed .nav-link {
-  justify-content: center;
-  padding: 0.875rem;
-}
-
 .nav-link i {
   font-size: 1.25rem;
   min-width: 1.25rem;
@@ -226,33 +179,6 @@ const toggleCollapse = () => {
   border-radius: 0 4px 4px 0;
 }
 
-/* Sidebar Footer */
-.sidebar-footer {
-  padding: 0 1rem;
-  margin-top: auto;
-}
-
-/* Collapse Button */
-.collapse-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  color: white;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.collapse-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
 /* Mobile Menu Toggle */
 .mobile-menu-toggle {
   display: none;
@@ -279,15 +205,6 @@ const toggleCollapse = () => {
 
 .mobile-overlay {
   display: none;
-}
-
-/* Animations */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
 }
 
 /* Mobile Responsive */
@@ -324,13 +241,6 @@ const toggleCollapse = () => {
   .mobile-overlay.show {
     opacity: 1;
     visibility: visible;
-  }
-}
-
-/* Tablet Responsive */
-@media (max-width: 1024px) and (min-width: 769px) {
-  .sidebar {
-    width: 80px;
   }
 }
 </style>
