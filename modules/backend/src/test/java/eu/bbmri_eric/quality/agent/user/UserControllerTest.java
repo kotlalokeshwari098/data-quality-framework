@@ -86,7 +86,7 @@ public class UserControllerTest {
 
   @WithUserDetails("admin")
   @Test
-  void changePassword_returnsForbidden_whenTryingToChangeOtherUserPassword() throws Exception {
+  void changePassword_returnsBadRequest_whenTryingToChangeOtherUserPassword() throws Exception {
     Long otherUserId = -1L;
     PasswordChangeRequest request =
         new PasswordChangeRequest("adminpass", "newPass123!", "newPass123!");
@@ -96,7 +96,7 @@ public class UserControllerTest {
             put("/api/users/" + otherUserId + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isForbidden());
+        .andExpect(status().isBadRequest());
   }
 
   @Test

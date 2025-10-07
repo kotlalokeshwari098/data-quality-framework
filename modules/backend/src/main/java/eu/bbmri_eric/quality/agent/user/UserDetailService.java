@@ -4,6 +4,8 @@ import static org.springframework.security.core.userdetails.User.withUsername;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,6 +33,25 @@ public class UserDetailService implements UserDetailsService {
             .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     return withUsername(user.getUsername()).password(user.getPassword()).build();
+  }
+
+  public String getCurrentUsername() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && authentication.isAuthenticated()) {
+      return authentication.getName();
+    }
+    throw new IllegalStateException("No authenticated user found");
+  }
+
+  public UserDTO getCurrentUserDTO() {
+    String username = getCurrentUsername();
+    User currentUser =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("Current user not found"));
+
+    boolean isUsingDefault = isUsingDefaultPassword(currentUser.getUsername());
+    return new UserDTO(currentUser.getUsername(), isUsingDefault, currentUser.getId());
   }
 
   private void validatePasswordFormat(String password) {
@@ -66,26 +87,18 @@ public class UserDetailService implements UserDetailsService {
   }
 
   public boolean isUsingDefaultPassword(String username) {
-    try {
-      var user =
-          userRepository
-              .findByUsername(username)
-              .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    var user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-      String defaultPassword = "admin".equals(username) ? "adminpass" : null;
+    String defaultPassword = "admin".equals(username) ? "adminpass" : null;
 
-      if (defaultPassword == null) {
-        return false;
-      }
-
-      return passwordEncoder.matches(defaultPassword, user.getPassword());
-    } catch (UsernameNotFoundException e) {
-      log.error("User not found during default password check: {}", username);
-      return false;
-    } catch (Exception e) {
-      log.error("Error checking default password for user {}: {}", username, e.getMessage(), e);
+    if (defaultPassword == null) {
       return false;
     }
+
+    return passwordEncoder.matches(defaultPassword, user.getPassword());
   }
 
   public Long getUserId(String username) {
