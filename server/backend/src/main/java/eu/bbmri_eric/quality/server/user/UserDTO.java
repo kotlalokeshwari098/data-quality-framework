@@ -3,6 +3,7 @@ package eu.bbmri_eric.quality.server.user;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Data Transfer Object for User information. Using Java Record as recommended for data-carrying
@@ -16,6 +17,8 @@ public class UserDTO {
 
   @Schema(description = "Unique identifier for the user", example = "user123")
   private String id;
+
+  private Set<UserRole> roles;
 
   public UserDTO(
       @NotEmpty(message = "Username cannot be empty") String username,
@@ -44,15 +47,25 @@ public class UserDTO {
     this.id = id;
   }
 
+  public Set<UserRole> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(Set<UserRole> roles) {
+    this.roles = roles;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     UserDTO userDTO = (UserDTO) o;
-    return Objects.equals(username, userDTO.username);
+    return Objects.equals(username, userDTO.username)
+        && Objects.equals(id, userDTO.id)
+        && Objects.equals(roles, userDTO.roles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(username);
+    return Objects.hash(username, id, roles);
   }
 }

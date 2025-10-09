@@ -38,15 +38,12 @@ class AuthControllerTest {
   @Test
   @DisplayName("Should return unauthorized for invalid credentials")
   void login_withInvalidCredentials_returnsUnauthorized() throws Exception {
-    // Test case-sensitive username
     mockMvc
         .perform(
             post(LOGIN_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(createLoginJson(ADMIN_USERNAME.toUpperCase(), ADMIN_PASSWORD)))
         .andExpect(status().isUnauthorized());
-
-    // Test wrong password
     mockMvc
         .perform(
             post(LOGIN_ENDPOINT)
@@ -70,6 +67,7 @@ class AuthControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.token").isString())
             .andExpect(jsonPath("$.token").value(not(emptyString())))
+            .andExpect(jsonPath("$.user.roles").value(hasItem("ADMIN")))
             .andExpect(jsonPath("$.user.username").value(ADMIN_USERNAME))
             .andReturn();
 

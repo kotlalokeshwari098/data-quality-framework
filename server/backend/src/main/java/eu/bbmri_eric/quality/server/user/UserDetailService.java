@@ -1,11 +1,9 @@
 package eu.bbmri_eric.quality.server.user;
 
-import static org.springframework.security.core.userdetails.User.withUsername;
 
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

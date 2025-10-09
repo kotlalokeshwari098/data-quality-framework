@@ -1,11 +1,21 @@
 package eu.bbmri_eric.quality.server.user;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * User entity representing a user account in the system. Follows domain-driven design principles
@@ -21,6 +31,12 @@ class User {
 
   private final String username;
   private String password;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+  @Column(name = "role")
+  @Enumerated(EnumType.STRING)
+  private Set<UserRole> roles = new HashSet<>();
 
   /**
    * Constructor for creating a new user.
@@ -53,6 +69,10 @@ class User {
     return id;
   }
 
+  public Set<UserRole> getRoles() {
+    return Collections.unmodifiableSet(roles);
+  }
+
   /**
    * Updates the user's password.
    *
@@ -60,6 +80,18 @@ class User {
    */
   public void updatePassword(String newPassword) {
     this.password = Objects.requireNonNull(newPassword, "Password cannot be null");
+  }
+
+  public void addRole(UserRole role) {
+    roles.add(role);
+  }
+
+  public void removeRole(UserRole role) {
+    roles.remove(role);
+  }
+
+  public boolean hasRole(UserRole role) {
+    return roles.contains(role);
   }
 
   @Override
