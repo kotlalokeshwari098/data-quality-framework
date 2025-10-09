@@ -26,11 +26,9 @@ public class UserDetailService implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+  public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Objects.requireNonNull(username, "Username cannot be null");
-
     logger.debug("Loading user details for username: {}", username);
-
     var user =
         userRepository
             .findByUsername(username)
@@ -39,8 +37,7 @@ public class UserDetailService implements UserDetailsService {
                   logger.warn("User not found during authentication: {}", username);
                   return new UsernameNotFoundException("User not found: " + username);
                 });
-
     logger.debug("Successfully loaded user details for: {}", username);
-    return withUsername(user.getUsername()).password(user.getPassword()).build();
+    return new CustomUserDetails(user);
   }
 }
