@@ -4,6 +4,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.Components;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +15,8 @@ class OpenApiConfig {
 
   @Bean
   OpenAPI customOpenAPI() {
+    final String securitySchemeName = "bearerAuth";
+
     return new OpenAPI()
         .info(
             new Info()
@@ -26,6 +30,14 @@ class OpenApiConfig {
                 .license(
                     new License()
                         .name("GNU AFFERO GENERAL PUBLIC LICENSE")
-                        .url("https://www.gnu.org/licenses/agpl-3.0.en.html")));
+                        .url("https://www.gnu.org/licenses/agpl-3.0.en.html")))
+        .components(
+            new Components()
+                .addSecuritySchemes(securitySchemeName,
+                    new SecurityScheme()
+                        .name(securitySchemeName)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")));
   }
 }

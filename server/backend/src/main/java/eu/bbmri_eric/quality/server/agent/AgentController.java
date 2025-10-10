@@ -31,7 +31,7 @@ public class AgentController {
   }
 
   @PatchMapping("/{id}")
-  @SecurityRequirement(name = "")
+  @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<EntityModel<AgentDTO>> update(
       @PathVariable String id, @Valid @RequestBody AgentUpdateRequest updateRequest) {
     AgentDTO agent = agentService.update(updateRequest, id);
@@ -40,6 +40,7 @@ public class AgentController {
   }
 
   @GetMapping("/{id}")
+  @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<EntityModel<AgentDTO>> findById(@PathVariable String id) {
     AgentDTO agent = agentService.findById(id);
     EntityModel<AgentDTO> agentModel = linkBuilder.toModel(agent);
@@ -47,6 +48,7 @@ public class AgentController {
   }
 
   @GetMapping
+  @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<CollectionModel<EntityModel<AgentDTO>>> listAll() {
     List<AgentDTO> agents = agentService.listAll();
     CollectionModel<EntityModel<AgentDTO>> agentsModel = linkBuilder.toCollectionModel(agents);
