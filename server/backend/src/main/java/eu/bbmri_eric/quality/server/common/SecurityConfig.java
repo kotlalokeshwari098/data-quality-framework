@@ -42,11 +42,11 @@ class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/auth/login")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/agents")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/agents")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/agents/**")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/agents/**")
                     .hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PATCH, "/api/agents/**")
+                    .requestMatchers(HttpMethod.PATCH, "/api/v1/agents/**")
                     .hasRole("ADMIN")
                     .requestMatchers(
                         "/",

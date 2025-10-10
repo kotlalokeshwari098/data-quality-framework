@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/agents")
+@RequestMapping("/api/v1/agents")
 public class AgentController {
 
   private final AgentService agentService;

@@ -27,7 +27,7 @@ class ApiService {
 
     async getAgents() {
         const token = localStorage.getItem('authToken')
-        const response = await fetch(`${API_BASE}/agents`, {
+        const response = await fetch(`${API_BASE}/v1/agents`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

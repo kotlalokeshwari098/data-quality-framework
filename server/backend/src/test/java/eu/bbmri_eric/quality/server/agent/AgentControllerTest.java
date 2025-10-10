@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @Transactional
 class AgentControllerIntegrationTest {
+  public static final String API_V_1_AGENTS = "/api/v1/agents";
+  public static final String API_V_1_AGENTS_ID = "/api/v1/agents/{id}";
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
@@ -35,7 +37,7 @@ class AgentControllerIntegrationTest {
     AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
     mockMvc
         .perform(
-            post("/api/agents")
+            post(API_V_1_AGENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isCreated())
@@ -48,7 +50,7 @@ class AgentControllerIntegrationTest {
     AgentRegistrationRequest createDto = new AgentRegistrationRequest("invalid-uuid");
     mockMvc
         .perform(
-            post("/api/agents")
+            post(API_V_1_AGENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isBadRequest());
@@ -59,7 +61,7 @@ class AgentControllerIntegrationTest {
     AgentRegistrationRequest createDto = new AgentRegistrationRequest("");
     mockMvc
         .perform(
-            post("/api/agents")
+            post(API_V_1_AGENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isBadRequest());
@@ -71,7 +73,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            post("/api/agents")
+            post(API_V_1_AGENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isBadRequest());
@@ -85,28 +87,29 @@ class AgentControllerIntegrationTest {
     agentRepository.save(agent);
 
     mockMvc
-        .perform(get("/api/agents/{id}", agentId))
+        .perform(get(API_V_1_AGENTS_ID, agentId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(agentId))
-        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents/" + agentId))
-        .andExpect(jsonPath("$._links.agents.href").value("http://localhost/api/agents"));
+        .andExpect(
+            jsonPath("$._links.self.href").value("http://localhost/api/v1/agents/" + agentId))
+        .andExpect(jsonPath("$._links.agents.href").value("http://localhost/api/v1/agents"));
   }
 
   @Test
   @WithMockUser(roles = "ADMIN")
   void findById_shouldReturnNotFoundWhenAgentDoesNotExist() throws Exception {
     String nonExistentAgentId = UUID.randomUUID().toString();
-    mockMvc.perform(get("/api/agents/{id}", nonExistentAgentId)).andExpect(status().isNotFound());
+    mockMvc.perform(get(API_V_1_AGENTS_ID, nonExistentAgentId)).andExpect(status().isNotFound());
   }
 
   @Test
   @WithMockUser(roles = "ADMIN")
   void listAll_shouldReturnEmptyListWithHateoasLinksWhenNoAgents() throws Exception {
     mockMvc
-        .perform(get("/api/agents"))
+        .perform(get(API_V_1_AGENTS))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$._embedded").doesNotExist())
-        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents"));
+        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/agents"));
   }
 
   @Test
@@ -117,13 +120,13 @@ class AgentControllerIntegrationTest {
     agentRepository.save(new Agent(agentId1));
     agentRepository.save(new Agent(agentId2));
     mockMvc
-        .perform(get("/api/agents"))
+        .perform(get(API_V_1_AGENTS))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$._embedded.agents").isArray())
         .andExpect(jsonPath("$._embedded.agents.length()").value(2))
         .andExpect(jsonPath("$._embedded.agents[?(@.id == '" + agentId1 + "')]").exists())
         .andExpect(jsonPath("$._embedded.agents[?(@.id == '" + agentId2 + "')]").exists())
-        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents"))
+        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/v1/agents"))
         .andExpect(jsonPath("$._embedded.agents[0]._links.self.href").exists())
         .andExpect(jsonPath("$._embedded.agents[1]._links.self.href").exists());
   }
@@ -136,7 +139,7 @@ class AgentControllerIntegrationTest {
     AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
     mockMvc
         .perform(
-            post("/api/agents")
+            post(API_V_1_AGENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isConflict());
@@ -150,18 +153,18 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            post("/api/agents")
+            post(API_V_1_AGENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isCreated());
 
     mockMvc
-        .perform(get("/api/agents/{id}", agentId))
+        .perform(get(API_V_1_AGENTS_ID, agentId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(agentId));
 
     mockMvc
-        .perform(get("/api/agents"))
+        .perform(get(API_V_1_AGENTS))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$._embedded.agents[?(@.id == '" + agentId + "')]").exists());
   }
@@ -177,14 +180,15 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            patch("/api/agents/{id}", agentId)
+            patch(API_V_1_AGENTS_ID, agentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(agentId))
         .andExpect(jsonPath("$.name").value("Updated Agent Name"))
-        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents/" + agentId))
-        .andExpect(jsonPath("$._links.agents.href").value("http://localhost/api/agents"));
+        .andExpect(
+            jsonPath("$._links.self.href").value("http://localhost/api/v1/agents/" + agentId))
+        .andExpect(jsonPath("$._links.agents.href").value("http://localhost/api/v1/agents"));
   }
 
   @Test
@@ -198,13 +202,14 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            patch("/api/agents/{id}", agentId)
+            patch(API_V_1_AGENTS_ID, agentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(agentId))
         .andExpect(jsonPath("$.status").value("ACTIVE"))
-        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents/" + agentId));
+        .andExpect(
+            jsonPath("$._links.self.href").value("http://localhost/api/v1/agents/" + agentId));
   }
 
   @Test
@@ -218,7 +223,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            patch("/api/agents/{id}", agentId)
+            patch(API_V_1_AGENTS_ID, agentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isOk())
@@ -235,7 +240,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            patch("/api/agents/{id}", nonExistentAgentId)
+            patch(API_V_1_AGENTS_ID, nonExistentAgentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isNotFound());
@@ -252,7 +257,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            patch("/api/agents/{id}", agentId)
+            patch(API_V_1_AGENTS_ID, agentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isOk())
@@ -265,7 +270,7 @@ class AgentControllerIntegrationTest {
     AgentUpdateRequest updateRequest = new AgentUpdateRequest("New Name", AgentStatus.ACTIVE);
     mockMvc
         .perform(
-            patch("/api/agents/{id}", agentId)
+            patch(API_V_1_AGENTS_ID, agentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isUnauthorized());
@@ -279,7 +284,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            patch("/api/agents/{id}", agentId)
+            patch(API_V_1_AGENTS_ID, agentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isForbidden());
@@ -293,7 +298,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc
         .perform(
-            post("/api/agents")
+            post(API_V_1_AGENTS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isCreated());
@@ -301,7 +306,7 @@ class AgentControllerIntegrationTest {
     AgentUpdateRequest updateRequest = new AgentUpdateRequest("Updated Agent", AgentStatus.ACTIVE);
     mockMvc
         .perform(
-            patch("/api/agents/{id}", agentId)
+            patch(API_V_1_AGENTS_ID, agentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isOk())
@@ -309,7 +314,7 @@ class AgentControllerIntegrationTest {
         .andExpect(jsonPath("$.status").value("ACTIVE"));
 
     mockMvc
-        .perform(get("/api/agents/{id}", agentId))
+        .perform(get(API_V_1_AGENTS_ID, agentId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(agentId))
         .andExpect(jsonPath("$.name").value("Updated Agent"))
