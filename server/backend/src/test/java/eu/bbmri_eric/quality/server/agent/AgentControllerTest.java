@@ -165,4 +165,154 @@ class AgentControllerIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$._embedded.agents[?(@.id == '" + agentId + "')]").exists());
   }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void update_shouldUpdateAgentNameAndReturnHateoasResponse() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest("Updated Agent Name", null);
+
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId))
+        .andExpect(jsonPath("$.name").value("Updated Agent Name"))
+        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents/" + agentId))
+        .andExpect(jsonPath("$._links.agents.href").value("http://localhost/api/agents"));
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void update_shouldUpdateAgentStatusAndReturnHateoasResponse() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest(null, AgentStatus.ACTIVE);
+
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId))
+        .andExpect(jsonPath("$.status").value("ACTIVE"))
+        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents/" + agentId));
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void update_shouldUpdateBothNameAndStatus() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest("Test Agent", AgentStatus.INACTIVE);
+
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId))
+        .andExpect(jsonPath("$.name").value("Test Agent"))
+        .andExpect(jsonPath("$.status").value("INACTIVE"));
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void update_shouldReturnNotFoundWhenAgentDoesNotExist() throws Exception {
+    String nonExistentAgentId = UUID.randomUUID().toString();
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest("New Name", AgentStatus.ACTIVE);
+
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", nonExistentAgentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void update_shouldHandleEmptyUpdateRequest() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest(null, null);
+
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId));
+  }
+
+  @Test
+  void update_shouldRequireAuthentication() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest("New Name", AgentStatus.ACTIVE);
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @WithMockUser(roles = "USER")
+  void update_shouldRequireAdminRole() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest("New Name", AgentStatus.ACTIVE);
+
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void endToEndFlow_createUpdateAndRetrieveAgent() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
+
+    mockMvc
+        .perform(
+            post("/api/agents")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createDto)))
+        .andExpect(status().isCreated());
+
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest("Updated Agent", AgentStatus.ACTIVE);
+    mockMvc
+        .perform(
+            patch("/api/agents/{id}", agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("Updated Agent"))
+        .andExpect(jsonPath("$.status").value("ACTIVE"));
+
+    mockMvc
+        .perform(get("/api/agents/{id}", agentId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId))
+        .andExpect(jsonPath("$.name").value("Updated Agent"))
+        .andExpect(jsonPath("$.status").value("ACTIVE"));
+  }
 }

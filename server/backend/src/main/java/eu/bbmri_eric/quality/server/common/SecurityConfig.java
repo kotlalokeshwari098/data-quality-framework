@@ -3,6 +3,7 @@ package eu.bbmri_eric.quality.server.common;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import eu.bbmri_eric.quality.server.auth.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,7 @@ class SecurityConfig {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
+        .anonymous(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -58,7 +60,15 @@ class SecurityConfig {
                         "/api/api-docs/**")
                     .permitAll()
                     .anyRequest()
-                    .denyAll());
+                    .denyAll())
+        .exceptionHandling(
+            ex ->
+                ex.authenticationEntryPoint(
+                        (request, response, authException) ->
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                    .accessDeniedHandler(
+                        (request, response, accessDeniedException) ->
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden")));
     return http.build();
   }
 
