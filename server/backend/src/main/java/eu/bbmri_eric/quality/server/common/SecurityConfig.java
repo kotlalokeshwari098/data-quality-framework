@@ -44,6 +44,8 @@ class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/agents/**")
                     .hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PATCH, "/api/agents/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(
                         "/",
                         "/index.html",

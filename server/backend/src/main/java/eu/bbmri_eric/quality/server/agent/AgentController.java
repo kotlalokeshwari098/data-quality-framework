@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.server.agent;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
@@ -27,6 +28,15 @@ public class AgentController {
       @Valid @RequestBody AgentRegistrationRequest createAgentDto) {
     AgentRegistration createdAgentDto = agentService.create(createAgentDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(EntityModel.of(createdAgentDto));
+  }
+
+  @PatchMapping("/{id}")
+  @SecurityRequirement(name = "")
+  public ResponseEntity<EntityModel<AgentDTO>> update(
+      @PathVariable String id, @Valid @RequestBody AgentUpdateRequest updateRequest) {
+    AgentDTO agent = agentService.update(updateRequest, id);
+    EntityModel<AgentDTO> agentModel = linkBuilder.toModel(agent);
+    return ResponseEntity.ok(agentModel);
   }
 
   @GetMapping("/{id}")

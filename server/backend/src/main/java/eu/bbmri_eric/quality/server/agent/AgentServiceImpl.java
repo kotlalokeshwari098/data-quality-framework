@@ -6,6 +6,7 @@ import eu.bbmri_eric.quality.server.user.UserCreateDTO;
 import eu.bbmri_eric.quality.server.user.UserDTO;
 import eu.bbmri_eric.quality.server.user.UserService;
 import java.util.List;
+import java.util.Objects;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,18 @@ public class AgentServiceImpl implements AgentService {
         userService.createUser(
             new UserCreateDTO("Agent %s".formatted(savedAgent.getId()), savedAgent.getId()));
     return new AgentRegistration(modelMapper.map(savedAgent, AgentDTO.class), agentUser);
+  }
+
+  @Override
+  public AgentDTO update(AgentUpdateRequest updateAgentDto, String agentId) {
+    Agent agent = agentRepository.findById(agentId).orElseThrow(EntityNotFoundException::new);
+    if (!Objects.isNull(updateAgentDto.getName())) {
+      agent.setName(updateAgentDto.getName());
+    }
+    if (!Objects.isNull(updateAgentDto.getStatus())) {
+      agent.setStatus(updateAgentDto.getStatus());
+    }
+    return modelMapper.map(agent, AgentDTO.class);
   }
 
   @Override

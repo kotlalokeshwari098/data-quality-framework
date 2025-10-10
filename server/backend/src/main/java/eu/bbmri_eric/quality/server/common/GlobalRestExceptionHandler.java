@@ -3,6 +3,7 @@ package eu.bbmri_eric.quality.server.common;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
@@ -175,6 +176,21 @@ public class GlobalRestExceptionHandler {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
     problemDetail.setTitle("Entity Already Exists");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(SQLException.class)
+  @ApiResponse(
+      responseCode = "500",
+      description = "Internal Server Error",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleSQLException(SQLException ex) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    problemDetail.setTitle("Internal Server Error");
     return problemDetail;
   }
 }

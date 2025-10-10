@@ -1,6 +1,7 @@
 -- Create agent table
 CREATE TABLE agent (
     id VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE,
+    name VARCHAR(255),
     status VARCHAR(20)
 );
 
