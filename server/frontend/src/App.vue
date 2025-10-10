@@ -65,12 +65,13 @@ body {
   margin-top: 64px;
   min-height: calc(100vh - 64px);
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  width: 100%;
+  width: calc(100% - 260px);
 }
 
 /* When sidebar is collapsed */
 .main-content.sidebar-collapsed {
   margin-left: 80px;
+  width: calc(100% - 80px);
 }
 
 /* When not authenticated (login page) */
@@ -78,6 +79,7 @@ body {
   margin-left: 0;
   margin-top: 0;
   min-height: 100vh;
+  width: 100%;
 }
 
 .main-content:has(.login-form) {

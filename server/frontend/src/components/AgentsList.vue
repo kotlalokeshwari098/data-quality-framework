@@ -3,9 +3,7 @@
     <div class="card border-0 shadow-sm h-100">
       <div class="card-header bg-white border-bottom-0 py-2">
         <h6 class="mb-0 fw-bold text-dark">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="me-2 text-primary">
-            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 4L13.5 7H7V9H21ZM21 11H7V13H21V11ZM21 15H7V17H21V15ZM21 19H7V21H21V19Z" fill="currentColor"/>
-          </svg>
+          <i class="bi bi-database-fill-gear me-2 text-primary"></i>
           Agents
         </h6>
       </div>
@@ -69,9 +67,7 @@
                       :disabled="processingAgent === agent.id"
                       style="font-size: 0.7rem;"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="me-1">
-                        <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
-                      </svg>
+                      <i class="bi bi-check-lg me-1"></i>
                       Approve
                     </button>
                     <button
@@ -80,9 +76,7 @@
                       :disabled="processingAgent === agent.id"
                       style="font-size: 0.7rem;"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="me-1">
-                        <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
-                      </svg>
+                      <i class="bi bi-x-lg me-1"></i>
                       Decline
                     </button>
                   </div>
@@ -100,9 +94,7 @@
             <!-- Pending message -->
             <div v-if="agent.status === 'PENDING'" class="pending-message mt-2 pt-1 border-top">
               <small class="text-muted">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="me-1 text-warning">
-                  <path d="M1 21H23L12 2L1 21ZM13 18H11V16H13V18ZM13 14H11V10H13V14Z" fill="currentColor"/>
-                </svg>
+                <i class="bi bi-exclamation-triangle me-1 text-warning"></i>
                 This agent is awaiting approval to join the network
               </small>
             </div>
@@ -111,9 +103,7 @@
 
         <!-- No agents state -->
         <div v-else class="text-center text-muted py-3">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="mb-1 opacity-50">
-            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 4L13.5 7H7V9H21ZM21 11H7V13H21V11ZM21 15H7V17H21V15ZM21 19H7V21H21V19Z" fill="currentColor"/>
-          </svg>
+          <i class="bi bi-database-fill-gear mb-1 opacity-50" style="font-size: 1.5rem;"></i>
           <p class="mb-0 small">No agents available</p>
         </div>
       </div>
