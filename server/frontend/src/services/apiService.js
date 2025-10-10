@@ -42,7 +42,7 @@ class ApiService {
 
     async updateAgent(agentId, data) {
         const token = localStorage.getItem('authToken')
-        const response = await fetch(`${API_BASE}/agents/${agentId}`, {
+        const response = await fetch(`${API_BASE}/v1/agents/${agentId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
