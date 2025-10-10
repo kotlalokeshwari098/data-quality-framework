@@ -33,7 +33,9 @@ public class AgentServiceImpl implements AgentService {
     }
     Agent agent = new Agent(createAgentDto.id());
     Agent savedAgent = agentRepository.save(agent);
-    UserDTO agentUser = userService.createUser(new UserCreateDTO("Agent user", savedAgent.getId()));
+    UserDTO agentUser =
+        userService.createUser(
+            new UserCreateDTO("Agent %s".formatted(savedAgent.getId()), savedAgent.getId()));
     return new AgentRegistration(modelMapper.map(savedAgent, AgentDto.class), agentUser);
   }
 
