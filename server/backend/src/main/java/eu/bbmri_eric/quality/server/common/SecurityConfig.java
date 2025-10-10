@@ -40,6 +40,10 @@ class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/auth/login")
                     .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/agents")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/agents/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(
                         "/",
                         "/index.html",

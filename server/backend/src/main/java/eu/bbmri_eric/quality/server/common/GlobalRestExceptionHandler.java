@@ -36,6 +36,21 @@ public class GlobalRestExceptionHandler {
     return problemDetail;
   }
 
+  @ExceptionHandler(EntityNotFoundException.class)
+  @ApiResponse(
+      responseCode = "404",
+      description = "Entity Not Found",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleEntityNotFound(EntityNotFoundException ex) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    problemDetail.setTitle("Entity Not Found");
+    return problemDetail;
+  }
+
   @ExceptionHandler(ConversionFailedException.class)
   @ApiResponse(
       responseCode = "400",
@@ -145,6 +160,21 @@ public class GlobalRestExceptionHandler {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
     problemDetail.setTitle("Access Denied");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(EntityAlreadyExistsException.class)
+  @ApiResponse(
+      responseCode = "409",
+      description = "Entity Already Exists",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleEntityAlreadyExists(EntityAlreadyExistsException ex) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    problemDetail.setTitle("Entity Already Exists");
     return problemDetail;
   }
 }
