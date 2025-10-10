@@ -432,7 +432,8 @@ const saveAgentName = async (agent) => {
 
   try {
     processingAgent.value = agent.id
-    await apiService.updateAgentName(agent.id, { name: editingName.value.trim() })
+    await apiService.updateAgentName(agent.id, editingName.value.trim())
+    // Update the agent name locally
     const agentIndex = agents.value.findIndex(a => a.id === agent.id)
     if (agentIndex !== -1) {
       agents.value[agentIndex].name = editingName.value.trim()
