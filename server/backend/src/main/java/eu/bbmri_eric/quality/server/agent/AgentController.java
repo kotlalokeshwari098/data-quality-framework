@@ -30,16 +30,16 @@ public class AgentController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<EntityModel<AgentDto>> findById(@PathVariable String id) {
-    AgentDto agent = agentService.findById(id);
-    EntityModel<AgentDto> agentModel = linkBuilder.toModel(agent);
+  public ResponseEntity<EntityModel<AgentDTO>> findById(@PathVariable String id) {
+    AgentDTO agent = agentService.findById(id);
+    EntityModel<AgentDTO> agentModel = linkBuilder.toModel(agent);
     return ResponseEntity.ok(agentModel);
   }
 
   @GetMapping
-  public ResponseEntity<CollectionModel<EntityModel<AgentDto>>> listAll() {
-    List<AgentDto> agents = agentService.listAll();
-    CollectionModel<EntityModel<AgentDto>> agentsModel = linkBuilder.toCollectionModel(agents);
+  public ResponseEntity<CollectionModel<EntityModel<AgentDTO>>> listAll() {
+    List<AgentDTO> agents = agentService.listAll();
+    CollectionModel<EntityModel<AgentDTO>> agentsModel = linkBuilder.toCollectionModel(agents);
     return ResponseEntity.ok(agentsModel);
   }
 }

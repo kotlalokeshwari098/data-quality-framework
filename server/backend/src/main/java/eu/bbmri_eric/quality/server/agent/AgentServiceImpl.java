@@ -36,25 +36,25 @@ public class AgentServiceImpl implements AgentService {
     UserDTO agentUser =
         userService.createUser(
             new UserCreateDTO("Agent %s".formatted(savedAgent.getId()), savedAgent.getId()));
-    return new AgentRegistration(modelMapper.map(savedAgent, AgentDto.class), agentUser);
+    return new AgentRegistration(modelMapper.map(savedAgent, AgentDTO.class), agentUser);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public AgentDto findById(String id) {
+  public AgentDTO findById(String id) {
     return modelMapper.map(
         agentRepository
             .findById(id)
             .orElseThrow(
                 () -> new EntityNotFoundException("Agent with ID %s not found".formatted(id))),
-        AgentDto.class);
+        AgentDTO.class);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public List<AgentDto> listAll() {
+  public List<AgentDTO> listAll() {
     return agentRepository.findAll().stream()
-        .map(agent -> modelMapper.map(agent, AgentDto.class))
+        .map(agent -> modelMapper.map(agent, AgentDTO.class))
         .toList();
   }
 }

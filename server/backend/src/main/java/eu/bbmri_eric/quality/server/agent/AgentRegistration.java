@@ -4,19 +4,19 @@ import eu.bbmri_eric.quality.server.user.UserDTO;
 import java.util.Objects;
 
 public class AgentRegistration {
-  private AgentDto agent;
+  private AgentDTO agent;
   private UserDTO user;
 
-  public AgentRegistration(AgentDto agent, UserDTO user) {
+  public AgentRegistration(AgentDTO agent, UserDTO user) {
     this.agent = agent;
     this.user = user;
   }
 
-  public AgentDto getAgent() {
+  public AgentDTO getAgent() {
     return agent;
   }
 
-  public void setAgent(AgentDto agent) {
+  public void setAgent(AgentDTO agent) {
     this.agent = agent;
   }
 

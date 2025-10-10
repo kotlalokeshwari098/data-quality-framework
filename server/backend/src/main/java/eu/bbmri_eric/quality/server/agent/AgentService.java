@@ -5,7 +5,7 @@ import java.util.List;
 public interface AgentService {
   AgentRegistration create(AgentRegistrationRequest createAgentDto);
 
-  AgentDto findById(String id);
+  AgentDTO findById(String id);
 
-  List<AgentDto> listAll();
+  List<AgentDTO> listAll();
 }
