@@ -56,7 +56,7 @@ class SecurityConfig {
                         "/api/api-docs/**")
                     .permitAll()
                     .anyRequest()
-                    .authenticated());
+                    .denyAll());
     return http.build();
   }
 
