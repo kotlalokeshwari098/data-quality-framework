@@ -32,22 +32,20 @@ class AgentControllerIntegrationTest {
   @Test
   void create_shouldCreateAgentAndReturnHateoasResponse() throws Exception {
     String agentId = UUID.randomUUID().toString();
-    CreateAgentDto createDto = new CreateAgentDto(agentId);
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
     mockMvc
         .perform(
             post("/api/agents")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(agentId))
-        .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/agents/" + agentId))
-        .andExpect(jsonPath("$._links.agents.href").value("http://localhost/api/agents"));
+        .andExpect(jsonPath("$.agent.id").value(agentId));
     assert agentRepository.findById(agentId).isPresent();
   }
 
   @Test
   void create_shouldReturnBadRequestForInvalidUuid() throws Exception {
-    CreateAgentDto createDto = new CreateAgentDto("invalid-uuid");
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest("invalid-uuid");
     mockMvc
         .perform(
             post("/api/agents")
@@ -58,7 +56,7 @@ class AgentControllerIntegrationTest {
 
   @Test
   void create_shouldReturnBadRequestForBlankId() throws Exception {
-    CreateAgentDto createDto = new CreateAgentDto("");
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest("");
     mockMvc
         .perform(
             post("/api/agents")
@@ -69,7 +67,7 @@ class AgentControllerIntegrationTest {
 
   @Test
   void create_shouldReturnBadRequestForNullId() throws Exception {
-    CreateAgentDto createDto = new CreateAgentDto(null);
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest(null);
 
     mockMvc
         .perform(
@@ -135,7 +133,7 @@ class AgentControllerIntegrationTest {
     String agentId = UUID.randomUUID().toString();
     Agent existingAgent = new Agent(agentId);
     agentRepository.save(existingAgent);
-    CreateAgentDto createDto = new CreateAgentDto(agentId);
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
     mockMvc
         .perform(
             post("/api/agents")
@@ -148,7 +146,7 @@ class AgentControllerIntegrationTest {
   @WithMockUser(roles = "ADMIN")
   void endToEndFlow_createAndRetrieveAgent() throws Exception {
     String agentId = UUID.randomUUID().toString();
-    CreateAgentDto createDto = new CreateAgentDto(agentId);
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
 
     mockMvc
         .perform(

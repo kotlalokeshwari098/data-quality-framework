@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.server.agent;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
@@ -21,11 +22,11 @@ public class AgentController {
   }
 
   @PostMapping
-  public ResponseEntity<EntityModel<AgentDto>> create(
-      @Valid @RequestBody CreateAgentDto createAgentDto) {
-    AgentDto createdAgent = agentService.create(createAgentDto);
-    EntityModel<AgentDto> agentModel = linkBuilder.toModel(createdAgent);
-    return ResponseEntity.status(HttpStatus.CREATED).body(agentModel);
+  @Schema(name = "Register an agent")
+  public ResponseEntity<EntityModel<AgentRegistration>> create(
+      @Valid @RequestBody AgentRegistrationRequest createAgentDto) {
+    AgentRegistration createdAgentDto = agentService.create(createAgentDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(EntityModel.of(createdAgentDto));
   }
 
   @GetMapping("/{id}")

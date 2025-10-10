@@ -3,7 +3,7 @@ package eu.bbmri_eric.quality.server.agent;
 import java.util.List;
 
 public interface AgentService {
-  AgentDto create(CreateAgentDto createAgentDto);
+  AgentRegistration create(AgentRegistrationRequest createAgentDto);
 
   AgentDto findById(String id);
 

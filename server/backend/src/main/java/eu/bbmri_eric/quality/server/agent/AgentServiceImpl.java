@@ -2,6 +2,9 @@ package eu.bbmri_eric.quality.server.agent;
 
 import eu.bbmri_eric.quality.server.common.EntityAlreadyExistsException;
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
+import eu.bbmri_eric.quality.server.user.UserCreateDTO;
+import eu.bbmri_eric.quality.server.user.UserDTO;
+import eu.bbmri_eric.quality.server.user.UserService;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -13,21 +16,25 @@ public class AgentServiceImpl implements AgentService {
 
   private final AgentRepository agentRepository;
   private final ModelMapper modelMapper;
+  private final UserService userService;
 
-  public AgentServiceImpl(AgentRepository agentRepository, ModelMapper modelMapper) {
+  public AgentServiceImpl(
+      AgentRepository agentRepository, ModelMapper modelMapper, UserService userService) {
     this.agentRepository = agentRepository;
     this.modelMapper = modelMapper;
+    this.userService = userService;
   }
 
   @Override
-  public AgentDto create(CreateAgentDto createAgentDto) {
+  public AgentRegistration create(AgentRegistrationRequest createAgentDto) {
     if (agentRepository.existsById(createAgentDto.id())) {
       throw new EntityAlreadyExistsException(
           "Agent %s already exists".formatted(createAgentDto.id()));
     }
     Agent agent = new Agent(createAgentDto.id());
     Agent savedAgent = agentRepository.save(agent);
-    return modelMapper.map(savedAgent, AgentDto.class);
+    UserDTO agentUser = userService.createUser(new UserCreateDTO("Agent user", savedAgent.getId()));
+    return new AgentRegistration(modelMapper.map(savedAgent, AgentDto.class), agentUser);
   }
 
   @Override
