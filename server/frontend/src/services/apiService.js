@@ -40,43 +40,7 @@ class ApiService {
         return await response.json()
     }
 
-    async approveAgent(agentId) {
-        const token = localStorage.getItem('authToken')
-        const response = await fetch(`${API_BASE}/agents/${agentId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token && { 'Authorization': `Bearer ${token}` })
-            },
-            body: JSON.stringify({
-                status: 'ACTIVE'
-            })
-        })
-        if (!response.ok) {
-            throw new Error(`Failed to approve agent: ${response.status}`)
-        }
-        return await response.json()
-    }
-
-    async declineAgent(agentId) {
-        const token = localStorage.getItem('authToken')
-        const response = await fetch(`${API_BASE}/agents/${agentId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token && { 'Authorization': `Bearer ${token}` })
-            },
-            body: JSON.stringify({
-                status: 'INACTIVE'
-            })
-        })
-        if (!response.ok) {
-            throw new Error(`Failed to decline agent: ${response.status}`)
-        }
-        return await response.json()
-    }
-
-    async updateAgentName(agentId, data) {
+    async updateAgent(agentId, data) {
         const token = localStorage.getItem('authToken')
         const response = await fetch(`${API_BASE}/agents/${agentId}`, {
             method: 'PATCH',
@@ -90,6 +54,23 @@ class ApiService {
             throw new Error(`Failed to update agent: ${response.status}`)
         }
         return await response.json()
+    }
+
+    // Convenience methods using the consolidated updateAgent method
+    async approveAgent(agentId) {
+        return this.updateAgent(agentId, { status: 'ACTIVE' })
+    }
+
+    async declineAgent(agentId) {
+        return this.updateAgent(agentId, { status: 'INACTIVE' })
+    }
+
+    async updateAgentStatus(agentId, status) {
+        return this.updateAgent(agentId, { status })
+    }
+
+    async updateAgentName(agentId, name) {
+        return this.updateAgent(agentId, { name })
     }
 }
 

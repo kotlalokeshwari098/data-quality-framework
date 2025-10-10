@@ -189,6 +189,23 @@
                           Decline
                         </button>
                       </div>
+
+                      <!-- Active/Inactive toggle -->
+                      <div v-else-if="agent.status === 'ACTIVE' || agent.status === 'INACTIVE'" class="d-flex align-items-center">
+                        <div class="form-check form-switch">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :id="`toggle-${agent.id}`"
+                            :checked="agent.status === 'ACTIVE'"
+                            @change="toggleAgentStatus(agent)"
+                            :disabled="processingAgent === agent.id"
+                          >
+                          <label class="form-check-label small text-muted ms-1" :for="`toggle-${agent.id}`">
+                            {{ agent.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -376,6 +393,23 @@ const declineAgent = async (agent) => {
   } catch (err) {
     console.error('Error declining agent:', err)
     error.value = `Failed to decline agent: ${err.message}`
+  } finally {
+    processingAgent.value = null
+  }
+}
+
+const toggleAgentStatus = async (agent) => {
+  const newStatus = agent.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
+  try {
+    processingAgent.value = agent.id
+    await apiService.updateAgentStatus(agent.id, newStatus)
+    const agentIndex = agents.value.findIndex(a => a.id === agent.id)
+    if (agentIndex !== -1) {
+      agents.value[agentIndex].status = newStatus
+    }
+  } catch (err) {
+    console.error('Error updating agent status:', err)
+    error.value = `Failed to update agent status: ${err.message}`
   } finally {
     processingAgent.value = null
   }
