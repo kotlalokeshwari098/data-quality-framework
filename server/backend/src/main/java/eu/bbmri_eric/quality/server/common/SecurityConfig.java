@@ -2,6 +2,7 @@ package eu.bbmri_eric.quality.server.common;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bbmri_eric.quality.server.auth.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -24,9 +26,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final AuthenticationEntryPoint authenticationEntryPoint;
+  private final HttpRequestLoggingFilter httpRequestLoggingFilter;
 
-  public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+  public SecurityConfig(
+      JwtAuthenticationFilter jwtAuthenticationFilter,
+      AuthenticationEntryPoint authenticationEntryPoint,
+      HttpRequestLoggingFilter httpRequestLoggingFilter) {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    this.authenticationEntryPoint = authenticationEntryPoint;
+    this.httpRequestLoggingFilter = httpRequestLoggingFilter;
   }
 
   @Bean
@@ -36,6 +45,7 @@ class SecurityConfig {
         .cors(Customizer.withDefaults())
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(httpRequestLoggingFilter, JwtAuthenticationFilter.class)
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(HttpMethod.OPTIONS, "/**")
@@ -63,12 +73,10 @@ class SecurityConfig {
                     .denyAll())
         .exceptionHandling(
             ex ->
-                ex.authenticationEntryPoint(
-                        (request, response, authException) ->
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
-                    .accessDeniedHandler(
+                ex.accessDeniedHandler(
                         (request, response, accessDeniedException) ->
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden")));
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
+                    .authenticationEntryPoint(authenticationEntryPoint));
     return http.build();
   }
 
@@ -80,5 +88,10 @@ class SecurityConfig {
   @Bean
   AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
     return config.getAuthenticationManager();
+  }
+
+  @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint() {
+    return new CustomBearerTokenAuthenticationEntryPoint(new ObjectMapper());
   }
 }
