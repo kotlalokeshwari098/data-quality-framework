@@ -294,27 +294,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Download agent image artifact
+        uses: actions/download-artifact@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRIBUTION }}
-          cache: 'maven'
+          name: agent-image
+          path: /tmp
 
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.m2/wrapper
-          key: ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml', '**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-agent-${{ hashFiles('agent/backend/pom.xml') }}
-            ${{ runner.os }}-maven-agent-
-            ${{ runner.os }}-maven-
-
-      - working-directory: agent/backend
-        run: mvn --quiet clean package -DskipTests
-
-      - uses: docker/setup-buildx-action@v3
+      - name: Load Docker image
+        run: docker load -i /tmp/agent-image.tar
 
       - id: meta
         uses: docker/metadata-action@v5
@@ -333,15 +320,21 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v6
-        with:
-          context: ./agent
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: ARTIFACT_VERSION=${{ github.ref_name }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Tag and push images
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          # The loaded image has the tag from migration job
+          LOADED_IMAGE="ghcr.io/bbmri-cz/data-quality-agent:latest"
+          
+          # Tag and push each generated tag
+          echo "$TAGS" | while read -r tag; do
+            if [ -n "$tag" ]; then
+              echo "Tagging and pushing: $tag"
+              docker tag "$LOADED_IMAGE" "$tag"
+              docker push "$tag"
+            fi
+          done
 
   build-server:
     name: Publish Server Image
@@ -355,27 +348,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Download server image artifact
+        uses: actions/download-artifact@v4
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRIBUTION }}
-          cache: 'maven'
+          name: server-image
+          path: /tmp
 
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.m2/wrapper
-          key: ${{ runner.os }}-maven-server-${{ hashFiles('server/backend/pom.xml', '**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-server-${{ hashFiles('server/backend/pom.xml') }}
-            ${{ runner.os }}-maven-server-
-            ${{ runner.os }}-maven-
-
-      - working-directory: server/backend
-        run: mvn --quiet clean package -DskipTests
-
-      - uses: docker/setup-buildx-action@v3
+      - name: Load Docker image
+        run: docker load -i /tmp/server-image.tar
 
       - id: meta
         uses: docker/metadata-action@v5
@@ -394,15 +374,21 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v6
-        with:
-          context: ./server
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: ARTIFACT_VERSION=${{ github.ref_name }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Tag and push images
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          # The loaded image has the tag from migration job
+          LOADED_IMAGE="ghcr.io/bbmri-cz/data-quality-server:latest"
+          
+          # Tag and push each generated tag
+          echo "$TAGS" | while read -r tag; do
+            if [ -n "$tag" ]; then
+              echo "Tagging and pushing: $tag"
+              docker tag "$LOADED_IMAGE" "$tag"
+              docker push "$tag"
+            fi
+          done
 
   integration-test:
     name: Run System Test
