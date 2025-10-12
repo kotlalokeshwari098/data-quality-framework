@@ -32,7 +32,7 @@ public class ReportController {
   @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<EntityModel<ReportDTO>> create(
       @PathVariable String agentId, @Valid @RequestBody ReportCreateRequest createRequest) {
-    ReportDTO createdReport = reportService.create(createRequest);
+    ReportDTO createdReport = reportService.create(agentId, createRequest);
     EntityModel<ReportDTO> reportModel = linkBuilder.toModel(createdReport);
     return ResponseEntity.status(HttpStatus.CREATED).body(reportModel);
   }

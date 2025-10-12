@@ -8,10 +8,11 @@ public interface ReportService {
   /**
    * Creates a new report.
    *
+   * @param agentId the agent ID
    * @param createRequest the report creation request
    * @return the created report as DTO
    */
-  ReportDTO create(ReportCreateRequest createRequest);
+  ReportDTO create(String agentId, ReportCreateRequest createRequest);
 
   /**
    * Finds a report by its ID.

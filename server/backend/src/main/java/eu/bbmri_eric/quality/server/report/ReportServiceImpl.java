@@ -20,8 +20,8 @@ public class ReportServiceImpl implements ReportService {
   }
 
   @Override
-  public ReportDTO create(ReportCreateRequest createRequest) {
-    Report report = new Report(createRequest.agentId());
+  public ReportDTO create(String agentId, ReportCreateRequest createRequest) {
+    Report report = new Report(agentId);
     Report savedReport = reportRepository.save(report);
     return modelMapper.map(savedReport, ReportDTO.class);
   }
