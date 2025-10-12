@@ -3,6 +3,7 @@ package eu.bbmri_eric.quality.server.common;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
@@ -32,6 +33,21 @@ public class GlobalRestExceptionHandler {
     logger.debug("Stale state exception: {}", ex.getMessage());
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Entity not found");
+    problemDetail.setTitle("Entity Not Found");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  @ApiResponse(
+      responseCode = "404",
+      description = "Entity Not Found",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleEntityNotFound(EntityNotFoundException ex) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     problemDetail.setTitle("Entity Not Found");
     return problemDetail;
   }
@@ -145,6 +161,36 @@ public class GlobalRestExceptionHandler {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
     problemDetail.setTitle("Access Denied");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(EntityAlreadyExistsException.class)
+  @ApiResponse(
+      responseCode = "409",
+      description = "Entity Already Exists",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleEntityAlreadyExists(EntityAlreadyExistsException ex) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    problemDetail.setTitle("Entity Already Exists");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(SQLException.class)
+  @ApiResponse(
+      responseCode = "500",
+      description = "Internal Server Error",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleSQLException(SQLException ex) {
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    problemDetail.setTitle("Internal Server Error");
     return problemDetail;
   }
 }

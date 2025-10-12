@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.server.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.Set;
  * classes.
  */
 @Schema(description = "User information data transfer object")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDTO {
 
   @Schema(description = "Username of the user", example = "admin")
@@ -17,6 +19,9 @@ public class UserDTO {
 
   @Schema(description = "Unique identifier for the user", example = "user123")
   private String id;
+
+  @Schema(description = "Temporary password", example = "123")
+  private String temporaryPassword;
 
   private Set<UserRole> roles;
 
@@ -55,17 +60,26 @@ public class UserDTO {
     this.roles = roles;
   }
 
+  public String getTemporaryPassword() {
+    return temporaryPassword;
+  }
+
+  public void setTemporaryPassword(String temporaryPassword) {
+    this.temporaryPassword = temporaryPassword;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     UserDTO userDTO = (UserDTO) o;
     return Objects.equals(username, userDTO.username)
         && Objects.equals(id, userDTO.id)
+        && Objects.equals(temporaryPassword, userDTO.temporaryPassword)
         && Objects.equals(roles, userDTO.roles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(username, id, roles);
+    return Objects.hash(username, id, temporaryPassword, roles);
   }
 }

@@ -18,6 +18,10 @@
           <i class="bi bi-grid-3x3-gap-fill"></i>
           <span>Dashboard</span>
         </router-link>
+        <router-link to="/agents" class="nav-link" :class="{ active: $route.name === 'Agents' }" @click="closeMobileMenu">
+          <i class="bi bi-database-fill-gear"></i>
+          <span>Agents</span>
+        </router-link>
         <router-link to="/reports" class="nav-link" :class="{ active: $route.name === 'Reports' }" @click="closeMobileMenu">
           <i class="bi bi-bar-chart-fill"></i>
           <span>Reports</span>
