@@ -86,7 +86,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser(roles = "HUMAN_USER")
   void findById_shouldReturnReportWithHateoasLinksWhenExists() throws Exception {
     Report report = new Report(testAgentId);
     reportRepository.save(report);
@@ -104,7 +104,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser(roles = "HUMAN_USER")
   void findById_shouldReturnNotFoundWhenReportDoesNotExist() throws Exception {
     String nonExistentReportId = UUID.randomUUID().toString();
 
@@ -112,7 +112,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser(roles = "HUMAN_USER")
   void findByAgentId_shouldReturnEmptyListWithHateoasLinksWhenNoReports() throws Exception {
     mockMvc
         .perform(get(API_V1_AGENTS_REPORTS, testAgentId))
@@ -122,7 +122,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser(roles = "HUMAN_USER")
   void findByAgentId_shouldReturnAllReportsForAgentWithHateoasLinks() throws Exception {
     Report report1 = new Report(testAgentId);
     Report report2 = new Report(testAgentId);
@@ -142,7 +142,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithMockUser(roles = "HUMAN_USER")
   void findByAgentId_shouldNotReturnReportsFromOtherAgents() throws Exception {
     String otherAgentId = UUID.randomUUID().toString();
     Agent otherAgent = new Agent(otherAgentId);
@@ -240,12 +240,33 @@ class ReportControllerTest {
   void findById_shouldRequireAuthentication() throws Exception {
     Report report = new Report(testAgentId);
     reportRepository.save(report);
-
     mockMvc.perform(get(API_V1_REPORTS_ID, report.getId())).andExpect(status().isUnauthorized());
   }
 
   @Test
   void findByAgentId_shouldRequireAuthentication() throws Exception {
     mockMvc.perform(get(API_V1_AGENTS_REPORTS, testAgentId)).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void findById_shouldAllowAdminRole() throws Exception {
+    Report report = new Report(testAgentId);
+    reportRepository.save(report);
+    mockMvc
+        .perform(get(API_V1_REPORTS_ID, report.getId()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(report.getId()));
+  }
+
+  @Test
+  @WithMockUser(roles = "ADMIN")
+  void findByAgentId_shouldAllowAdminRole() throws Exception {
+    Report report = new Report(testAgentId);
+    reportRepository.save(report);
+    mockMvc
+        .perform(get(API_V1_AGENTS_REPORTS, testAgentId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$._embedded.reports.length()").value(1));
   }
 }
