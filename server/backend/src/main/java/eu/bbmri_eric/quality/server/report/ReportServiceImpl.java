@@ -5,7 +5,6 @@ import eu.bbmri_eric.quality.server.user.AuthenticationContextService;
 import eu.bbmri_eric.quality.server.user.UserDTO;
 import eu.bbmri_eric.quality.server.user.UserRole;
 import java.util.List;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,15 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReportServiceImpl implements ReportService {
 
   private final ReportRepository reportRepository;
-  private final ModelMapper modelMapper;
+  private final QualityCheckRepository qualityCheckRepository;
   private final AuthenticationContextService authenticationContextService;
 
   public ReportServiceImpl(
       ReportRepository reportRepository,
-      ModelMapper modelMapper,
+      QualityCheckRepository qualityCheckRepository,
       AuthenticationContextService authenticationContextService) {
     this.reportRepository = reportRepository;
-    this.modelMapper = modelMapper;
+    this.qualityCheckRepository = qualityCheckRepository;
     this.authenticationContextService = authenticationContextService;
   }
 
@@ -35,9 +34,24 @@ public class ReportServiceImpl implements ReportService {
       throw new AccessDeniedException(
           "User is not authorized to create reports for agent: " + agentId);
     }
+
     Report report = new Report(agentId);
+    if (createRequest.results() != null && !createRequest.results().isEmpty()) {
+      for (QualityCheckResultDTO resultDTO : createRequest.results()) {
+        QualityCheck qualityCheck = qualityCheckRepository
+            .findById(resultDTO.hash())
+            .orElseGet(() -> {
+              // Create a new quality check if it doesn't exist
+              QualityCheck newCheck = new QualityCheck(resultDTO.hash(), "", "");
+              return qualityCheckRepository.save(newCheck);
+            });
+
+        report.addQualityCheckResult(qualityCheck, resultDTO.result());
+      }
+    }
+
     Report savedReport = reportRepository.save(report);
-    return modelMapper.map(savedReport, ReportDTO.class);
+    return convertToDTO(savedReport);
   }
 
   private boolean isAuthorizedToCreateReport(UserDTO user, String agentId) {
@@ -49,19 +63,37 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public ReportDTO findById(String id) {
-    return modelMapper.map(
-        reportRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Report with ID %s not found".formatted(id))),
-        ReportDTO.class);
+    Report report = reportRepository
+        .findById(id)
+        .orElseThrow(
+            () -> new EntityNotFoundException("Report with ID %s not found".formatted(id)));
+    return convertToDTO(report);
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<ReportDTO> findByAgentId(String agentId) {
     return reportRepository.findByAgentId(agentId).stream()
-        .map(report -> modelMapper.map(report, ReportDTO.class))
+        .map(this::convertToDTO)
         .toList();
+  }
+
+  private ReportDTO convertToDTO(Report report) {
+    ReportDTO dto = new ReportDTO();
+    dto.setId(report.getId());
+    dto.setTimestamp(report.getTimestamp());
+    dto.setAgentId(report.getAgentId());
+
+    // Map quality check results manually
+    if (report.getQualityCheckResults() != null && !report.getQualityCheckResults().isEmpty()) {
+      List<QualityCheckResultDTO> resultDTOs = report.getQualityCheckResults().stream()
+          .map(result -> new QualityCheckResultDTO(
+              result.getQualityCheck().getHash(),
+              result.getResult()))
+          .toList();
+      dto.setResults(resultDTOs);
+    }
+
+    return dto;
   }
 }

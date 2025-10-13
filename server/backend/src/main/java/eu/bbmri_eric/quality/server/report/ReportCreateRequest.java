@@ -9,8 +9,8 @@ import java.util.List;
 @Schema(name = "Report Create Request", description = "Request object for creating a new report")
 public record ReportCreateRequest(
     @Valid
+        @NotEmpty(message = "Results cannot be empty")
         @Schema(
             description = "List of quality check results",
             requiredMode = Schema.RequiredMode.REQUIRED)
-        @NotEmpty(message = "Results cannot be empty")
         List<QualityCheckResultDTO> results) {}

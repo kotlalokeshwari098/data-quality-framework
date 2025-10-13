@@ -3,6 +3,7 @@ package eu.bbmri_eric.quality.server.report;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.hateoas.server.core.Relation;
 
 /** Response DTO for report data. */
@@ -23,6 +24,9 @@ public class ReportDTO {
       description = "ID of the agent that generated this report",
       example = "550e8400-e29b-41d4-a716-446655440000")
   private String agentId;
+
+  @Schema(description = "Quality check results for this report")
+  private List<QualityCheckResultDTO> results;
 
   public ReportDTO() {}
 
@@ -48,5 +52,13 @@ public class ReportDTO {
 
   public void setAgentId(String agentId) {
     this.agentId = agentId;
+  }
+
+  public List<QualityCheckResultDTO> getResults() {
+    return results;
+  }
+
+  public void setResults(List<QualityCheckResultDTO> results) {
+    this.results = results;
   }
 }
