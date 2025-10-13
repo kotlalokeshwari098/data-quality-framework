@@ -38,13 +38,15 @@ public class ReportServiceImpl implements ReportService {
     Report report = new Report(agentId);
     if (createRequest.results() != null && !createRequest.results().isEmpty()) {
       for (QualityCheckResultDTO resultDTO : createRequest.results()) {
-        QualityCheck qualityCheck = qualityCheckRepository
-            .findById(resultDTO.hash())
-            .orElseGet(() -> {
-              // Create a new quality check if it doesn't exist
-              QualityCheck newCheck = new QualityCheck(resultDTO.hash(), "", "");
-              return qualityCheckRepository.save(newCheck);
-            });
+        QualityCheck qualityCheck =
+            qualityCheckRepository
+                .findById(resultDTO.hash())
+                .orElseGet(
+                    () -> {
+                      // Create a new quality check if it doesn't exist
+                      QualityCheck newCheck = new QualityCheck(resultDTO.hash(), "", "");
+                      return qualityCheckRepository.save(newCheck);
+                    });
 
         report.addQualityCheckResult(qualityCheck, resultDTO.result());
       }
@@ -63,19 +65,18 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public ReportDTO findById(String id) {
-    Report report = reportRepository
-        .findById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Report with ID %s not found".formatted(id)));
+    Report report =
+        reportRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Report with ID %s not found".formatted(id)));
     return convertToDTO(report);
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<ReportDTO> findByAgentId(String agentId) {
-    return reportRepository.findByAgentId(agentId).stream()
-        .map(this::convertToDTO)
-        .toList();
+    return reportRepository.findByAgentId(agentId).stream().map(this::convertToDTO).toList();
   }
 
   private ReportDTO convertToDTO(Report report) {
@@ -86,11 +87,13 @@ public class ReportServiceImpl implements ReportService {
 
     // Map quality check results manually
     if (report.getQualityCheckResults() != null && !report.getQualityCheckResults().isEmpty()) {
-      List<QualityCheckResultDTO> resultDTOs = report.getQualityCheckResults().stream()
-          .map(result -> new QualityCheckResultDTO(
-              result.getQualityCheck().getHash(),
-              result.getResult()))
-          .toList();
+      List<QualityCheckResultDTO> resultDTOs =
+          report.getQualityCheckResults().stream()
+              .map(
+                  result ->
+                      new QualityCheckResultDTO(
+                          result.getQualityCheck().getHash(), result.getResult()))
+              .toList();
       dto.setResults(resultDTOs);
     }
 

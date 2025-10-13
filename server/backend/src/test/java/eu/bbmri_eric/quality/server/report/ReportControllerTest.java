@@ -309,8 +309,6 @@ class ReportControllerTest {
         .andExpect(status().isForbidden());
   }
 
-  // Quality Check Results Tests
-
   @Test
   @WithUserDetails("admin")
   void create_shouldCreateQualityCheckIfNotExists() throws Exception {
@@ -325,19 +323,17 @@ class ReportControllerTest {
                 .content(objectMapper.writeValueAsString(createRequest)))
         .andExpect(status().isCreated());
 
-    // Verify quality check was created
     assert qualityCheckRepository.findById(newHash).isPresent();
   }
 
   @Test
   @WithUserDetails("admin")
   void create_shouldReuseExistingQualityCheck() throws Exception {
-    // Create a quality check first
-    QualityCheck existingCheck = new QualityCheck("existing-hash", "Test Check", "Test Description");
+    QualityCheck existingCheck =
+        new QualityCheck("existing-hash", "Test Check", "Test Description");
     qualityCheckRepository.save(existingCheck);
 
-    List<QualityCheckResultDTO> results =
-        List.of(new QualityCheckResultDTO("existing-hash", 0.92));
+    List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO("existing-hash", 0.92));
     ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
     mockMvc
@@ -347,7 +343,6 @@ class ReportControllerTest {
                 .content(objectMapper.writeValueAsString(createRequest)))
         .andExpect(status().isCreated());
 
-    // Verify only one quality check exists with this hash
     assert qualityCheckRepository.count() == 1;
   }
 
@@ -374,7 +369,6 @@ class ReportControllerTest {
 
     String reportId = objectMapper.readTree(responseContent).get("id").asText();
 
-    // Verify the report has all results
     Report savedReport = reportRepository.findById(reportId).orElseThrow();
     assert savedReport.getQualityCheckResults().size() == 3;
   }
@@ -382,13 +376,11 @@ class ReportControllerTest {
   @Test
   @WithUserDetails("admin")
   void findById_shouldReturnReportWithResults() throws Exception {
-    // Create quality checks
     QualityCheck check1 = new QualityCheck("check1", "Check 1", "Description 1");
     QualityCheck check2 = new QualityCheck("check2", "Check 2", "Description 2");
     qualityCheckRepository.save(check1);
     qualityCheckRepository.save(check2);
 
-    // Create report with results
     Report report = new Report(testAgentId);
     report.addQualityCheckResult(check1, 0.95);
     report.addQualityCheckResult(check2, 0.87);
@@ -454,7 +446,7 @@ class ReportControllerTest {
   @Test
   @WithUserDetails("admin")
   void create_shouldRejectHashThatIsTooLong() throws Exception {
-    String longHash = "a".repeat(256); // 256 characters, exceeds max of 255
+    String longHash = "a".repeat(256);
     List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO(longHash, 0.95));
     ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
@@ -469,7 +461,7 @@ class ReportControllerTest {
   @Test
   @WithUserDetails("admin")
   void create_shouldAcceptValidHashAtMaxLength() throws Exception {
-    String maxLengthHash = "a".repeat(255); // Exactly 255 characters
+    String maxLengthHash = "a".repeat(255);
     List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO(maxLengthHash, 0.95));
     ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
@@ -538,7 +530,6 @@ class ReportControllerTest {
             new QualityCheckResultDTO("accuracy-check", 0.92));
     ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
-    // Create report
     String responseContent =
         mockMvc
             .perform(
@@ -553,18 +544,15 @@ class ReportControllerTest {
 
     String reportId = objectMapper.readTree(responseContent).get("id").asText();
 
-    // Retrieve report and verify results
     mockMvc
         .perform(get(API_V1_REPORTS_ID, reportId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(reportId))
         .andExpect(jsonPath("$.results.length()").value(3))
-        .andExpect(
-            jsonPath("$.results[?(@.hash == 'completeness-check')].result").value(0.98))
+        .andExpect(jsonPath("$.results[?(@.hash == 'completeness-check')].result").value(0.98))
         .andExpect(jsonPath("$.results[?(@.hash == 'consistency-check')].result").value(0.85))
         .andExpect(jsonPath("$.results[?(@.hash == 'accuracy-check')].result").value(0.92));
 
-    // Verify quality checks were created
     assert qualityCheckRepository.findById("completeness-check").isPresent();
     assert qualityCheckRepository.findById("consistency-check").isPresent();
     assert qualityCheckRepository.findById("accuracy-check").isPresent();
