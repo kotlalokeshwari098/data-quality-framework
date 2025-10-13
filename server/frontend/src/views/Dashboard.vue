@@ -9,7 +9,7 @@
     />
 
     <!-- Stats Cards Row -->
-    <div class="stats-row mb-3">
+    <div class="stats-row mb-4">
       <StatsCard
         label="Sites Monitored"
         :value="`${activeAgentsCount}`"
@@ -272,11 +272,11 @@ onMounted(() => {
   }
 
   .quality-checks-grid {
-    grid-template-columns: repeat(auto-fill, 320px);
+    grid-template-columns: repeat(auto-fill, 480px);
   }
 
   .quality-checks-grid > * {
-    height: 154px;
+    height: 480px;
   }
 }
 

@@ -1,15 +1,20 @@
 <template>
   <div class="card border-0 shadow-sm h-100 compact-card">
-    <div class="card-body p-2">
-      <div class="mb-2">
-        <p class="text-muted mb-0 fw-semibold" style="font-size: 0.85rem; line-height: 1.2;">{{ qualityCheck.cql || qualityCheck.hash }}</p>
-        <small class="text-muted font-monospace d-block" style="font-size: 0.6rem; opacity: 0.6;">{{ qualityCheck.hash }}</small>
+    <div class="card-body p-3 position-relative">
+      <!-- Icon in top right corner -->
+      <div class="position-absolute top-0 end-0 p-3">
+        <i class="bi bi-clipboard-data-fill text-primary opacity-75" style="font-size: 1.5rem;"></i>
+      </div>
+
+      <div class="mb-3">
+        <p class="text-muted mb-1 fw-semibold" style="font-size: 1rem; line-height: 1.3;">{{ qualityCheck.cql || qualityCheck.hash }}</p>
+        <small class="text-muted font-monospace d-block" style="font-size: 0.7rem; opacity: 0.6;">{{ qualityCheck.hash }}</small>
       </div>
 
       <!-- No data state -->
-      <div v-if="worstAgents.length === 0" class="text-center py-2 text-muted flex-grow-1 d-flex flex-column justify-content-center">
-        <i class="bi bi-check-circle fs-5 d-block mb-1 opacity-50"></i>
-        <p class="mb-0" style="font-size: 0.75rem;">No results</p>
+      <div v-if="worstAgents.length === 0" class="text-center py-3 text-muted flex-grow-1 d-flex flex-column justify-content-center">
+        <i class="bi bi-check-circle d-block mb-2 opacity-50" style="font-size: 2.5rem;"></i>
+        <p class="mb-0" style="font-size: 1rem;">No results</p>
       </div>
 
       <!-- Top 3 worst performing agents -->
@@ -17,18 +22,18 @@
         <div
           v-for="agentResult in worstAgents"
           :key="agentResult.agentId"
-          class="agent-result-item mb-1"
+          class="agent-result-item mb-2"
         >
           <div class="d-flex justify-content-between align-items-center">
-            <div class="flex-grow-1 me-1" style="min-width: 0;">
-              <div class="fw-semibold text-dark text-truncate" style="font-size: 1rem; line-height: 1.2;">{{ agentResult.agentName }}</div>
-              <small class="text-muted d-block text-truncate" style="font-size: 0.7rem; line-height: 1.2;">{{ agentResult.agentId }}</small>
+            <div class="flex-grow-1 me-2" style="min-width: 0;">
+              <div class="fw-semibold text-dark text-truncate" style="font-size: 1.1rem; line-height: 1.3;">{{ agentResult.agentName }}</div>
+              <small class="text-muted d-block text-truncate" style="font-size: 0.85rem; line-height: 1.3;">{{ agentResult.agentId }}</small>
             </div>
             <div class="text-end flex-shrink-0">
               <div
                 class="fw-bold mb-0"
                 :class="getResultColorClass(agentResult.result)"
-                style="font-size: 1.5rem; line-height: 1;"
+                style="font-size: 1.75rem; line-height: 1;"
               >
                 {{ formatResultAsPercentage(agentResult.result) }}%
               </div>
@@ -40,13 +45,13 @@
       <!-- Threshold info -->
       <div v-if="worstAgents.length > 0" class="mt-auto pt-2 border-top">
         <div class="d-flex justify-content-between align-items-center">
-          <small class="text-muted" style="font-size: 0.6rem;">
+          <small class="text-muted" style="font-size: 0.75rem;">
             <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>
-            {{ qualityCheck.warningThreshold }}
+            Warn: {{ qualityCheck.warningThreshold }}
           </small>
-          <small class="text-muted" style="font-size: 0.6rem;">
+          <small class="text-muted" style="font-size: 0.75rem;">
             <i class="bi bi-x-circle-fill text-danger me-1"></i>
-            {{ qualityCheck.errorThreshold }}
+            Error: {{ qualityCheck.errorThreshold }}
           </small>
         </div>
       </div>
