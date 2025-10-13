@@ -26,6 +26,10 @@
           <i class="bi bi-bar-chart-fill"></i>
           <span>Reports</span>
         </router-link>
+        <router-link to="/quality-checks" class="nav-link" :class="{ active: $route.name === 'QualityChecks' }" @click="closeMobileMenu">
+          <i class="bi bi-clipboard-check-fill"></i>
+          <span>Quality Checks</span>
+        </router-link>
         <router-link to="/settings" class="nav-link" :class="{ active: $route.name === 'Settings' }" @click="closeMobileMenu">
           <i class="bi bi-gear-fill"></i>
           <span>Settings</span>

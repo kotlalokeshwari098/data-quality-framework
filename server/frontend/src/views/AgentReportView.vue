@@ -1,0 +1,246 @@
+<template>
+  <div class="container-fluid py-3 py-md-4">
+    <!-- Agent Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <PageHeader
+          :title="agentName"
+          :subtitle="`Agent ID: ${agentId}`"
+          icon="bi bi-file-earmark-text-fill"
+        />
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading agent report...</span>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      {{ error }}
+    </div>
+
+    <!-- Agent Report Content -->
+    <div v-else>
+      <!-- Stats Cards -->
+      <div class="row mb-4">
+        <div class="col-12 col-sm-6 col-md-3 mb-3">
+          <StatsCard
+            label="Total Reports"
+            :value="reportStats.total"
+            icon="bi bi-file-text"
+            iconColor="#0d6efd"
+            iconBgColor="#cfe2ff"
+            trendText="All time"
+            trendType="neutral"
+          />
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 mb-3">
+          <StatsCard
+            label="Failed Checks"
+            :value="reportStats.failed"
+            icon="bi bi-x-circle"
+            iconColor="#dc3545"
+            iconBgColor="#f8d7da"
+            trendText="Needs attention"
+          />
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 mb-3">
+          <StatsCard
+            label="Warnings"
+            :value="reportStats.warnings"
+            icon="bi bi-exclamation-triangle"
+            iconColor="#ffc107"
+            iconBgColor="#fff3cd"
+            trendText="Review recommended"
+            trendType="neutral"
+          />
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 mb-3">
+          <StatsCard
+            label="Last Report"
+            :value="reportStats.lastReportTime"
+            icon="bi bi-clock"
+            iconColor="#0dcaf0"
+            iconBgColor="#cff4fc"
+            trendText="Timestamp"
+            trendType="neutral"
+          />
+        </div>
+      </div>
+
+      <!-- Recent Reports Table -->
+      <div class="row">
+        <div class="col-12">
+          <ReportsTable
+            :reports="reports"
+            :quality-check-map="qualityCheckMap"
+            @report-selected="openReportModal"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Details Modal -->
+    <ReportDetailsModal
+      :report="selectedReport"
+      :quality-check-map="qualityCheckMap"
+      @close="closeReportModal"
+    />
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import StatsCard from '../components/StatsCard.vue'
+import ReportsTable from '../components/ReportsTable.vue'
+import ReportDetailsModal from '../components/ReportDetailsModal.vue'
+import PageHeader from '../components/PageHeader.vue'
+import { apiService } from '../services/apiService.js'
+import { countChecksByStatus } from '../utils/qualityCheckUtils.js'
+
+const route = useRoute()
+const router = useRouter()
+
+const agentId = ref(route.params.uuid)
+const loading = ref(true)
+const error = ref(null)
+const agent = ref(null)
+const reports = ref([])
+const qualityChecks = ref([])
+const selectedReport = ref(null)
+
+const agentName = computed(() => {
+  return agent.value?.name || 'Unknown Agent'
+})
+
+// Create a map of hash -> quality check for quick lookup
+const qualityCheckMap = computed(() => {
+  const map = new Map()
+  qualityChecks.value.forEach(check => {
+    map.set(check.hash, check)
+  })
+  return map
+})
+
+const reportStats = computed(() => {
+  const total = reports.value.length
+
+  // Get the latest report for stats calculation
+  const sortedReports = [...reports.value].sort((a, b) =>
+    new Date(b.timestamp) - new Date(a.timestamp)
+  )
+  const latestReport = sortedReports[0]
+
+  if (!latestReport) {
+    return {
+      total: 0,
+      failed: 0,
+      passed: 0,
+      warnings: 0,
+      lastReportTime: 'N/A'
+    }
+  }
+
+  const counts = countChecksByStatus(latestReport, qualityCheckMap.value)
+  const lastReportTime = formatTime(latestReport.timestamp)
+
+  return {
+    total,
+    failed: counts.failed,
+    passed: counts.passed,
+    warnings: counts.warnings,
+    lastReportTime
+  }
+})
+
+const fetchAgentDetails = async () => {
+  try {
+    loading.value = true
+    error.value = null
+
+    // Fetch quality checks first
+    const qualityChecksResponse = await apiService.getQualityChecks()
+    qualityChecks.value = qualityChecksResponse._embedded?.qualityChecks || []
+
+    // Fetch agent details
+    const agentsResponse = await apiService.getAgents()
+    const agents = agentsResponse._embedded?.agents || []
+    agent.value = agents.find(a => a.id === agentId.value)
+
+    if (!agent.value) {
+      error.value = 'Agent not found'
+      return
+    }
+
+    // Fetch real reports from the API
+    const reportsResponse = await apiService.getAgentReports(agentId.value)
+    const reportsList = reportsResponse._embedded?.reports || reportsResponse.reports || []
+
+    // Sort reports by timestamp (newest first)
+    reports.value = reportsList.sort((a, b) =>
+      new Date(b.timestamp) - new Date(a.timestamp)
+    )
+
+  } catch (err) {
+    error.value = err.message || 'Failed to load agent report'
+    console.error('Error fetching agent details:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const formatTime = (dateString) => {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffMs = now - date
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMins / 60)
+  const diffDays = Math.floor(diffHours / 24)
+
+  if (diffMins < 1) return 'Just now'
+  if (diffMins < 60) return `${diffMins}m ago`
+  if (diffHours < 24) return `${diffHours}h ago`
+  if (diffDays < 7) return `${diffDays}d ago`
+
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+const openReportModal = (report) => {
+  selectedReport.value = report
+}
+
+const closeReportModal = () => {
+  selectedReport.value = null
+}
+
+onMounted(() => {
+  fetchAgentDetails()
+})
+</script>
+
+<style scoped>
+/* Page Header */
+.page-header {
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+</style>

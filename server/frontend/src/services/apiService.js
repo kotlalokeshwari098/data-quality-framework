@@ -72,6 +72,67 @@ class ApiService {
     async updateAgentName(agentId, name) {
         return this.updateAgent(agentId, { name })
     }
+
+    async getAgentReports(agentId) {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE}/v1/agents/${agentId}/reports`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to fetch agent reports: ${response.status}`)
+        }
+        return await response.json()
+    }
+
+    async getQualityChecks() {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE}/v1/quality-checks`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to fetch quality checks: ${response.status}`)
+        }
+        return await response.json()
+    }
+
+    async getReports() {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE}/v1/reports`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to fetch reports: ${response.status}`)
+        }
+        return await response.json()
+    }
+
+    async updateQualityCheck(hash, data) {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE}/v1/quality-checks/${hash}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            },
+            body: JSON.stringify(data)
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to update quality check: ${response.status}`)
+        }
+        return await response.json()
+    }
 }
 
 export const apiService = new ApiService()
