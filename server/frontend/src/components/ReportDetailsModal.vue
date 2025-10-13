@@ -123,16 +123,13 @@
                           <span class="badge" :class="getCheckBadgeClass(result)">
                             {{ getCheckStatusText(result) }}
                           </span>
-                          <span class="text-muted small">
-                            <span class="fw-semibold text-dark">{{ formatScore(result.result) }}</span> invalid records
-                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="check-score">
                     <div class="score-circle" :class="getScoreCircleClass(result)">
-                      <span class="score-value">{{ formatScoreRounded(result.result) }}%</span>
+                      <span class="score-value">{{ result.result }}%</span>
                     </div>
                   </div>
                 </div>
@@ -157,7 +154,6 @@ import {
   getCheckStatus,
   getStatusBadgeClass,
   formatScore,
-  formatScoreRounded,
   countChecksByStatus,
   getReportStatus,
   CheckStatus
@@ -424,11 +420,24 @@ const getOverallStatusBadgeClass = () => {
   height: 60px;
   border-radius: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.875rem;
   border: 3px solid;
+}
+
+.score-value {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 0.125rem;
+  opacity: 0.8;
 }
 
 .score-success {

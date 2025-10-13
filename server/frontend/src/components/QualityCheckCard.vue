@@ -7,7 +7,19 @@
       </div>
 
       <div class="mb-3">
-        <p class="text-muted mb-1 fw-semibold" style="font-size: 1rem; line-height: 1.3;">{{ qualityCheck.cql || qualityCheck.hash }}</p>
+        <div class="d-flex align-items-center gap-2">
+          <p class="text-muted mb-0 fw-bold" style="font-size: 1rem; line-height: 1.3;">
+            {{ qualityCheck.name || qualityCheck.cql || qualityCheck.hash }}
+          </p>
+          <i
+            v-if="qualityCheck.description"
+            class="bi bi-question-circle text-muted"
+            style="font-size: 0.9rem; cursor: help;"
+            :title="qualityCheck.description"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+          ></i>
+        </div>
         <small class="text-muted font-monospace d-block" style="font-size: 0.7rem; opacity: 0.6;">{{ qualityCheck.hash }}</small>
       </div>
 
@@ -26,7 +38,7 @@
         >
           <div class="d-flex justify-content-between align-items-center">
             <div class="flex-grow-1 me-2" style="min-width: 0;">
-              <div class="fw-semibold text-dark text-truncate" style="font-size: 1.1rem; line-height: 1.3;">{{ agentResult.agentName }}</div>
+              <div class="text-dark text-truncate" style="font-size: 1.1rem; line-height: 1.3;">{{ agentResult.agentName }}</div>
               <small class="text-muted d-block text-truncate" style="font-size: 0.85rem; line-height: 1.3;">{{ agentResult.agentId }}</small>
             </div>
             <div class="text-end flex-shrink-0">
@@ -44,15 +56,19 @@
 
       <!-- Threshold info -->
       <div v-if="worstAgents.length > 0" class="mt-auto pt-2 border-top">
-        <div class="d-flex justify-content-between align-items-center">
-          <small class="text-muted" style="font-size: 0.75rem;">
-            <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>
-            Warn: {{ qualityCheck.warningThreshold }}
-          </small>
-          <small class="text-muted" style="font-size: 0.75rem;">
-            <i class="bi bi-x-circle-fill text-danger me-1"></i>
-            Error: {{ qualityCheck.errorThreshold }}
-          </small>
+        <div class="d-flex align-items-center">
+          <div
+            style="font-size: 1rem; cursor: help;"
+            :title="getThresholdTooltip()"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            data-bs-html="true"
+          >
+            <span class="text-muted">Average across all agents:</span>
+            <span :class="getResultColorClass(averageResult)" class="fw-bold ms-1">
+              {{ formatResultAsPercentage(averageResult) }}%
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -60,8 +76,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, onUpdated } from 'vue'
 import { CheckStatus } from '../utils/qualityCheckUtils.js'
+import { Tooltip } from 'bootstrap'
 
 const props = defineProps({
   qualityCheck: {
@@ -122,6 +139,15 @@ const worstAgents = computed(() => {
     .slice(0, 3)
 })
 
+// Calculate the average result of the worst agents
+const averageResult = computed(() => {
+  if (worstAgents.value.length === 0) {
+    return 0
+  }
+  const total = worstAgents.value.reduce((sum, agent) => sum + agent.result, 0)
+  return total / worstAgents.value.length
+})
+
 // Get status based on thresholds
 const getStatus = (result) => {
   if (result > props.qualityCheck.errorThreshold) {
@@ -131,6 +157,23 @@ const getStatus = (result) => {
   } else {
     return CheckStatus.PASSED
   }
+}
+
+// Generate formatted tooltip for thresholds
+const getThresholdTooltip = () => {
+  return `
+    <div style="text-align: left; padding: 4px;">
+      <strong style="display: block; margin-bottom: 6px; font-size: 0.9rem;">Quality Check Thresholds</strong>
+      <div style="margin-bottom: 4px;">
+        <span style="color: #ffc107; font-weight: bold;">⚠</span>
+        <strong>Warning:</strong> Results above ${props.qualityCheck.warningThreshold}%
+      </div>
+      <div>
+        <span style="color: #dc3545; font-weight: bold;">✖</span>
+        <strong>Error:</strong> Results above ${props.qualityCheck.errorThreshold}%
+      </div>
+    </div>
+  `
 }
 
 const getResultColorClass = (result) => {
@@ -155,6 +198,28 @@ const formatResultAsPercentage = (result) => {
   }
   // Otherwise, show the raw value
   return result.toFixed(1)
+}
+
+// Initialize Bootstrap tooltips
+onMounted(() => {
+  initTooltips()
+})
+
+onUpdated(() => {
+  initTooltips()
+})
+
+const initTooltips = () => {
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  tooltipTriggerList.forEach(tooltipTriggerEl => {
+    // Dispose existing tooltip if any
+    const existingTooltip = Tooltip.getInstance(tooltipTriggerEl)
+    if (existingTooltip) {
+      existingTooltip.dispose()
+    }
+    // Create new tooltip
+    new Tooltip(tooltipTriggerEl)
+  })
 }
 </script>
 

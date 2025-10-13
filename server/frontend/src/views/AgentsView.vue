@@ -24,6 +24,10 @@
         <!-- Stats Cards -->
         <div class="stats-grid mb-3 mb-md-4">
           <div class="stat-card">
+            <div class="stat-number text-dark">{{ agentStats.total }}</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-card">
             <div class="stat-number text-success">{{ agentStats.active }}</div>
             <div class="stat-label">Active</div>
           </div>
@@ -34,10 +38,6 @@
           <div class="stat-card">
             <div class="stat-number text-secondary">{{ agentStats.inactive }}</div>
             <div class="stat-label">Inactive</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number text-dark">{{ agentStats.total }}</div>
-            <div class="stat-label">Total</div>
           </div>
         </div>
 
