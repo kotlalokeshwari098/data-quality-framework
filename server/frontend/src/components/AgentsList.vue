@@ -27,6 +27,7 @@
             :key="agent.id"
             class="agent-item border-bottom px-4 py-3 hover-bg-light cursor-pointer"
             :class="{ 'pending-agent': agent.status === 'PENDING' }"
+            @click="navigateToAgentReport(agent)"
           >
             <div class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center flex-grow-1">
@@ -120,8 +121,10 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { apiService } from '../services/apiService.js'
 
+const router = useRouter()
 const emit = defineEmits(['agentsLoaded'])
 
 const loading = ref(true)
@@ -247,6 +250,14 @@ const saveAgentName = async (agent) => {
 const cancelEditing = () => {
   editingAgent.value = null
   editingName.value = ''
+}
+
+const navigateToAgentReport = (agent) => {
+  // Don't navigate if we're currently editing
+  if (editingAgent.value === agent.id) {
+    return
+  }
+  router.push(`/agents/${agent.id}/report`)
 }
 
 onMounted(() => {
