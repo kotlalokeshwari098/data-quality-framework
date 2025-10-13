@@ -161,6 +161,13 @@ const formatResultAsPercentage = (result) => {
 <style scoped>
 .compact-card {
   font-size: 0.875rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, box-shadow;
+}
+
+.compact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
 }
 
 .compact-card .card-body {
