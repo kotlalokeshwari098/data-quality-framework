@@ -3,16 +3,11 @@
     <!-- Agent Header -->
     <div class="row mb-4">
       <div class="col-12">
-        <div class="d-flex align-items-center mb-3">
-          <button @click="goBack" class="btn btn-outline-secondary btn-sm me-3">
-            <i class="bi bi-arrow-left me-1"></i>
-            Back
-          </button>
-          <div>
-            <h2 class="mb-1">{{ agentName }}</h2>
-            <p class="text-muted mb-0">Agent ID: {{ agentId }}</p>
-          </div>
-        </div>
+        <PageHeader
+          :title="agentName"
+          :subtitle="`Agent ID: ${agentId}`"
+          icon="bi bi-file-earmark-text-fill"
+        />
       </div>
     </div>
 
@@ -105,6 +100,7 @@ import { useRoute, useRouter } from 'vue-router'
 import StatsCard from '../components/StatsCard.vue'
 import ReportsTable from '../components/ReportsTable.vue'
 import ReportDetailsModal from '../components/ReportDetailsModal.vue'
+import PageHeader from '../components/PageHeader.vue'
 import { apiService } from '../services/apiService.js'
 import { countChecksByStatus } from '../utils/qualityCheckUtils.js'
 
@@ -215,10 +211,6 @@ const formatTime = (dateString) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-const goBack = () => {
-  router.push('/dashboard')
-}
-
 const openReportModal = (report) => {
   selectedReport.value = report
 }
@@ -233,6 +225,22 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* No additional styles needed - moved to child components */
-</style>
+/* Page Header */
+.page-header {
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
 
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+</style>

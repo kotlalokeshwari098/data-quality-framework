@@ -3,28 +3,23 @@
     <div class="row">
       <div class="col-12">
         <!-- Page Header -->
-        <div class="page-header mb-3 mb-md-4">
-          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-2">
-            <div class="header-content">
-              <h1 class="page-title mb-1">
-                <i class="bi bi-database-fill-gear me-2 text-primary"></i>
-                <span class="d-none d-sm-inline">Agents Management</span>
-                <span class="d-inline d-sm-none">Agents</span>
-              </h1>
-              <p class="page-subtitle d-none d-sm-block">Manage and monitor all connected agents in the network</p>
-            </div>
-            <div class="header-actions">
-              <button
-                @click="refreshAgents"
-                class="btn btn-outline-primary btn-sm"
-                :disabled="loading"
-              >
-                <i class="bi bi-arrow-clockwise"></i>
-                <span class="d-none d-md-inline ms-1">Refresh</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <PageHeader
+          title="Agents Management"
+          mobile-title="Agents"
+          subtitle="Manage and monitor all connected agents in the network"
+          icon="bi bi-database-fill-gear"
+        >
+          <template #actions>
+            <button
+              @click="refreshAgents"
+              class="btn btn-outline-primary btn-sm"
+              :disabled="loading"
+            >
+              <i class="bi bi-arrow-clockwise"></i>
+              <span class="d-none d-md-inline ms-1">Refresh</span>
+            </button>
+          </template>
+        </PageHeader>
 
         <!-- Stats Cards -->
         <div class="stats-grid mb-3 mb-md-4">
@@ -99,7 +94,7 @@
             :class="{ 'pending': agent.status === 'PENDING' }"
           >
             <!-- Mobile Layout -->
-            <div class="agent-content-mobile d-block d-md-none">
+            <div class="agent-content-mobile d-block d-md-none" @click="navigateToAgentReports(agent)">
               <div class="agent-header">
                 <div class="agent-avatar">
                   <div class="avatar-circle" :class="getAvatarClass(agent.status)">
@@ -108,11 +103,11 @@
                 </div>
                 <div class="agent-info">
                   <div class="agent-name" v-if="editingAgent !== agent.id">
-                    <span @click="startEditing(agent)" class="editable-name" :title="agent.name || 'Unknown'">
+                    <span @click.stop="startEditing(agent)" class="editable-name" :title="agent.name || 'Unknown'">
                       {{ agent.name || 'Unknown' }}
                     </span>
                   </div>
-                  <div class="agent-name-edit" v-else>
+                  <div class="agent-name-edit" v-else @click.stop>
                     <input
                       ref="nameInput"
                       v-model="editingName"
@@ -135,7 +130,7 @@
                 </div>
               </div>
 
-              <div class="agent-actions" v-if="agent.status !== 'ERROR'">
+              <div class="agent-actions" v-if="agent.status !== 'ERROR'" @click.stop>
                 <!-- Processing indicator -->
                 <div v-if="processingAgent === agent.id" class="processing-indicator">
                   <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
@@ -192,7 +187,7 @@
             </div>
 
             <!-- Desktop Layout -->
-            <div class="agent-content-desktop d-none d-md-block">
+            <div class="agent-content-desktop d-none d-md-block" @click="navigateToAgentReports(agent)">
               <div class="agent-row">
                 <div class="agent-col-info">
                   <div class="d-flex align-items-center">
@@ -203,11 +198,11 @@
                     </div>
                     <div class="agent-details">
                       <div class="agent-name" v-if="editingAgent !== agent.id">
-                        <span @click="startEditing(agent)" class="editable-name" :title="agent.name || 'Unknown'">
+                        <span @click.stop="startEditing(agent)" class="editable-name" :title="agent.name || 'Unknown'">
                           {{ agent.name || 'Unknown' }}
                         </span>
                       </div>
-                      <div class="agent-name-edit" v-else>
+                      <div class="agent-name-edit" v-else @click.stop>
                         <input
                           ref="nameInput"
                           v-model="editingName"
@@ -232,7 +227,7 @@
                   </span>
                 </div>
 
-                <div class="agent-col-actions">
+                <div class="agent-col-actions" @click.stop>
                   <!-- Processing indicator -->
                   <div v-if="processingAgent === agent.id" class="d-flex align-items-center">
                     <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
@@ -306,8 +301,11 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { apiService } from '../services/apiService.js'
+import PageHeader from '../components/PageHeader.vue'
 
+const router = useRouter()
 const loading = ref(true)
 const error = ref(null)
 const agents = ref([])
@@ -519,6 +517,10 @@ const cancelEditing = () => {
   editingName.value = ''
 }
 
+const navigateToAgentReports = (agent) => {
+  router.push(`/agents/${agent.id}/reports`)
+}
+
 onMounted(() => {
   fetchAgents()
 })
@@ -658,6 +660,7 @@ onMounted(() => {
 /* Mobile Layout */
 .agent-content-mobile {
   padding: 1rem;
+  cursor: pointer;
 }
 
 .agent-header {
@@ -774,6 +777,7 @@ onMounted(() => {
 /* Desktop Layout */
 .agent-content-desktop {
   padding: 1rem 1.5rem;
+  cursor: pointer;
 }
 
 .agent-row {

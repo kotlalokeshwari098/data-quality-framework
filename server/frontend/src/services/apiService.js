@@ -102,6 +102,22 @@ class ApiService {
         }
         return await response.json()
     }
+
+    async updateQualityCheck(hash, data) {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE}/v1/quality-checks/${hash}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            },
+            body: JSON.stringify(data)
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to update quality check: ${response.status}`)
+        }
+        return await response.json()
+    }
 }
 
 export const apiService = new ApiService()

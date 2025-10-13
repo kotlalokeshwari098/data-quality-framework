@@ -1,7 +1,7 @@
 <template>
   <div class="agents-container">
     <div class="card border-0 shadow-md rounded-3 overflow-hidden h-100">
-      <div class="card-header bg-primary bg-gradient px-4 py-3 border-bottom-0">
+      <div class="card-header px-4 py-3 border-bottom-0 header-gradient">
         <h6 class="mb-0 fw-semibold text-white">
           <i class="bi bi-database-fill-gear me-2"></i>
           Agents
@@ -257,7 +257,7 @@ const navigateToAgentReport = (agent) => {
   if (editingAgent.value === agent.id) {
     return
   }
-  router.push(`/agents/${agent.id}/report`)
+  router.push(`/agents/${agent.id}/reports`)
 }
 
 onMounted(() => {
@@ -356,6 +356,11 @@ onMounted(() => {
 
 .agents-list::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* Header gradient to match sidebar */
+.header-gradient {
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
 }
 
 @media (max-width: 768px) {

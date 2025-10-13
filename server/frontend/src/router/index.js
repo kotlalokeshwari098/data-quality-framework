@@ -6,6 +6,7 @@ import Reports from '../views/Reports.vue'
 import Settings from '../views/Settings.vue'
 import AgentsView from '../views/AgentsView.vue'
 import AgentReportView from '../views/AgentReportView.vue'
+import QualityChecksView from '../views/QualityChecksView.vue'
 import LoginView from '../views/LoginView.vue'
 import NotFound from '../views/NotFound.vue'
 
@@ -40,6 +41,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/quality-checks',
+    name: 'QualityChecks',
+    component: QualityChecksView,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/settings',
     name: 'Settings',
     component: Settings,
@@ -52,7 +59,7 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/agents/:uuid/report',
+    path: '/agents/:uuid/reports',
     name: 'AgentReport',
     component: AgentReportView,
     meta: { requiresAuth: true }
