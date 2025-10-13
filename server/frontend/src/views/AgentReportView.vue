@@ -52,12 +52,11 @@
             iconColor="#dc3545"
             iconBgColor="#f8d7da"
             trendText="Needs attention"
-            trendType="negative"
           />
         </div>
         <div class="col-12 col-sm-6 col-md-3 mb-3">
           <StatsCard
-            label="Warning Checks"
+            label="Warnings"
             :value="reportStats.warnings"
             icon="bi bi-exclamation-triangle"
             iconColor="#ffc107"
@@ -82,55 +81,21 @@
       <!-- Recent Reports Table -->
       <div class="row">
         <div class="col-12">
-          <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom py-3">
-              <h5 class="mb-0 fw-semibold">Recent Reports</h5>
-            </div>
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Report ID</th>
-                      <th>Date</th>
-                      <th>Checks Passed</th>
-                      <th>Checks Failed</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="report in reports" :key="report.id">
-                      <td class="font-monospace small">{{ report.id }}</td>
-                      <td>{{ formatDate(report.timestamp) }}</td>
-                      <td>
-                        <span class="text-success">
-                          <i class="bi bi-check-circle me-1"></i>{{ getPassedChecks(report) }}
-                        </span>
-                      </td>
-                      <td>
-                        <span class="text-danger">
-                          <i class="bi bi-x-circle me-1"></i>{{ getFailedChecks(report) }}
-                        </span>
-                      </td>
-                      <td>
-                        <button class="btn btn-sm btn-outline-primary">
-                          <i class="bi bi-eye me-1"></i>View
-                        </button>
-                      </td>
-                    </tr>
-                    <tr v-if="reports.length === 0">
-                      <td colspan="5" class="text-center text-muted py-4">
-                        No reports available for this agent
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <ReportsTable
+            :reports="reports"
+            :quality-check-map="qualityCheckMap"
+            @report-selected="openReportModal"
+          />
         </div>
       </div>
     </div>
+
+    <!-- Report Details Modal -->
+    <ReportDetailsModal
+      :report="selectedReport"
+      :quality-check-map="qualityCheckMap"
+      @close="closeReportModal"
+    />
   </div>
 </template>
 
@@ -138,7 +103,10 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StatsCard from '../components/StatsCard.vue'
+import ReportsTable from '../components/ReportsTable.vue'
+import ReportDetailsModal from '../components/ReportDetailsModal.vue'
 import { apiService } from '../services/apiService.js'
+import { countChecksByStatus } from '../utils/qualityCheckUtils.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -149,6 +117,7 @@ const error = ref(null)
 const agent = ref(null)
 const reports = ref([])
 const qualityChecks = ref([])
+const selectedReport = ref(null)
 
 const agentName = computed(() => {
   return agent.value?.name || 'Unknown Agent'
@@ -172,39 +141,24 @@ const reportStats = computed(() => {
   )
   const latestReport = sortedReports[0]
 
-  // Calculate stats from the latest report only
-  let passedChecks = 0
-  let failedChecks = 0
-  let warningChecks = 0
-
-  if (latestReport?.results && Array.isArray(latestReport.results)) {
-    latestReport.results.forEach(result => {
-      const check = qualityCheckMap.value.get(result.hash)
-      const errorThreshold = check?.errorThreshold || 0.5
-      const warningThreshold = check?.warningThreshold || 0.7
-
-      // Failed: result < errorThreshold
-      if (result.result < errorThreshold) {
-        failedChecks++
-      }
-      // Warning: result >= errorThreshold but < warningThreshold
-      else if (result.result < warningThreshold) {
-        warningChecks++
-      }
-      // Passed: result >= warningThreshold
-      else {
-        passedChecks++
-      }
-    })
+  if (!latestReport) {
+    return {
+      total: 0,
+      failed: 0,
+      passed: 0,
+      warnings: 0,
+      lastReportTime: 'N/A'
+    }
   }
 
-  const lastReportTime = latestReport ? formatTime(latestReport.timestamp) : 'N/A'
+  const counts = countChecksByStatus(latestReport, qualityCheckMap.value)
+  const lastReportTime = formatTime(latestReport.timestamp)
 
   return {
     total,
-    failed: failedChecks,
-    passed: passedChecks,
-    warnings: warningChecks,
+    failed: counts.failed,
+    passed: counts.passed,
+    warnings: counts.warnings,
     lastReportTime
   }
 })
@@ -245,17 +199,6 @@ const fetchAgentDetails = async () => {
   }
 }
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
-
 const formatTime = (dateString) => {
   const date = new Date(dateString)
   const now = new Date()
@@ -272,73 +215,16 @@ const formatTime = (dateString) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-const getStatusBadgeClass = (status) => {
-  switch (status) {
-    case 'SUCCESS':
-      return 'bg-success'
-    case 'FAILED':
-      return 'bg-danger'
-    case 'WARNING':
-      return 'bg-warning text-dark'
-    default:
-      return 'bg-secondary'
-  }
-}
-
-const getPassedChecks = (report) => {
-  if (!report.results || !Array.isArray(report.results)) {
-    return 0
-  }
-  return report.results.filter(result => {
-    const check = qualityCheckMap.value.get(result.hash)
-    const threshold = check?.errorThreshold || 0.5
-    return result.result >= threshold
-  }).length
-}
-
-const getFailedChecks = (report) => {
-  if (!report.results || !Array.isArray(report.results)) {
-    return 0
-  }
-  return report.results.filter(result => {
-    const check = qualityCheckMap.value.get(result.hash)
-    const threshold = check?.errorThreshold || 0.5
-    return result.result < threshold
-  }).length
-}
-
-const getReportStatus = (report) => {
-  if (!report.results || report.results.length === 0) {
-    return 'NO DATA'
-  }
-
-  // Calculate status based on individual check thresholds
-  let hasError = false
-  let hasWarning = false
-
-  report.results.forEach(result => {
-    const check = qualityCheckMap.value.get(result.hash)
-    if (check) {
-      if (result.result < check.errorThreshold) {
-        hasError = true
-      } else if (result.result < check.warningThreshold) {
-        hasWarning = true
-      }
-    }
-  })
-
-  if (hasError) return 'FAILED'
-  if (hasWarning) return 'WARNING'
-  return 'SUCCESS'
-}
-
-const getReportStatusBadgeClass = (report) => {
-  const status = getReportStatus(report)
-  return getStatusBadgeClass(status)
-}
-
 const goBack = () => {
   router.push('/dashboard')
+}
+
+const openReportModal = (report) => {
+  selectedReport.value = report
+}
+
+const closeReportModal = () => {
+  selectedReport.value = null
 }
 
 onMounted(() => {
@@ -347,30 +233,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.table th {
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #6c757d;
-}
-
-.table td {
-  vertical-align: middle;
-}
-
-.font-monospace {
-  font-family: 'Courier New', monospace;
-}
-
-@media (max-width: 768px) {
-  .table {
-    font-size: 0.875rem;
-  }
-
-  .table th,
-  .table td {
-    padding: 0.5rem;
-  }
-}
+/* No additional styles needed - moved to child components */
 </style>
+

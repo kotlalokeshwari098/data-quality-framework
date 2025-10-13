@@ -6,15 +6,18 @@ INSERT INTO agent (id, name, status) VALUES
     ('agent-005', 'Clinical Data Hub Epsilon', 'ACTIVE');
 
 -- Insert dummy quality checks
+-- NOTE: Result values represent the percentage/count of INVALID records (0.0 = perfect, 1.0 = all invalid)
+-- warning_threshold: if result > warning_threshold, trigger warning
+-- error_threshold: if result > error_threshold, trigger error
 INSERT INTO quality_check (hash, name, description, registered_at, warning_threshold, error_threshold) VALUES
-    ('patient-count-check', 'Patient Count Validation', 'Validates that the patient count is within expected ranges', '2024-01-15 10:00:00', 0.8, 0.5),
-    ('data-completeness-check', 'Data Completeness Check', 'Ensures that required fields are populated for patient records', '2024-01-15 10:15:00', 0.9, 0.7),
-    ('date-consistency-check', 'Date Consistency Validation', 'Verifies that dates are logical and consistent across records', '2024-01-15 10:30:00', 0.85, 0.6),
-    ('duplicate-detection-check', 'Duplicate Record Detection', 'Identifies potential duplicate patient records in the system', '2024-01-15 10:45:00', 0.95, 0.8),
-    ('format-validation-check', 'Data Format Validation', 'Validates that data follows expected formats and standards', '2024-01-15 11:00:00', 0.88, 0.65),
-    ('reference-integrity-check', 'Reference Integrity Check', 'Ensures referential integrity between related data entities', '2024-01-15 11:15:00', 0.92, 0.75),
-    ('outlier-detection-check', 'Statistical Outlier Detection', 'Identifies statistical outliers in numerical data fields', '2024-01-15 11:30:00', 0.7, 0.4),
-    ('coding-standard-check', 'Medical Coding Standards', 'Validates compliance with medical coding standards (ICD-10, SNOMED)', '2024-01-15 11:45:00', 0.9, 0.7);
+    ('unsupported-gender-check', 'Unsupported Gender Values', 'Percentage of patients with non-supported gender attribute values (not Male/Female/Other/Unknown)', '2024-01-15 10:00:00', 0.05, 0.15),
+    ('missing-birthdate-check', 'Missing Birth Date', 'Percentage of patients with missing or null birth date values', '2024-01-15 10:15:00', 0.03, 0.10),
+    ('invalid-date-check', 'Invalid Date Values', 'Percentage of records with logically invalid dates (e.g., future birth dates, death before birth)', '2024-01-15 10:30:00', 0.02, 0.08),
+    ('duplicate-patient-check', 'Duplicate Patient Records', 'Percentage of patients that appear to be duplicates based on matching identifiers', '2024-01-15 10:45:00', 0.01, 0.05),
+    ('invalid-format-check', 'Invalid Data Formats', 'Percentage of records with data that does not follow expected formats (e.g., malformed IDs, invalid postal codes)', '2024-01-15 11:00:00', 0.04, 0.12),
+    ('broken-reference-check', 'Broken Reference Integrity', 'Percentage of records with references to non-existent related entities', '2024-01-15 11:15:00', 0.02, 0.08),
+    ('outlier-value-check', 'Statistical Outlier Values', 'Percentage of numerical values that are statistical outliers (e.g., age > 150, negative measurements)', '2024-01-15 11:30:00', 0.10, 0.25),
+    ('invalid-coding-check', 'Invalid Medical Codes', 'Percentage of records with invalid or non-standard medical codes (ICD-10, SNOMED CT)', '2024-01-15 11:45:00', 0.03, 0.10);
 
 -- Insert dummy reports for the past 30 days
 INSERT INTO report (id, timestamp, agent_id) VALUES
@@ -40,97 +43,97 @@ INSERT INTO report (id, timestamp, agent_id) VALUES
     ('report-020', '2024-10-10 16:10:00', 'agent-004');
 
 -- Insert quality check results for the reports
--- Report 1 results (good quality data)
+-- Report 1 results (good quality data - low error rates)
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
-    ('report-001', 'patient-count-check', 0.95),
-    ('report-001', 'data-completeness-check', 0.92),
-    ('report-001', 'date-consistency-check', 0.88),
-    ('report-001', 'duplicate-detection-check', 0.97),
-    ('report-001', 'format-validation-check', 0.90),
-    ('report-001', 'reference-integrity-check', 0.94),
-    ('report-001', 'outlier-detection-check', 0.75),
-    ('report-001', 'coding-standard-check', 0.89);
+    ('report-001', 'unsupported-gender-check', 0.02),
+    ('report-001', 'missing-birthdate-check', 0.01),
+    ('report-001', 'invalid-date-check', 0.01),
+    ('report-001', 'duplicate-patient-check', 0.00),
+    ('report-001', 'invalid-format-check', 0.03),
+    ('report-001', 'broken-reference-check', 0.01),
+    ('report-001', 'outlier-value-check', 0.08),
+    ('report-001', 'invalid-coding-check', 0.02);
 
--- Report 2 results (mixed quality)
+-- Report 2 results (mixed quality - some warnings)
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
-    ('report-002', 'patient-count-check', 0.82),
-    ('report-002', 'data-completeness-check', 0.76),
-    ('report-002', 'date-consistency-check', 0.85),
-    ('report-002', 'duplicate-detection-check', 0.91),
-    ('report-002', 'format-validation-check', 0.73),
-    ('report-002', 'reference-integrity-check', 0.89),
-    ('report-002', 'outlier-detection-check', 0.68),
-    ('report-002', 'coding-standard-check', 0.81);
+    ('report-002', 'unsupported-gender-check', 0.07),
+    ('report-002', 'missing-birthdate-check', 0.05),
+    ('report-002', 'invalid-date-check', 0.03),
+    ('report-002', 'duplicate-patient-check', 0.02),
+    ('report-002', 'invalid-format-check', 0.09),
+    ('report-002', 'broken-reference-check', 0.04),
+    ('report-002', 'outlier-value-check', 0.15),
+    ('report-002', 'invalid-coding-check', 0.06);
 
--- Report 3 results (poor quality data - some below thresholds)
+-- Report 3 results (poor quality data - many errors above thresholds)
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
-    ('report-003', 'patient-count-check', 0.45),
-    ('report-003', 'data-completeness-check', 0.62),
-    ('report-003', 'date-consistency-check', 0.71),
-    ('report-003', 'duplicate-detection-check', 0.83),
-    ('report-003', 'format-validation-check', 0.58),
-    ('report-003', 'reference-integrity-check', 0.69),
-    ('report-003', 'outlier-detection-check', 0.35),
-    ('report-003', 'coding-standard-check', 0.64);
+    ('report-003', 'unsupported-gender-check', 0.18),
+    ('report-003', 'missing-birthdate-check', 0.12),
+    ('report-003', 'invalid-date-check', 0.09),
+    ('report-003', 'duplicate-patient-check', 0.06),
+    ('report-003', 'invalid-format-check', 0.14),
+    ('report-003', 'broken-reference-check', 0.11),
+    ('report-003', 'outlier-value-check', 0.28),
+    ('report-003', 'invalid-coding-check', 0.13);
 
--- Report 4 results (excellent quality)
+-- Report 4 results (excellent quality - very low error rates)
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
-    ('report-004', 'patient-count-check', 0.98),
-    ('report-004', 'data-completeness-check', 0.96),
-    ('report-004', 'date-consistency-check', 0.94),
-    ('report-004', 'duplicate-detection-check', 0.99),
-    ('report-004', 'format-validation-check', 0.95),
-    ('report-004', 'reference-integrity-check', 0.97),
-    ('report-004', 'outlier-detection-check', 0.85),
-    ('report-004', 'coding-standard-check', 0.93);
+    ('report-004', 'unsupported-gender-check', 0.00),
+    ('report-004', 'missing-birthdate-check', 0.01),
+    ('report-004', 'invalid-date-check', 0.00),
+    ('report-004', 'duplicate-patient-check', 0.00),
+    ('report-004', 'invalid-format-check', 0.01),
+    ('report-004', 'broken-reference-check', 0.00),
+    ('report-004', 'outlier-value-check', 0.05),
+    ('report-004', 'invalid-coding-check', 0.01);
 
 -- Report 5 results (average quality)
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
-    ('report-005', 'patient-count-check', 0.79),
-    ('report-005', 'data-completeness-check', 0.84),
-    ('report-005', 'date-consistency-check', 0.81),
-    ('report-005', 'duplicate-detection-check', 0.88),
-    ('report-005', 'format-validation-check', 0.77),
-    ('report-005', 'reference-integrity-check', 0.85),
-    ('report-005', 'outlier-detection-check', 0.62),
-    ('report-005', 'coding-standard-check', 0.80);
+    ('report-005', 'unsupported-gender-check', 0.06),
+    ('report-005', 'missing-birthdate-check', 0.04),
+    ('report-005', 'invalid-date-check', 0.03),
+    ('report-005', 'duplicate-patient-check', 0.02),
+    ('report-005', 'invalid-format-check', 0.07),
+    ('report-005', 'broken-reference-check', 0.03),
+    ('report-005', 'outlier-value-check', 0.12),
+    ('report-005', 'invalid-coding-check', 0.05);
 
 -- Add more results for remaining reports with varying quality scores
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
-    -- Report 6
-    ('report-006', 'patient-count-check', 0.91),
-    ('report-006', 'data-completeness-check', 0.87),
-    ('report-006', 'date-consistency-check', 0.93),
-    ('report-006', 'duplicate-detection-check', 0.95),
+    -- Report 6 (good quality)
+    ('report-006', 'unsupported-gender-check', 0.02),
+    ('report-006', 'missing-birthdate-check', 0.02),
+    ('report-006', 'invalid-date-check', 0.01),
+    ('report-006', 'duplicate-patient-check', 0.01),
 
-    -- Report 7
-    ('report-007', 'patient-count-check', 0.67),
-    ('report-007', 'data-completeness-check', 0.74),
-    ('report-007', 'format-validation-check', 0.71),
-    ('report-007', 'outlier-detection-check', 0.58),
+    -- Report 7 (poor quality - warnings)
+    ('report-007', 'unsupported-gender-check', 0.11),
+    ('report-007', 'missing-birthdate-check', 0.08),
+    ('report-007', 'invalid-format-check', 0.10),
+    ('report-007', 'outlier-value-check', 0.18),
 
-    -- Report 8
-    ('report-008', 'patient-count-check', 0.89),
-    ('report-008', 'data-completeness-check', 0.92),
-    ('report-008', 'date-consistency-check', 0.86),
-    ('report-008', 'duplicate-detection-check', 0.94),
-    ('report-008', 'reference-integrity-check', 0.91),
+    -- Report 8 (good quality)
+    ('report-008', 'unsupported-gender-check', 0.03),
+    ('report-008', 'missing-birthdate-check', 0.02),
+    ('report-008', 'invalid-date-check', 0.02),
+    ('report-008', 'duplicate-patient-check', 0.01),
+    ('report-008', 'broken-reference-check', 0.02),
 
-    -- Report 9
-    ('report-009', 'patient-count-check', 0.43),
-    ('report-009', 'data-completeness-check', 0.56),
-    ('report-009', 'format-validation-check', 0.61),
-    ('report-009', 'coding-standard-check', 0.59),
+    -- Report 9 (very poor quality - many errors)
+    ('report-009', 'unsupported-gender-check', 0.19),
+    ('report-009', 'missing-birthdate-check', 0.15),
+    ('report-009', 'invalid-format-check', 0.16),
+    ('report-009', 'invalid-coding-check', 0.14),
 
-    -- Report 10
-    ('report-010', 'patient-count-check', 0.96),
-    ('report-010', 'data-completeness-check', 0.94),
-    ('report-010', 'date-consistency-check', 0.92),
-    ('report-010', 'duplicate-detection-check', 0.98),
-    ('report-010', 'format-validation-check', 0.93),
-    ('report-010', 'reference-integrity-check', 0.95),
-    ('report-010', 'outlier-detection-check', 0.78),
-    ('report-010', 'coding-standard-check', 0.91);
+    -- Report 10 (excellent quality)
+    ('report-010', 'unsupported-gender-check', 0.01),
+    ('report-010', 'missing-birthdate-check', 0.01),
+    ('report-010', 'invalid-date-check', 0.01),
+    ('report-010', 'duplicate-patient-check', 0.00),
+    ('report-010', 'invalid-format-check', 0.02),
+    ('report-010', 'broken-reference-check', 0.01),
+    ('report-010', 'outlier-value-check', 0.06),
+    ('report-010', 'invalid-coding-check', 0.02);
 
 -- Add some recent reports with current timestamps for immediate testing
 INSERT INTO report (id, timestamp, agent_id) VALUES
@@ -140,13 +143,13 @@ INSERT INTO report (id, timestamp, agent_id) VALUES
 
 -- Add results for current reports
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
-    ('report-current-1', 'patient-count-check', 0.87),
-    ('report-current-1', 'data-completeness-check', 0.91),
-    ('report-current-1', 'duplicate-detection-check', 0.94),
-    ('report-current-2', 'patient-count-check', 0.72),
-    ('report-current-2', 'format-validation-check', 0.68),
-    ('report-current-2', 'coding-standard-check', 0.75),
-    ('report-current-3', 'patient-count-check', 0.95),
-    ('report-current-3', 'data-completeness-check', 0.93),
-    ('report-current-3', 'date-consistency-check', 0.89),
-    ('report-current-3', 'reference-integrity-check', 0.92);
+    ('report-current-1', 'unsupported-gender-check', 0.04),
+    ('report-current-1', 'missing-birthdate-check', 0.02),
+    ('report-current-1', 'duplicate-patient-check', 0.01),
+    ('report-current-2', 'unsupported-gender-check', 0.09),
+    ('report-current-2', 'invalid-format-check', 0.11),
+    ('report-current-2', 'invalid-coding-check', 0.08),
+    ('report-current-3', 'unsupported-gender-check', 0.01),
+    ('report-current-3', 'missing-birthdate-check', 0.02),
+    ('report-current-3', 'invalid-date-check', 0.02),
+    ('report-current-3', 'broken-reference-check', 0.01);
