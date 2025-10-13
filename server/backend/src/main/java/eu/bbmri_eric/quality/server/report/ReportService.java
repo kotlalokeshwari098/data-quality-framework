@@ -29,4 +29,11 @@ public interface ReportService {
    * @return list of report DTOs for the specified agent
    */
   List<ReportDTO> findByAgentId(String agentId);
+
+  /**
+   * Finds all reports in the system.
+   *
+   * @return list of all report DTOs
+   */
+  List<ReportDTO> findAll();
 }

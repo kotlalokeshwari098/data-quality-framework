@@ -1,55 +1,221 @@
 <template>
-  <div class="container-fluid py-3 py-md-4">
-    <div class="row justify-content-center">
-      <div class="col-12 col-lg-8">
-        <div class="card border-0 shadow-sm mobile-reports-card">
-          <div class="card-body text-center py-4 py-md-5">
-            <div class="mb-3 mb-md-4">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-primary reports-icon">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="currentColor"/>
-              </svg>
-            </div>
-            <h2 class="h4 h-md-3 fw-bold text-dark mb-2 mb-md-3">Reports</h2>
-            <p class="text-muted mb-0 reports-description">This is the reports page - detailed analytics and reports will be implemented here.</p>
+  <div class="container-fluid px-2 px-md-3 py-3 py-md-4">
+    <div class="row">
+      <div class="col-12">
+        <!-- Page Header -->
+        <PageHeader
+          title="Reports"
+          mobile-title="Reports"
+          subtitle="View and analyze data quality reports from all agents"
+          icon="bi bi-file-earmark-text-fill"
+        >
+          <template #actions>
+            <button
+              @click="fetchData"
+              class="btn btn-outline-primary btn-sm"
+              :disabled="loading"
+            >
+              <i class="bi bi-arrow-clockwise"></i>
+              <span class="d-none d-md-inline ms-1">Refresh</span>
+            </button>
+          </template>
+        </PageHeader>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid mb-3 mb-md-4">
+          <div class="stat-card">
+            <div class="stat-number text-dark">{{ reports.length }}</div>
+            <div class="stat-label">Total Reports</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number text-success">{{ reportStats.passed }}</div>
+            <div class="stat-label">Passed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number text-warning">{{ reportStats.warnings }}</div>
+            <div class="stat-label">With Warnings</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number text-danger">{{ reportStats.failed }}</div>
+            <div class="stat-label">Failed</div>
           </div>
         </div>
+
+        <!-- Loading state -->
+        <div v-if="loading" class="loading-state">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Error state -->
+        <div v-else-if="error" class="alert alert-danger" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ error }}
+        </div>
+
+        <!-- Reports table -->
+        <ReportsTable
+          v-else
+          :reports="reports"
+          :quality-check-map="qualityCheckMap"
+          @report-selected="handleReportSelected"
+        />
       </div>
     </div>
+
+    <!-- Report Details Modal -->
+    <ReportDetailsModal
+      v-if="selectedReport"
+      :report="selectedReport"
+      :quality-check-map="qualityCheckMap"
+      @close="selectedReport = null"
+    />
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted, computed } from 'vue'
+import ReportsTable from '../components/ReportsTable.vue'
+import ReportDetailsModal from '../components/ReportDetailsModal.vue'
+import PageHeader from '../components/PageHeader.vue'
+import { apiService } from '../services/apiService.js'
+import { getReportStatus, CheckStatus } from '../utils/qualityCheckUtils.js'
+
+const reports = ref([])
+const qualityCheckMap = ref(new Map())
+const loading = ref(true)
+const error = ref(null)
+const selectedReport = ref(null)
+
+const reportStats = computed(() => {
+  const stats = {
+    passed: 0,
+    warnings: 0,
+    failed: 0
+  }
+
+  reports.value.forEach(report => {
+    const status = getReportStatus(report, qualityCheckMap.value)
+
+    switch (status) {
+      case CheckStatus.PASSED:
+        stats.passed++
+        break
+      case CheckStatus.WARNING:
+        stats.warnings++
+        break
+      case CheckStatus.FAILED:
+        stats.failed++
+        break
+    }
+  })
+
+  return stats
+})
+
+const fetchData = async () => {
+  try {
+    loading.value = true
+    error.value = null
+
+    // Fetch quality checks and reports in parallel
+    const [checksData, reportsData] = await Promise.all([
+      apiService.getQualityChecks(),
+      apiService.getReports()
+    ])
+
+    // Handle HAL format response for quality checks
+    const checks = checksData._embedded?.qualityChecks || (Array.isArray(checksData) ? checksData : [])
+
+    // Handle HAL format response for reports
+    const reportsArray = reportsData._embedded?.reports || (Array.isArray(reportsData) ? reportsData : [])
+
+    // Convert quality checks array to Map for quick lookup
+    qualityCheckMap.value = new Map(checks.map(check => [check.hash, check]))
+
+    // Sort reports by timestamp (newest first)
+    reports.value = reportsArray.sort((a, b) =>
+      new Date(b.timestamp) - new Date(a.timestamp)
+    )
+  } catch (err) {
+    console.error('Error fetching reports:', err)
+    error.value = err.message || 'Failed to load reports'
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleReportSelected = (report) => {
+  selectedReport.value = report
+}
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style scoped>
-.mobile-reports-card {
-  border-radius: 12px;
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
 }
 
-.reports-icon {
-  width: 48px;
-  height: 48px;
+.stat-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.reports-description {
-  font-size: 0.95rem;
-  max-width: 400px;
-  margin: 0 auto;
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 768px) {
-  .reports-icon {
-    width: 40px;
-    height: 40px;
+.stat-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.813rem;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+@media (min-width: 576px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
   }
 
-  .reports-description {
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-
-  .mobile-reports-card {
-    margin: 0 0.5rem;
+  .stat-card {
+    padding: 1.5rem;
   }
 }
 
@@ -59,8 +225,8 @@
     padding-right: 0.75rem;
   }
 
-  .card-body {
-    padding: 2rem 1.5rem !important;
+  .stat-number {
+    font-size: 1.5rem;
   }
 }
 </style>

@@ -79,6 +79,12 @@ public class ReportServiceImpl implements ReportService {
     return reportRepository.findByAgentId(agentId).stream().map(this::convertToDTO).toList();
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public List<ReportDTO> findAll() {
+    return reportRepository.findAll().stream().map(this::convertToDTO).toList();
+  }
+
   private ReportDTO convertToDTO(Report report) {
     ReportDTO dto = new ReportDTO();
     dto.setId(report.getId());

@@ -59,4 +59,15 @@ public class ReportController {
     CollectionModel<EntityModel<ReportDTO>> reportsModel = linkBuilder.toCollectionModel(reports);
     return ResponseEntity.ok(reportsModel);
   }
+
+  @GetMapping("/reports")
+  @Operation(
+      summary = "Get all reports",
+      description = "Retrieves all reports in the system (admin only)")
+  @SecurityRequirement(name = "bearerAuth")
+  public ResponseEntity<CollectionModel<EntityModel<ReportDTO>>> findAll() {
+    List<ReportDTO> reports = reportService.findAll();
+    CollectionModel<EntityModel<ReportDTO>> reportsModel = linkBuilder.toCollectionModel(reports);
+    return ResponseEntity.ok(reportsModel);
+  }
 }
