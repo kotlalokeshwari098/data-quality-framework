@@ -27,14 +27,6 @@
             <div class="stat-number text-dark">{{ qualityChecks.length }}</div>
             <div class="stat-label">Total Checks</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-number text-primary">{{ checksWithWarning }}</div>
-            <div class="stat-label">Warning Threshold</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number text-danger">{{ checksWithError }}</div>
-            <div class="stat-label">Error Threshold</div>
-          </div>
         </div>
 
         <!-- Filters -->
