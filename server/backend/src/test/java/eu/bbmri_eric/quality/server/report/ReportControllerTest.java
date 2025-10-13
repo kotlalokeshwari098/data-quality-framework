@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bbmri_eric.quality.server.agent.Agent;
 import eu.bbmri_eric.quality.server.agent.AgentRepository;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,8 @@ class ReportControllerTest {
   @Test
   @WithUserDetails("admin")
   void create_shouldCreateReportAndReturnHateoasResponse() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
+    List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO("hash1", 0.95));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
     mockMvc
         .perform(
@@ -61,9 +64,26 @@ class ReportControllerTest {
   }
 
   @Test
+  @WithUserDetails("admin")
+  void create_shouldCreateReportWithResults() throws Exception {
+    List<QualityCheckResultDTO> results =
+        List.of(new QualityCheckResultDTO("hash1", 0.95), new QualityCheckResultDTO("hash2", 0.87));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
+
+    mockMvc
+        .perform(
+            post(API_V1_AGENTS_REPORTS, testAgentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.agentId").value(testAgentId))
+        .andExpect(jsonPath("$.id").exists());
+  }
+
+  @Test
   @WithMockUser(roles = "ADMIN")
-  void create_shouldReturnBadRequestForBlankAgentId() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest("");
+  void create_shouldReturnBadRequestForNullResults() throws Exception {
+    ReportCreateRequest createRequest = new ReportCreateRequest(null);
 
     mockMvc
         .perform(
@@ -75,8 +95,8 @@ class ReportControllerTest {
 
   @Test
   @WithMockUser(roles = "ADMIN")
-  void create_shouldReturnBadRequestForNullAgentId() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest(null);
+  void create_shouldReturnBadRequestForEmptyResults() throws Exception {
+    ReportCreateRequest createRequest = new ReportCreateRequest(Collections.emptyList());
 
     mockMvc
         .perform(
@@ -165,7 +185,8 @@ class ReportControllerTest {
   @Test
   @WithUserDetails("admin")
   void endToEndFlow_createAndRetrieveReport() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
+    List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO("hash1", 0.95));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
     String responseContent =
         mockMvc
@@ -195,7 +216,8 @@ class ReportControllerTest {
   @Test
   @WithUserDetails("admin")
   void create_shouldGenerateUniqueIdsForMultipleReports() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
+    List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO("hash1", 0.95));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
     String response1 =
         mockMvc
@@ -227,7 +249,8 @@ class ReportControllerTest {
 
   @Test
   void create_shouldRequireAuthentication() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
+    List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO("hash1", 0.95));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
 
     mockMvc
         .perform(
@@ -274,7 +297,8 @@ class ReportControllerTest {
   @Test
   @WithMockUser(roles = "USER")
   void create_shouldReturnForbiddenForNonAdminUserNotLinkedToAgent() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
+    List<QualityCheckResultDTO> results = List.of(new QualityCheckResultDTO("hash1", 0.95));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
     mockMvc
         .perform(
             post(API_V1_AGENTS_REPORTS, testAgentId)

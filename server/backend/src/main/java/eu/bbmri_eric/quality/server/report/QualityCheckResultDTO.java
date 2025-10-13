@@ -1,0 +1,21 @@
+package eu.bbmri_eric.quality.server.report;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+/** DTO for quality check result data. */
+@Schema(name = "Quality Check Result", description = "Result of a quality check execution")
+public record QualityCheckResultDTO(
+    @NotBlank(message = "Quality check hash cannot be blank")
+        @Schema(
+            description = "Hash identifying the quality check",
+            example = "abc123def456",
+            requiredMode = Schema.RequiredMode.REQUIRED)
+        String hash,
+    @NotNull(message = "Result cannot be null")
+        @Schema(
+            description = "Numeric result of the quality check",
+            example = "0.95",
+            requiredMode = Schema.RequiredMode.REQUIRED)
+        Double result) {}
