@@ -1,8 +1,12 @@
 package eu.bbmri_eric.quality.server.report;
 
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
+import eu.bbmri_eric.quality.server.user.AuthenticationContextService;
+import eu.bbmri_eric.quality.server.user.UserDTO;
+import eu.bbmri_eric.quality.server.user.UserRole;
 import java.util.List;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,17 +17,33 @@ public class ReportServiceImpl implements ReportService {
 
   private final ReportRepository reportRepository;
   private final ModelMapper modelMapper;
+  private final AuthenticationContextService authenticationContextService;
 
-  public ReportServiceImpl(ReportRepository reportRepository, ModelMapper modelMapper) {
+  public ReportServiceImpl(
+      ReportRepository reportRepository,
+      ModelMapper modelMapper,
+      AuthenticationContextService authenticationContextService) {
     this.reportRepository = reportRepository;
     this.modelMapper = modelMapper;
+    this.authenticationContextService = authenticationContextService;
   }
 
   @Override
   public ReportDTO create(String agentId, ReportCreateRequest createRequest) {
+    UserDTO currentUser = authenticationContextService.getCurrentUser();
+    if (!isAuthorizedToCreateReport(currentUser, agentId)) {
+      throw new AccessDeniedException(
+          "User is not authorized to create reports for agent: " + agentId);
+    }
     Report report = new Report(agentId);
     Report savedReport = reportRepository.save(report);
     return modelMapper.map(savedReport, ReportDTO.class);
+  }
+
+  private boolean isAuthorizedToCreateReport(UserDTO user, String agentId) {
+    boolean isAdmin = user.getRoles() != null && user.getRoles().contains(UserRole.ADMIN);
+    boolean isLinkedToAgent = agentId.equals(user.getAgentId());
+    return isAdmin || isLinkedToAgent;
   }
 
   @Override

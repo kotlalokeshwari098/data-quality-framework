@@ -23,6 +23,9 @@ public class UserDTO {
   @Schema(description = "Temporary password", example = "123")
   private String temporaryPassword;
 
+  @Schema(description = "Agent ID associated with the user", example = "agent123")
+  private String agentId;
+
   private Set<UserRole> roles;
 
   public UserDTO(
@@ -68,6 +71,14 @@ public class UserDTO {
     this.temporaryPassword = temporaryPassword;
   }
 
+  public String getAgentId() {
+    return agentId;
+  }
+
+  public void setAgentId(String agentId) {
+    this.agentId = agentId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
@@ -75,11 +86,12 @@ public class UserDTO {
     return Objects.equals(username, userDTO.username)
         && Objects.equals(id, userDTO.id)
         && Objects.equals(temporaryPassword, userDTO.temporaryPassword)
+        && Objects.equals(agentId, userDTO.agentId)
         && Objects.equals(roles, userDTO.roles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(username, id, temporaryPassword, roles);
+    return Objects.hash(username, id, temporaryPassword, agentId, roles);
   }
 }

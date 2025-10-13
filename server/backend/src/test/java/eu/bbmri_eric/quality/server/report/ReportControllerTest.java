@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void create_shouldCreateReportAndReturnHateoasResponse() throws Exception {
     ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
 
@@ -162,7 +163,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void endToEndFlow_createAndRetrieveReport() throws Exception {
     ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
 
@@ -192,7 +193,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void create_shouldGenerateUniqueIdsForMultipleReports() throws Exception {
     ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
 
@@ -268,5 +269,17 @@ class ReportControllerTest {
         .perform(get(API_V1_AGENTS_REPORTS, testAgentId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$._embedded.reports.length()").value(1));
+  }
+
+  @Test
+  @WithMockUser(roles = "USER")
+  void create_shouldReturnForbiddenForNonAdminUserNotLinkedToAgent() throws Exception {
+    ReportCreateRequest createRequest = new ReportCreateRequest(testAgentId);
+    mockMvc
+        .perform(
+            post(API_V1_AGENTS_REPORTS, testAgentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
+        .andExpect(status().isForbidden());
   }
 }
