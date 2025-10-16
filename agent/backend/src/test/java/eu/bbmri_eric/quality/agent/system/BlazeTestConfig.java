@@ -1,6 +1,6 @@
 package eu.bbmri_eric.quality.agent.system;
 
-import eu.bbmri_eric.quality.agent.common.ApplicationProperties;
+import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import eu.bbmri_eric.quality.agent.fhir.Blaze;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Primary;
 public class BlazeTestConfig {
   @Bean
   @Primary
-  public Blaze blaze(ApplicationProperties applicationProperties) {
+  public Blaze blaze(SettingsService settingsService) {
     int mappedPort = QualityCheckSystemTest.blazeContainer.getMappedPort(8080);
-    return new BlazeTestWrapper(applicationProperties, mappedPort);
+    return new BlazeTestWrapper(settingsService, mappedPort);
   }
 }

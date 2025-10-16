@@ -94,8 +94,3 @@ export async function authenticate(username, password) {
 function baseToken(username, password) {
     return btoa(`${username}:${password}`);
 }
-
-export async function updateFhirSettings(settings) {
-    const response = await api.put('/api/settings/fhir', settings);
-    return response.data;
-}

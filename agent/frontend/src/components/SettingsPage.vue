@@ -81,7 +81,7 @@
 
 <script setup>
 import { defineProps, ref, reactive, onMounted } from 'vue';
-import { updateFhirSettings } from '../js/api.js';
+import settingsStore from '../stores/settingsStore.js';
 
 const props = defineProps({
   username: {
@@ -118,10 +118,15 @@ async function saveFhirSettings() {
   isSaving.value = true;
 
   try {
-    await updateFhirSettings(editableFhirSettings);
+    const payload = {
+      fhirUrl: editableFhirSettings.url,
+      fhirUsername: editableFhirSettings.username,
+      fhirPassword: editableFhirSettings.password
+    };
+
+    await settingsStore.updateSettings(payload);
     Object.assign(fhirSettings, editableFhirSettings);
     isEditingFhir.value = false;
-    alert('FHIR settings saved successfully!');
   } catch (error) {
     console.error('Error saving FHIR settings:', error);
     alert('Error saving FHIR settings. Please try again.');
@@ -130,7 +135,21 @@ async function saveFhirSettings() {
   }
 }
 
+async function loadSettings() {
+  try {
+    const data = await settingsStore.fetchSettings();
+    if (data) {
+      fhirSettings.url = data.fhirUrl || '';
+      fhirSettings.username = data.fhirUsername || '';
+      fhirSettings.password = data.fhirPassword || '';
+    }
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+}
+
 onMounted(() => {
+  loadSettings();
 });
 </script>
 
