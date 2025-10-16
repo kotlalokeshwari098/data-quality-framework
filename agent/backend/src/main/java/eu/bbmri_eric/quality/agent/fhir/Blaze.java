@@ -48,9 +48,7 @@ public class Blaze implements FHIRStore {
   private final HttpHeaders headers;
   private final FhirContext ctx;
 
-  public Blaze(
-      SettingsService settingsService,
-      RestTemplateBuilder restTemplateBuilder) {
+  public Blaze(SettingsService settingsService, RestTemplateBuilder restTemplateBuilder) {
     this.settingsService = settingsService;
     this.restTemplateBuilder = restTemplateBuilder;
 
@@ -93,7 +91,8 @@ public class Blaze implements FHIRStore {
     String decodedPassword = new String(Base64.getDecoder().decode(settings.getFhirPassword()));
 
     this.client = ctx.newRestfulGenericClient(settings.getFhirUrl());
-    this.client.registerInterceptor(new BasicAuthInterceptor(settings.getFhirUsername(), decodedPassword));
+    this.client.registerInterceptor(
+        new BasicAuthInterceptor(settings.getFhirUsername(), decodedPassword));
     this.restTemplate = createRestTemplate(settings.getFhirUsername(), decodedPassword);
   }
 
@@ -133,9 +132,7 @@ public class Blaze implements FHIRStore {
 
     } catch (Exception e) {
       log.warn("Failed to create SSL-configured RestTemplate, falling back to default", e);
-      return restTemplateBuilder
-          .basicAuthentication(username, password)
-          .build();
+      return restTemplateBuilder.basicAuthentication(username, password).build();
     }
   }
 
@@ -240,10 +237,7 @@ public class Blaze implements FHIRStore {
     try {
       ResponseEntity<String> response =
           restTemplate.exchange(
-              getFhirUrl() + "/" + resourceType,
-              HttpMethod.POST,
-              entity,
-              String.class);
+              getFhirUrl() + "/" + resourceType, HttpMethod.POST, entity, String.class);
       return new JSONObject(response.getBody());
     } catch (HttpClientErrorException e) {
       throw new RuntimeException("HTTP error: " + e.getStatusCode(), e);
@@ -287,10 +281,7 @@ public class Blaze implements FHIRStore {
     try {
       ResponseEntity<String> response =
           restTemplate.exchange(
-              getFhirUrl()
-                  + "/Measure/"
-                  + measureId
-                  + "/$evaluate-measure",
+              getFhirUrl() + "/Measure/" + measureId + "/$evaluate-measure",
               HttpMethod.POST,
               entity,
               String.class);

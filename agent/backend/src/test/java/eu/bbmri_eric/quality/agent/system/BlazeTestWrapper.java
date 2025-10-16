@@ -1,7 +1,7 @@
 package eu.bbmri_eric.quality.agent.system;
 
-import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import eu.bbmri_eric.quality.agent.fhir.Blaze;
+import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 
 public class BlazeTestWrapper extends Blaze {

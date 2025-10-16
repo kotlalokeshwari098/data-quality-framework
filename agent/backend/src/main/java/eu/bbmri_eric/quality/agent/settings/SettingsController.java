@@ -11,22 +11,26 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Settings", description = "FHIR server settings management")
 public class SettingsController {
 
-    private final SettingsService settingsService;
+  private final SettingsService settingsService;
 
-    @Autowired
-    public SettingsController(SettingsService settingsService) {
-        this.settingsService = settingsService;
-    }
+  @Autowired
+  public SettingsController(SettingsService settingsService) {
+    this.settingsService = settingsService;
+  }
 
-    @GetMapping
-    @Operation(summary = "Get FHIR server settings", description = "Retrieve current FHIR server configuration")
-    public SettingsDTO getSettings() {
-        return settingsService.getSettings();
-    }
+  @GetMapping
+  @Operation(
+      summary = "Get FHIR server settings",
+      description = "Retrieve current FHIR server configuration")
+  public SettingsDTO getSettings() {
+    return settingsService.getSettings();
+  }
 
-    @PutMapping
-    @Operation(summary = "Update FHIR server settings", description = "Update FHIR server configuration")
-    public SettingsDTO updateSettings(@Valid @RequestBody SettingsDTO settingsDto) {
-        return settingsService.updateSettings(settingsDto);
-    }
+  @PutMapping
+  @Operation(
+      summary = "Update FHIR server settings",
+      description = "Update FHIR server configuration")
+  public SettingsDTO updateSettings(@Valid @RequestBody SettingsDTO settingsDto) {
+    return settingsService.updateSettings(settingsDto);
+  }
 }

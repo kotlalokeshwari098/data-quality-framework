@@ -7,51 +7,59 @@ import jakarta.validation.constraints.Size;
 @Schema(description = "FHIR server configuration settings")
 public class SettingsDTO {
 
-    @NotBlank(message = "FHIR URL is required")
-    @Size(max = 500, message = "FHIR URL must not exceed 500 characters")
-    @Schema(description = "FHIR server URL", example = "http://localhost:8080/fhir", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String fhirUrl;
+  @NotBlank(message = "FHIR URL is required")
+  @Size(max = 500, message = "FHIR URL must not exceed 500 characters")
+  @Schema(
+      description = "FHIR server URL",
+      example = "http://localhost:8080/fhir",
+      requiredMode = Schema.RequiredMode.REQUIRED)
+  private String fhirUrl;
 
-    @NotBlank(message = "FHIR username is required")
-    @Size(max = 100, message = "FHIR username must not exceed 100 characters")
-    @Schema(description = "FHIR server username", example = "admin", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String fhirUsername;
+  @NotBlank(message = "FHIR username is required")
+  @Size(max = 100, message = "FHIR username must not exceed 100 characters")
+  @Schema(
+      description = "FHIR server username",
+      example = "admin",
+      requiredMode = Schema.RequiredMode.REQUIRED)
+  private String fhirUsername;
 
-    @NotBlank(message = "FHIR password is required")
-    @Size(max = 100, message = "FHIR password must not exceed 100 characters")
-    @Schema(description = "FHIR server password", example = "password", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String fhirPassword;
+  @NotBlank(message = "FHIR password is required")
+  @Size(max = 100, message = "FHIR password must not exceed 100 characters")
+  @Schema(
+      description = "FHIR server password",
+      example = "password",
+      requiredMode = Schema.RequiredMode.REQUIRED)
+  private String fhirPassword;
 
-    public SettingsDTO() {
-    }
+  public SettingsDTO() {}
 
-    public SettingsDTO(String fhirUrl, String fhirUsername, String fhirPassword) {
-        this.fhirUrl = fhirUrl;
-        this.fhirUsername = fhirUsername;
-        this.fhirPassword = fhirPassword;
-    }
+  public SettingsDTO(String fhirUrl, String fhirUsername, String fhirPassword) {
+    this.fhirUrl = fhirUrl;
+    this.fhirUsername = fhirUsername;
+    this.fhirPassword = fhirPassword;
+  }
 
-    public String getFhirUrl() {
-        return fhirUrl;
-    }
+  public String getFhirUrl() {
+    return fhirUrl;
+  }
 
-    public void setFhirUrl(String fhirUrl) {
-        this.fhirUrl = fhirUrl;
-    }
+  public void setFhirUrl(String fhirUrl) {
+    this.fhirUrl = fhirUrl;
+  }
 
-    public String getFhirUsername() {
-        return fhirUsername;
-    }
+  public String getFhirUsername() {
+    return fhirUsername;
+  }
 
-    public void setFhirUsername(String fhirUsername) {
-        this.fhirUsername = fhirUsername;
-    }
+  public void setFhirUsername(String fhirUsername) {
+    this.fhirUsername = fhirUsername;
+  }
 
-    public String getFhirPassword() {
-        return fhirPassword;
-    }
+  public String getFhirPassword() {
+    return fhirPassword;
+  }
 
-    public void setFhirPassword(String fhirPassword) {
-        this.fhirPassword = fhirPassword;
-    }
+  public void setFhirPassword(String fhirPassword) {
+    this.fhirPassword = fhirPassword;
+  }
 }
