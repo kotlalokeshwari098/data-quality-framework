@@ -91,7 +91,8 @@ public class Blaze implements FHIRStore {
     String decodedPassword = new String(Base64.getDecoder().decode(settings.getFhirPassword()));
 
     IGenericClient newClient = ctx.newRestfulGenericClient(settings.getFhirUrl());
-    BasicAuthInterceptor newAuthInterceptor = new BasicAuthInterceptor(settings.getFhirUsername(), decodedPassword);
+    BasicAuthInterceptor newAuthInterceptor =
+        new BasicAuthInterceptor(settings.getFhirUsername(), decodedPassword);
     newClient.registerInterceptor(newAuthInterceptor);
 
     RestTemplate newRestTemplate = createRestTemplate(settings.getFhirUsername(), decodedPassword);
