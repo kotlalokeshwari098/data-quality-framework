@@ -80,15 +80,8 @@
 </template>
 
 <script setup>
-import { defineProps, ref, reactive, onMounted } from 'vue';
+import {ref, reactive, onMounted } from 'vue';
 import settingsStore from '../stores/settingsStore.js';
-
-const props = defineProps({
-  username: {
-    type: String,
-    required: true
-  }
-});
 
 const isEditingFhir = ref(false);
 const isSaving = ref(false);

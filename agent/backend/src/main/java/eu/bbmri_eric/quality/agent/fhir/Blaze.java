@@ -42,8 +42,8 @@ import org.springframework.web.client.RestTemplate;
 public class Blaze implements FHIRStore {
   private final SettingsService settingsService;
   private static final Logger log = LoggerFactory.getLogger(Blaze.class);
-  private IGenericClient client;
-  private RestTemplate restTemplate;
+  private volatile IGenericClient client;
+  private volatile RestTemplate restTemplate;
   private final RestTemplateBuilder restTemplateBuilder;
   private final HttpHeaders headers;
   private final FhirContext ctx;
@@ -90,10 +90,15 @@ public class Blaze implements FHIRStore {
     SettingsDTO settings = settingsService.getSettings();
     String decodedPassword = new String(Base64.getDecoder().decode(settings.getFhirPassword()));
 
-    this.client = ctx.newRestfulGenericClient(settings.getFhirUrl());
-    this.client.registerInterceptor(
-        new BasicAuthInterceptor(settings.getFhirUsername(), decodedPassword));
-    this.restTemplate = createRestTemplate(settings.getFhirUsername(), decodedPassword);
+    IGenericClient newClient = ctx.newRestfulGenericClient(settings.getFhirUrl());
+    BasicAuthInterceptor newAuthInterceptor = new BasicAuthInterceptor(settings.getFhirUsername(), decodedPassword);
+    newClient.registerInterceptor(newAuthInterceptor);
+
+    RestTemplate newRestTemplate = createRestTemplate(settings.getFhirUsername(), decodedPassword);
+    this.client = newClient;
+    this.restTemplate = newRestTemplate;
+
+    log.info("FHIR clients reinitialized with URL: {}", settings.getFhirUrl());
   }
 
   private String getFhirUrl() {

@@ -17,7 +17,7 @@
               href="#"
               class="nav-link d-flex align-items-center px-3 py-2 fw-medium"
               :class="{ active: activeSection === 'quality' }"
-              @click.prevent="setActiveSection('quality', $event)"
+              @click.prevent="setActiveSection('quality')"
           >
             <i class="bi bi-bar-chart-fill me-2"></i>
             <span v-show="!isCollapsed">Data Quality</span>
@@ -28,7 +28,7 @@
               href="#"
               class="nav-link d-flex align-items-center px-3 py-2 fw-medium"
               :class="{ active: activeSection === 'settings' }"
-              @click.prevent="setActiveSection('settings', $event)"
+              @click.prevent="setActiveSection('settings')"
           >
             <i class="bi bi-gear-fill me-2"></i>
             <span v-show="!isCollapsed">Settings</span>

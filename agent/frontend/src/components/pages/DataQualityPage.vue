@@ -55,7 +55,6 @@
     <SettingsPage
         v-if="activeSection === 'settings'"
         :username="username"
-        @showPasswordModal="showChangePasswordModal"
     />
 
     <footer class="footer bg-secondary text-white text-center">
@@ -137,11 +136,7 @@ onUnmounted(() => {
 
 <style scoped>
 
-.title-section h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  margin: 0;
-}
+
 
 .footer {
   padding: 1rem 0;

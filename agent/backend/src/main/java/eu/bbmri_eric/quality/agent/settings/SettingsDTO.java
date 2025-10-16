@@ -26,8 +26,8 @@ public class SettingsDTO {
   @NotBlank(message = "FHIR password is required")
   @Size(max = 100, message = "FHIR password must not exceed 100 characters")
   @Schema(
-      description = "FHIR server password",
-      example = "password",
+      description = "FHIR server password (Base64-encoded)",
+      example = "cGFzc3dvcmQ=",
       requiredMode = Schema.RequiredMode.REQUIRED)
   private String fhirPassword;
 
