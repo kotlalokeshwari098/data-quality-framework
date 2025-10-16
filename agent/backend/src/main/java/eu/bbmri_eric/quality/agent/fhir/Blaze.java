@@ -13,6 +13,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -89,17 +90,18 @@ public class Blaze implements FHIRStore {
 
   private synchronized void initializeClients() {
     SettingsDTO settings = settingsService.getSettings();
+    String decodedPassword = new String(Base64.getDecoder().decode(settings.getFhirPassword()));
 
     this.client = ctx.newRestfulGenericClient(settings.getFhirUrl());
-    this.client.registerInterceptor(new BasicAuthInterceptor(settings.getFhirUsername(), settings.getFhirPassword()));
-    this.restTemplate = createRestTemplate(settings);
+    this.client.registerInterceptor(new BasicAuthInterceptor(settings.getFhirUsername(), decodedPassword));
+    this.restTemplate = createRestTemplate(settings.getFhirUsername(), decodedPassword);
   }
 
   private String getFhirUrl() {
     return settingsService.getSettings().getFhirUrl();
   }
 
-  private RestTemplate createRestTemplate(SettingsDTO settings) {
+  private RestTemplate createRestTemplate(String username, String password) {
     try {
       SSLContext sslContext =
           org.apache.hc.core5.ssl.SSLContextBuilder.create()
@@ -126,13 +128,13 @@ public class Blaze implements FHIRStore {
 
       return restTemplateBuilder
           .requestFactory(() -> requestFactory)
-          .basicAuthentication(settings.getFhirUsername(), settings.getFhirPassword())
+          .basicAuthentication(username, password)
           .build();
 
     } catch (Exception e) {
       log.warn("Failed to create SSL-configured RestTemplate, falling back to default", e);
       return restTemplateBuilder
-          .basicAuthentication(settings.getFhirUsername(), settings.getFhirPassword())
+          .basicAuthentication(username, password)
           .build();
     }
   }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Base64;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -14,7 +15,6 @@ import java.util.stream.StreamSupport;
 public class SettingsService {
 
     private final ObjectMapper objectMapper;
-
     private final SettingsRepository settingsRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -25,7 +25,7 @@ public class SettingsService {
     }
 
     public SettingsDTO getSettings() {
-        Map<String , String> values = loadSettingsMap();
+        Map<String, String> values = loadSettingsMap();
         return objectMapper.convertValue(values, SettingsDTO.class);
     }
 

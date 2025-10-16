@@ -5,4 +5,4 @@ CREATE TABLE settings (
 
 INSERT INTO settings (setting_name, setting_value) VALUES ('fhirUrl', 'http://localhost:8080/fhir');
 INSERT INTO settings (setting_name, setting_value) VALUES ('fhirUsername', 'fhiruser');
-INSERT INTO settings (setting_name, setting_value) VALUES ('fhirPassword', 'fhirpass');
+INSERT INTO settings (setting_name, setting_value) VALUES ('fhirPassword', 'ZmhpcnBhc3M=');

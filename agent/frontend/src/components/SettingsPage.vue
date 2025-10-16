@@ -104,8 +104,28 @@ const editableFhirSettings = reactive({
   password: ''
 });
 
+function decodeBase64(encoded) {
+  try {
+    return atob(encoded);
+  } catch (e) {
+    console.error('Error decoding Base64:', e);
+    return '';
+  }
+}
+
+function encodeBase64(text) {
+  try {
+    return btoa(text);
+  } catch (e) {
+    console.error('Error encoding Base64:', e);
+    return '';
+  }
+}
+
 function startEditingFhir() {
-  Object.assign(editableFhirSettings, fhirSettings);
+  editableFhirSettings.url = fhirSettings.url;
+  editableFhirSettings.username = fhirSettings.username;
+  editableFhirSettings.password = fhirSettings.password ? decodeBase64(fhirSettings.password) : '';
   isEditingFhir.value = true;
 }
 
@@ -121,11 +141,13 @@ async function saveFhirSettings() {
     const payload = {
       fhirUrl: editableFhirSettings.url,
       fhirUsername: editableFhirSettings.username,
-      fhirPassword: editableFhirSettings.password
+      fhirPassword: encodeBase64(editableFhirSettings.password)
     };
 
     await settingsStore.updateSettings(payload);
-    Object.assign(fhirSettings, editableFhirSettings);
+    fhirSettings.url = editableFhirSettings.url;
+    fhirSettings.username = editableFhirSettings.username;
+    fhirSettings.password = payload.fhirPassword;
     isEditingFhir.value = false;
   } catch (error) {
     console.error('Error saving FHIR settings:', error);
