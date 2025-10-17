@@ -1,0 +1,111 @@
+<template>
+  <div class="card border-0 shadow-sm h-100 quality-check-card">
+    <div class="card-body p-3 position-relative d-flex flex-column">
+      <!-- Icon in top right corner -->
+      <div class="position-absolute top-0 end-0 p-3">
+        <i class="bi bi-clipboard-data-fill text-primary opacity-75" style="font-size: 1.5rem;"></i>
+      </div>
+
+      <!-- Check Name -->
+      <div class="mb-3">
+        <p class="text-muted mb-0 fw-bold" style="font-size: 1rem; line-height: 1.3;">
+          {{ check.checkName }}
+        </p>
+        <small class="text-muted font-monospace d-block" style="font-size: 0.7rem; opacity: 0.6;">
+          {{ check.checkId }}{{ check.stratum ? ` - ${check.stratum}` : '' }}
+        </small>
+      </div>
+
+      <!-- Main Result Display -->
+      <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center mb-3">
+        <div
+          class="display-4 fw-bold mb-2"
+          :class="getResultColorClass(check)"
+          style="line-height: 1;"
+        >
+          {{ formatPercentage(check.obfuscatedValue) }}%
+        </div>
+        <div class="text-muted" style="font-size: 0.9rem;">
+          Occurrence Rate
+        </div>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="mt-auto">
+        <div class="row g-2 text-center mb-2">
+          <div class="col-6">
+            <small class="text-muted d-block" style="font-size: 0.75rem;">Epsilon Used</small>
+            <strong style="font-size: 0.9rem;">{{ check.epsilon }}</strong>
+          </div>
+          <div class="col-6">
+            <small class="text-muted d-block" style="font-size: 0.75rem;">Patients</small>
+            <strong style="font-size: 0.9rem;">{{ check.patients?.length || 0 }}</strong>
+          </div>
+        </div>
+
+        <!-- Threshold Info -->
+        <div class="pt-2 border-top">
+          <div class="d-flex justify-content-between align-items-center" style="font-size: 0.85rem;">
+            <span class="text-muted">Thresholds:</span>
+            <span>
+              <span class="text-warning fw-bold">{{ check.warningThreshold }}%</span>
+              <span class="text-muted mx-1">/</span>
+              <span class="text-danger fw-bold">{{ check.errorThreshold }}%</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Error Message if present -->
+        <div v-if="check.error" class="alert alert-danger p-2 mt-2 mb-0" style="font-size: 0.75rem;">
+          <i class="bi bi-exclamation-triangle-fill me-1"></i>
+          {{ check.error }}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+const props = defineProps({
+  check: {
+    type: Object,
+    required: true
+  },
+  totalEntities: {
+    type: Number,
+    required: true
+  }
+})
+
+const formatPercentage = (value) => {
+  const percentage = (value / props.totalEntities) * 100
+  return percentage.toFixed(1)
+}
+
+const getResultColorClass = (check) => {
+  const percentage = parseFloat(formatPercentage(check.obfuscatedValue))
+
+  if (percentage >= check.errorThreshold || check.error) {
+    return 'text-danger'
+  } else if (percentage >= check.warningThreshold) {
+    return 'text-warning'
+  }
+  return 'text-success'
+}
+</script>
+
+<style scoped>
+.quality-check-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, box-shadow;
+}
+
+.quality-check-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.font-monospace {
+  font-family: 'Courier New', monospace;
+}
+</style>

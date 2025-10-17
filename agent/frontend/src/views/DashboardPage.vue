@@ -11,21 +11,98 @@
 
     <div class="page-content">
       <HealthStatusBanner v-if="healthStore.healthStatus?.status !== 'UP'" />
-      <DataQualityReports />
+
+      <!-- Loading Spinner -->
+      <div v-if="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-3">Loading reports...</p>
+      </div>
+
+      <template v-else>
+        <!-- Statistics Grid -->
+        <div class="stats-grid mb-4">
+          <StatCard
+            :number="totalReports"
+            label="Total Reports"
+            numberClass="text-primary"
+          />
+          <StatCard
+            :number="successfulChecks"
+            label="Successful Checks"
+            numberClass="text-success"
+          />
+          <StatCard
+            :number="errorChecks"
+            label="Errors"
+            numberClass="text-danger"
+          />
+          <StatCard
+            :number="warningChecks"
+            label="Warnings"
+            numberClass="text-warning"
+          />
+        </div>
+
+        <!-- Generate Report Section -->
+        <div class="card mb-4 border-0 shadow-sm" v-if="latestReport">
+          <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-0">Latest Report</h5>
+              <small class="text-muted">Generated: {{ formatDate(latestReport.generatedAt) }}</small>
+            </div>
+            <button
+              class="btn btn-success"
+              @click="generateReportWithReset"
+              :disabled="reportStore.isGenerating || healthStore.healthStatus?.status !== 'UP'"
+            >
+              <span v-if="reportStore.isGenerating" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ reportStore.isGenerating ? 'Generating...' : 'Generate New Report' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- No Reports State -->
+        <div v-if="!latestReport && !reportStore.isGenerating" class="text-center py-5">
+          <i class="bi bi-clipboard-data display-1 text-muted opacity-50"></i>
+          <p class="text-muted mt-3">No reports available.</p>
+          <button
+            class="btn btn-success"
+            @click="generateReportWithReset"
+            :disabled="healthStore.healthStatus?.status !== 'UP'"
+          >
+            Generate First Report
+          </button>
+        </div>
+
+        <!-- Quality Checks Grid -->
+        <div v-if="latestReport?.results" class="quality-checks-grid">
+          <QualityCheckCard
+            v-for="result in latestReport.results"
+            :key="getCheckKey(result)"
+            :check="result"
+            :total-entities="latestReport.numberOfEntities"
+          />
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
-import DataQualityReports from "@/components/DataQualityReports.vue";
 import HealthStatusBanner from "@/components/HealthStatusBanner.vue";
 import PasswordChangeModal from "@/components/PasswordChangeModal.vue";
 import PageHeader from "@/components/PageHeader.vue";
+import StatCard from "@/components/StatCard.vue";
+import QualityCheckCard from "@/components/QualityCheckCard.vue";
 import { useUserStore } from '@/stores/userStore.js';
 import healthStore from '@/stores/healthStore.js';
-import { ref, watch } from "vue";
+import reportStore from '@/stores/reportStore.js';
+import { ref, watch, computed, onMounted } from "vue";
 
 const showPasswordModal = ref(false);
+const isLoading = ref(true);
 
 const { initializeDefaultPasswordStatus } = useUserStore();
 
@@ -38,11 +115,136 @@ watch(showPasswordModal, (newValue) => {
 const closePasswordModal = () => {
   showPasswordModal.value = false;
 };
+
+// Load reports on page mount
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    await Promise.all([
+      reportStore.fetchReports(),
+      healthStore.checkHealth()
+    ]);
+  } catch (error) {
+    console.error('Error loading dashboard data:', error);
+  } finally {
+    isLoading.value = false;
+  }
+});
+
+// Computed properties for statistics
+const totalReports = computed(() => {
+  return reportStore.reports.length;
+});
+
+const latestReport = computed(() => {
+  if (!reportStore.reports.length) return null;
+  return [...reportStore.reports].sort((a, b) => new Date(b.generatedAt) - new Date(a.generatedAt))[0];
+});
+
+const calculatePercentage = (result) => {
+  const total = latestReport.value?.numberOfEntities || 1;
+  return (result.obfuscatedValue / total) * 100;
+};
+
+const successfulChecks = computed(() => {
+  if (!latestReport.value?.results) return 0;
+  return latestReport.value.results.filter(result => {
+    const percentage = calculatePercentage(result);
+    return percentage < result.warningThreshold && !result.error;
+  }).length;
+});
+
+const errorChecks = computed(() => {
+  if (!latestReport.value?.results) return 0;
+  return latestReport.value.results.filter(result => {
+    const percentage = calculatePercentage(result);
+    return percentage >= result.errorThreshold || result.error;
+  }).length;
+});
+
+const warningChecks = computed(() => {
+  if (!latestReport.value?.results) return 0;
+  return latestReport.value.results.filter(result => {
+    const percentage = calculatePercentage(result);
+    return percentage >= result.warningThreshold && percentage < result.errorThreshold && !result.error;
+  }).length;
+});
+
+const getCheckKey = (result) => {
+  return result.checkId + '_' + (result.stratum || 'all');
+};
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+const generateReportWithReset = async () => {
+  await reportStore.generateReport();
+};
 </script>
 
 <style scoped>
-.dashboard-page { min-height: 100%; padding: 2rem; }
-.page-content { max-width: 1400px; margin: 0 auto; }
-@media (max-width: 768px) { .dashboard-page { padding: 1rem; } }
-@media (max-width: 576px) { .dashboard-page { padding: 0.75rem; } }
+.dashboard-page {
+  min-height: 100%;
+  padding: 2rem;
+}
+
+.page-content {
+  width: 100%;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.quality-checks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.quality-checks-grid > * {
+  min-height: 150px;
+}
+
+/* Desktop Layout */
+@media (min-width: 992px) {
+  .quality-checks-grid {
+    grid-template-columns: repeat(auto-fill, 480px);
+  }
+
+  .quality-checks-grid > * {
+    height: 480px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-page { padding: 1rem; }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-page { padding: 0.75rem; }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .quality-checks-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
