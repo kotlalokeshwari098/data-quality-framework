@@ -79,12 +79,11 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-@import './base.css';
 
 #app {
   max-width: 100%;
@@ -111,4 +110,3 @@ a {
   #app {
   }
 }
-

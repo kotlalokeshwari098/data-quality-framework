@@ -15,12 +15,16 @@
       <!-- Navigation Menu -->
       <nav class="sidebar-nav">
         <router-link to="/dashboard" class="nav-link" :class="{ active: $route.path === '/dashboard' }" @click="closeMobileMenu">
-          <i class="bi bi-speedometer2"></i>
+          <i class="bi bi-grid-3x3-gap-fill"></i>
           <span>Dashboard</span>
         </router-link>
         <router-link to="/quality-checks" class="nav-link" :class="{ active: $route.path === '/quality-checks' }" @click="closeMobileMenu">
-          <i class="bi bi-check2-square"></i>
+          <i class="bi bi-clipboard-check-fill"></i>
           <span>Quality Checks</span>
+        </router-link>
+        <router-link to="/reports" class="nav-link" :class="{ active: $route.path === '/reports' }" @click="closeMobileMenu">
+          <i class="bi bi-file-earmark-text-fill"></i>
+          <span>Reports</span>
         </router-link>
         <router-link to="/settings" class="nav-link" :class="{ active: $route.path === '/settings' }" @click="closeMobileMenu">
           <i class="bi bi-gear-fill"></i>
