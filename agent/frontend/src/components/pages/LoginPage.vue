@@ -1,41 +1,122 @@
 <template>
-  <div class="app-container">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm px-4">
-      <div class="container-fluid">
-        <div class="ms-auto d-flex align-items-center text-white">
-          <i class="bi bi-person-fill fs-4 me-2"></i>
-        </div>
-      </div>
-    </nav>
+  <div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="row w-100 justify-content-center">
+      <div class="col-12 col-xl-10">
+        <div class="card shadow-lg border-0 overflow-hidden mobile-card">
+          <div class="row g-0 min-vh-75">
+            <!-- Left side - Info panel (hidden on small screens) -->
+            <div class="col-lg-6 d-none d-lg-flex">
+              <div class="info-panel p-4 p-xl-5 d-flex flex-column justify-content-center w-100">
+                <div>
+                  <h1 class="display-5 fw-bold mb-3">Data Quality Agent</h1>
+                  <p class="lead mb-4">Local Repository Data Quality Monitoring</p>
 
-    <header class="title-section">
-      <h1>Data Quality Agent</h1>
-    </header>
+                  <div class="mb-4">
+                    <div class="mb-4">
+                      <h5 class="fw-semibold mb-2">Local Data Validation</h5>
+                      <p class="text-light mb-0">Performs comprehensive data quality checks directly on your local repository or biobank data.</p>
+                    </div>
 
-    <main class="main-content d-flex justify-content-center align-items-start pt-5">
-      <div class="card shadow-lg p-4 rounded-4" style="max-width: 400px; width: 100%;">
-        <h3 class="mb-3 text-center">Login</h3>
+                    <div class="mb-4">
+                      <h5 class="fw-semibold mb-2">Automated Quality Reports</h5>
+                      <p class="text-light mb-0">Generates detailed quality reports and automatically submits them to the central monitoring server.</p>
+                    </div>
 
-        <div v-if="error" class="alert alert-danger py-2" role="alert">
-          {{ error }}
-        </div>
+                    <div class="mb-4">
+                      <h5 class="fw-semibold mb-2">CQL-Based Checks</h5>
+                      <p class="text-light mb-0">Executes configurable Clinical Quality Language (CQL) checks to ensure data integrity and compliance.</p>
+                    </div>
+                  </div>
 
-        <form @submit.prevent="login" class="d-flex flex-column gap-3" novalidate>
-          <input v-model="username" type="text" class="form-control" placeholder="Username" autocomplete="username" required />
-          <input v-model="password" type="password" class="form-control" placeholder="Password" autocomplete="current-password" required />
-          <div class="d-flex justify-content-between align-items-center">
-            <button type="submit" class="btn btn-primary" :disabled="loading">
-              <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              {{ loading ? 'Signing in...' : 'Login' }}
-            </button>
+                  <div class="border-top border-secondary pt-4">
+                    <div class="row text-center">
+                      <div class="col-4">
+                        <div class="h4 fw-bold mb-1">CQL</div>
+                        <small class="text-uppercase text-light">Quality Checks</small>
+                      </div>
+                      <div class="col-4">
+                        <div class="h4 fw-bold mb-1">Auto</div>
+                        <small class="text-uppercase text-light">Reporting</small>
+                      </div>
+                      <div class="col-4">
+                        <div class="h4 fw-bold mb-1">24/7</div>
+                        <small class="text-uppercase text-light">Monitoring</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right side - Login form -->
+            <div class="col-lg-6 col-12">
+              <div class="p-3 p-sm-4 p-lg-5 d-flex flex-column justify-content-center h-100">
+                <div class="w-100 login-form-container">
+                  <!-- Mobile header (visible only on small screens) -->
+                  <div class="d-lg-none text-center mb-4 mobile-header">
+                    <div class="brand-icon-mobile mx-auto mb-3">
+                      <i class="bi bi-bar-chart-fill"></i>
+                    </div>
+                    <h2 class="h4 fw-bold text-dark mb-2">Data Quality Agent</h2>
+                    <p class="text-muted small">Local repository monitoring</p>
+                  </div>
+
+                  <div class="text-center mb-4">
+                    <h1 class="h4 h-lg-3 fw-bold text-dark mb-2">Welcome Back</h1>
+                    <p class="text-muted mb-0 small">Please sign in to your account</p>
+                  </div>
+
+                  <form @submit.prevent="login" class="login-form" novalidate>
+                    <div class="mb-3">
+                      <label for="username" class="form-label fw-semibold">Username</label>
+                      <input
+                        id="username"
+                        v-model="username"
+                        type="text"
+                        class="form-control form-control-mobile"
+                        :class="{ 'is-invalid': error && !loading }"
+                        placeholder="Enter your username"
+                        :disabled="loading"
+                        required
+                        autocomplete="username"
+                      />
+                    </div>
+
+                    <div class="mb-4">
+                      <label for="password" class="form-label fw-semibold">Password</label>
+                      <input
+                        id="password"
+                        v-model="password"
+                        type="password"
+                        class="form-control form-control-mobile"
+                        :class="{ 'is-invalid': error && !loading }"
+                        placeholder="Enter your password"
+                        :disabled="loading"
+                        required
+                        autocomplete="current-password"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      class="btn btn-primary w-100 py-3 fw-semibold btn-mobile"
+                      :disabled="loading"
+                    >
+                      <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                      {{ loading ? 'Signing in...' : 'Sign In' }}
+                    </button>
+
+                    <div v-if="error" class="alert alert-danger mt-3 mb-0">
+                      {{ error }}
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
-    </main>
-
-    <footer class="footer bg-secondary text-white text-center">
-      © 2025 BBMRI-ERIC
-    </footer>
+    </div>
   </div>
 </template>
 
@@ -71,34 +152,138 @@ async function login() {
 </script>
 
 <style scoped>
-.app-container {
+.min-vh-75 {
+  min-height: 75vh;
+}
+
+.mobile-card {
+  border-radius: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Info Panel - Gradient Background */
+.info-panel {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.info-panel h1 {
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-panel .lead {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.info-panel h5 {
+  color: white;
+}
+
+.info-panel .text-light {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.info-panel .border-secondary {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Mobile Header */
+.brand-icon-mobile {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.title-section,
-.main-content {
-  background-color: #e9ecef;
+/* Form Styling */
+.login-form-container {
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.title-section {
-  text-align: center;
-  padding: 2rem 1rem;
+.form-label {
+  color: #374151;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 
-.title-section h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  margin: 0;
+.form-control,
+.form-control-mobile {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
 }
 
-.main-content {
-  flex-grow: 1;
-  padding: 2rem 1rem;
+.form-control:focus,
+.form-control-mobile:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.footer {
-  padding: 1rem 0;
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Mobile Responsive */
+@media (max-width: 991px) {
+  .mobile-card {
+    margin: 1rem;
+  }
+
+  .min-vh-75 {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-header {
+    padding: 1rem 0;
+  }
+
+  .form-control-mobile {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  .btn-mobile {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .mobile-card {
+    margin: 0.5rem;
+    border-radius: 0.75rem;
+  }
 }
 </style>

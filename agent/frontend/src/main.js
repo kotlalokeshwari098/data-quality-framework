@@ -1,12 +1,9 @@
-
-
-import { createApp } from 'vue'
-// main.js or main.ts
+import './assets/main.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
-// Optional: JavaScript for Bootstrap components (dropdowns, modals, etc.)
-import 'bootstrap'
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from './js/index.js';
 
