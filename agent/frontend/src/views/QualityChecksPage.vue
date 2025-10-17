@@ -20,8 +20,7 @@ import PageHeader from "@/components/PageHeader.vue";
 
 <style scoped>
 .quality-checks-page { min-height: 100%; padding: 2rem; }
-.page-content { max-width: 1400px; margin: 0 auto; }
+.page-content { width: 100%; }
 @media (max-width: 768px) { .quality-checks-page { padding: 1rem; } }
 @media (max-width: 576px) { .quality-checks-page { padding: 0.75rem; } }
 </style>
-
