@@ -1,178 +1,227 @@
 <template>
-  <div class="container">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="mb-0">CQL Checks</h2>
-      <button class="btn btn-success" @click="openAddModal">
-        <i class="bi bi-plus me-1"></i>Add Check
-      </button>
+  <div>
+    <!-- Filters and Actions -->
+    <div class="filters-card mb-3 mb-md-4">
+      <div class="filters-content">
+        <div class="search-filter">
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="form-control"
+            placeholder="Search quality checks..."
+          >
+        </div>
+        <div class="results-count">
+          <span class="text-muted small">{{ filteredChecks.length }} checks</span>
+        </div>
+        <button class="btn btn-success" @click="openAddModal">
+          <i class="bi bi-plus me-1"></i>Add Check
+        </button>
+      </div>
     </div>
-    <div>
-      <div v-for="dataQualityCheck in qualityChecks" :key="dataQualityCheck.id" class="card mb-2">
-        <div class="card-body">
-          <h5 class="card-title">{{ dataQualityCheck.name }}</h5>
-          <p class="card-text text-start"><strong>ID:</strong> {{ dataQualityCheck.id }}</p>
-          <p class="card-text text-start"><strong>Description:</strong> {{ dataQualityCheck.description }}</p>
-          <p class="card-text text-start"><strong>Query:</strong> {{ truncateQuery(dataQualityCheck.query) }}</p>
-          <p class="card-text text-start"><strong>Warning Threshold:</strong> {{ dataQualityCheck.warningThreshold }}</p>
-          <p class="card-text text-start"><strong>Error Threshold:</strong> {{ dataQualityCheck.errorThreshold }}</p>
-          <p class="card-text text-start"><strong>Epsilon Budget:</strong> {{ dataQualityCheck.epsilonBudget.toFixed(2) }}</p>
-          <div class="card-actions mt-2">
-            <button class="btn btn-sm btn-primary me-2" @click="openEditModal(dataQualityCheck)" title="Edit">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" @click="confirmDelete(dataQualityCheck.id)" title="Delete">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
+
+    <!-- Loading state -->
+    <div v-if="loading" class="loading-state">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading quality checks...</span>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div v-else-if="error" class="alert alert-danger" role="alert">
+      <h6 class="alert-heading">Error Loading Quality Checks</h6>
+      <p class="mb-0">{{ error }}</p>
+    </div>
+
+    <!-- Empty state -->
+    <div v-else-if="filteredChecks.length === 0" class="empty-state">
+      <div class="empty-state-icon">
+        <i class="bi bi-clipboard-check"></i>
+      </div>
+      <h5 class="empty-state-title">No Quality Checks Found</h5>
+      <p class="empty-state-text">
+        {{ searchQuery ? 'Try adjusting your search criteria' : 'No quality checks are configured yet' }}
+      </p>
+    </div>
+
+    <!-- Quality Checks Table -->
+    <div v-else class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-bottom py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 fw-semibold">CQL Quality Checks</h5>
+          <span class="badge bg-secondary">{{ filteredChecks.length }} checks</span>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div>
+          <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-4">Name</th>
+                <th class="d-none d-md-table-cell">Description</th>
+                <th class="d-none d-lg-table-cell">Query</th>
+                <th class="text-center d-none d-lg-table-cell">Warning</th>
+                <th class="text-center d-none d-lg-table-cell">Error</th>
+                <th class="text-center d-none d-xl-table-cell">Epsilon Budget</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="check in filteredChecks"
+                :key="check.id"
+                class="table-row-hover"
+                @click="openEditModal(check)"
+              >
+                <td class="ps-4">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-check2-square text-primary me-2"></i>
+                    <span class="fw-medium">{{ check.name }}</span>
+                  </div>
+                  <div class="d-md-none small text-muted mt-1">{{ check.description }}</div>
+                </td>
+                <td class="d-none d-md-table-cell">
+                  <span class="text-muted small">{{ check.description || 'No description' }}</span>
+                </td>
+                <td class="d-none d-lg-table-cell">
+                  <code class="font-monospace small text-muted query-code">{{ truncateQuery(check.query, 30) }}</code>
+                </td>
+                <td class="text-center d-none d-lg-table-cell">
+                  <span class="badge bg-warning-subtle text-warning-emphasis">
+                    {{ check.warningThreshold }}
+                  </span>
+                </td>
+                <td class="text-center d-none d-lg-table-cell">
+                  <span class="badge bg-danger-subtle text-danger-emphasis">
+                    {{ check.errorThreshold }}
+                  </span>
+                </td>
+                <td class="text-center d-none d-xl-table-cell">
+                  <span class="text-muted">{{ check.epsilonBudget.toFixed(2) }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- Edit/Create Modal -->
-    <div class="modal fade" id="checkModal" tabindex="-1" aria-labelledby="checkModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="checkModalLabel">{{ isEditing ? 'Edit Check' : 'Add Check' }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="checkName" class="form-label">Name</label>
-              <input v-model="currentCheck.name" class="form-control" id="checkName" placeholder="Enter dataQualityCheck name" />
-            </div>
-            <div class="mb-3">
-              <label for="checkDescription" class="form-label">Description</label>
-              <input v-model="currentCheck.description" class="form-control" id="checkDescription" placeholder="Enter description" />
-            </div>
-            <div class="mb-3">
-              <label for="checkQuery" class="form-label">CQL Query</label>
-              <textarea v-model="currentCheck.query" class="form-control" id="checkQuery" rows="4" placeholder="Enter CQL query"></textarea>
-            </div>
-            <div class="mb-3">
-              <label for="checkWarningThreshold" class="form-label">Warning Threshold</label>
-              <input v-model.number="currentCheck.warningThreshold" type="number" class="form-control" id="checkWarningThreshold" placeholder="Enter warning threshold" />
-            </div>
-            <div class="mb-3">
-              <label for="checkErrorThreshold" class="form-label">Error Threshold</label>
-              <input v-model.number="currentCheck.errorThreshold" type="number" class="form-control" id="checkErrorThreshold" placeholder="Enter error threshold" />
-            </div>
-            <div class="mb-3">
-              <label for="checkEpsilonBudget" class="form-label">Epsilon Budget</label>
-              <input v-model.number="currentCheck.epsilonBudget" type="number" step="0.1" class="form-control" id="checkEpsilonBudget" placeholder="Enter epsilon budget" />
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" @click="saveCheck">{{ isEditing ? 'Update' : 'Create' }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to delete this dataQualityCheck?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger" @click="deleteCheck">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- CQL Check Modal -->
+    <CQLCheckModal
+      ref="modalRef"
+      :show="showModal"
+      :check="selectedCheck"
+      :saving="saving"
+      @close="closeModal"
+      @save="saveCheck"
+      @delete="deleteCheck"
+    />
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
-import * as bootstrap from 'bootstrap';
-import {api} from "../js/api.js";
+import { onMounted, ref, computed } from 'vue';
+import { api } from "../js/api.js";
+import CQLCheckModal from './CQLCheckModal.vue';
 
 const qualityChecks = ref([]);
-const currentCheck = reactive({
-  id: null,
-  name: '',
-  description: '',
-  query: '',
-  warningThreshold: 10,
-  errorThreshold: 30,
-  epsilonBudget: 1.0,
-});
-const isEditing = ref(false);
-const deleteId = ref(null);
+const loading = ref(false);
+const saving = ref(false);
+const error = ref(null);
+const searchQuery = ref('');
+const showModal = ref(false);
+const selectedCheck = ref(null);
+const modalRef = ref(null);
 
 const url = '/api/cql-queries';
 
+const filteredChecks = computed(() => {
+  if (!searchQuery.value) {
+    return qualityChecks.value;
+  }
+
+  const query = searchQuery.value.toLowerCase();
+  return qualityChecks.value.filter(check =>
+    check.name?.toLowerCase().includes(query) ||
+    check.description?.toLowerCase().includes(query) ||
+    check.query?.toLowerCase().includes(query)
+  );
+});
+
 const fetchChecks = async () => {
+  loading.value = true;
+  error.value = null;
+
   try {
     const { data } = await api.get(url);
     qualityChecks.value = data._embedded?.cqlChecks || [];
-  } catch (error) {
-    console.error('Error fetching qualityChecks:', error);
+  } catch (err) {
+    error.value = err.message || 'Failed to load quality checks';
+    console.error('Error fetching checks:', err);
     qualityChecks.value = [];
+  } finally {
+    loading.value = false;
   }
 };
 
 const openAddModal = () => {
-  isEditing.value = false;
-  Object.assign(currentCheck, { id: null, name: '', description: '', query: '', warningThreshold: 10, errorThreshold: 30, epsilonBudget: 1.0 });
-  new bootstrap.Modal(document.getElementById('checkModal')).show();
+  selectedCheck.value = null;
+  showModal.value = true;
 };
 
-const openEditModal = (dataQualityCheck) => {
-  isEditing.value = true;
-  Object.assign(currentCheck, { ...dataQualityCheck });
-  new bootstrap.Modal(document.getElementById('checkModal')).show();
+const openEditModal = (check) => {
+  selectedCheck.value = check;
+  showModal.value = true;
 };
 
-const saveCheck = async () => {
+const closeModal = () => {
+  showModal.value = false;
+  selectedCheck.value = null;
+};
+
+const saveCheck = async (checkData) => {
+  saving.value = true;
+  error.value = null;
+
   try {
-    if (isEditing.value) {
-      await api.put(`${url}/${currentCheck.id}`, currentCheck);
+    if (checkData.id) {
+      await api.put(`${url}/${checkData.id}`, checkData);
     } else {
-      await api.post(url, currentCheck);
+      await api.post(url, checkData);
     }
     await fetchChecks();
-    bootstrap.Modal.getInstance(document.getElementById('checkModal')).hide();
-  } catch (error) {
-    console.error(`Error ${isEditing.value ? 'updating' : 'adding'} dataQualityCheck:`, error);
+    closeModal();
+
+    // Show success notification
+    modalRef.value?.showSaveSuccess();
+  } catch (err) {
+    error.value = err.message || `Failed to ${checkData.id ? 'update' : 'create'} check`;
+    console.error(`Error ${checkData.id ? 'updating' : 'adding'} check:`, err);
+
+    // Show error notification
+    modalRef.value?.showSaveError(err.message);
+  } finally {
+    saving.value = false;
   }
 };
 
-const confirmDelete = (id) => {
-  deleteId.value = id;
-  new bootstrap.Modal(document.getElementById('deleteModal')).show();
-};
+const deleteCheck = async (id) => {
+  saving.value = true;
+  error.value = null;
 
-const deleteCheck = async () => {
   try {
-    await api.delete(`${url}/${deleteId.value}`);
+    await api.delete(`${url}/${id}`);
     await fetchChecks();
-    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-  } catch (error) {
-    console.error('Error deleting dataQualityCheck:', error);
+    closeModal();
+  } catch (err) {
+    error.value = err.message || 'Failed to delete check';
+    console.error('Error deleting check:', err);
+  } finally {
+    saving.value = false;
   }
 };
 
-const getCheckResult = (dataQualityCheck) => {
-  // Mock result based on CQLCheck.execute (replace with actual API call if available)
-  return Math.random() * 2;
-};
-
-const isEpsilonOverBudget = (dataQualityCheck) => {
-  return getCheckResult(dataQualityCheck) > dataQualityCheck.epsilonBudget;
-};
-
-const truncateQuery = (query) => {
-  const maxLength = 50;
+const truncateQuery = (query, maxLength = 50) => {
+  if (!query) return '';
   return query.length > maxLength ? `${query.slice(0, maxLength)}...` : query;
 };
 
@@ -180,48 +229,135 @@ onMounted(fetchChecks);
 </script>
 
 <style scoped>
-.card {
-  border: 1px solid #dee2e6;
-  border-radius: 0.375rem;
+/* Filters */
+.filters-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filters-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.search-filter {
+  flex: 1;
+  min-width: 200px;
+}
+
+.results-count {
   margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
 }
-.card:hover {
-  transform: translateY(-2px);
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
 }
-.card-body {
-  padding: 0.75rem;
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
-.card-title {
-  font-size: 1.1rem;
+
+.empty-state-icon {
+  font-size: 4rem;
+  color: #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  color: #2c3e50;
+  font-weight: 600;
   margin-bottom: 0.5rem;
 }
-.card-text {
+
+.empty-state-text {
+  color: #6c757d;
+  margin-bottom: 0;
+}
+
+/* Table Styling */
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table {
   font-size: 0.875rem;
-  margin-bottom: 0.25rem;
+  table-layout: fixed;
+  width: 100%;
 }
-.card-actions {
-  margin-top: 0.5rem;
+
+.table th {
+  font-weight: 600;
+  font-size: 0.813rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  padding: 1rem 0.75rem;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
 }
-.warning {
-  background-color: #fef2f2;
-  color: #b91c1c;
-  padding: 0.5rem;
-  border: 1px solid #b91c1c;
-  border-radius: 0.25rem;
-  display: flex;
-  align-items: center;
+
+.table td {
+  vertical-align: middle;
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
   font-size: 0.875rem;
-  margin-top: 0.5rem;
+  word-wrap: break-word;
 }
-.warning-icon {
-  margin-right: 0.5rem;
-  font-size: 1rem;
+
+.query-code {
+  max-width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.btn-sm {
+
+.table-row-hover {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.table-row-hover:hover {
+  background-color: #f8f9fa;
+  transform: translateX(2px);
+  box-shadow: inset 3px 0 0 #0d6efd;
+}
+
+.font-monospace {
+  font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 0.35rem 0.65rem;
   font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filters-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .results-count {
+    margin-left: 0;
+  }
 }
 </style>
