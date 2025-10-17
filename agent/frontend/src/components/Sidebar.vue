@@ -2,7 +2,7 @@
   <aside class="sidebar" :class="{ show: showMobileMenu }">
     <div class="sidebar-container">
       <!-- Brand -->
-      <router-link to="/" class="sidebar-brand">
+      <router-link to="/dashboard" class="sidebar-brand">
         <div class="brand-icon">
           <i class="bi bi-bar-chart-fill"></i>
         </div>
@@ -14,9 +14,13 @@
 
       <!-- Navigation Menu -->
       <nav class="sidebar-nav">
-        <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }" @click="closeMobileMenu">
-          <i class="bi bi-grid-3x3-gap-fill"></i>
+        <router-link to="/dashboard" class="nav-link" :class="{ active: $route.path === '/dashboard' }" @click="closeMobileMenu">
+          <i class="bi bi-speedometer2"></i>
           <span>Dashboard</span>
+        </router-link>
+        <router-link to="/quality-checks" class="nav-link" :class="{ active: $route.path === '/quality-checks' }" @click="closeMobileMenu">
+          <i class="bi bi-check2-square"></i>
+          <span>Quality Checks</span>
         </router-link>
         <router-link to="/settings" class="nav-link" :class="{ active: $route.path === '/settings' }" @click="closeMobileMenu">
           <i class="bi bi-gear-fill"></i>

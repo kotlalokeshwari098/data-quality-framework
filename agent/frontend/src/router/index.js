@@ -5,7 +5,9 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/login', component: () => import('@/views/LoginPage.vue') },
-        { path: '/', component: () => import('@/views/DataQualityPage.vue'), meta: { requiresAuth: true } },
+        { path: '/', redirect: '/dashboard' },
+        { path: '/dashboard', component: () => import('@/views/DashboardPage.vue'), meta: { requiresAuth: true } },
+        { path: '/quality-checks', component: () => import('@/views/QualityChecksPage.vue'), meta: { requiresAuth: true } },
         { path: '/settings', component: () => import('@/views/SettingsPage.vue'), meta: { requiresAuth: true } },
     ],
 });

@@ -1,23 +1,21 @@
 <template>
-  <div class="data-quality-page">
+  <div class="dashboard-page">
     <PasswordChangeModal :isVisible="showPasswordModal" @close="closePasswordModal" />
 
     <PageHeader
-      title="Data Quality Agent"
-      mobileTitle="Quality"
+      title="Dashboard"
+      mobileTitle="Dashboard"
       subtitle="Monitor and validate your local repository data quality"
-      icon="bi bi-bar-chart-fill"
+      icon="bi bi-speedometer2"
     />
 
     <div class="page-content">
       <DataQualityReports />
-      <CQLCheckTable />
     </div>
   </div>
 </template>
 
 <script setup>
-import CQLCheckTable from "@/components/CQLCheckTable.vue";
 import DataQualityReports from "@/components/DataQualityReports.vue";
 import PasswordChangeModal from "@/components/PasswordChangeModal.vue";
 import PageHeader from "@/components/PageHeader.vue";
@@ -40,8 +38,8 @@ const closePasswordModal = () => {
 </script>
 
 <style scoped>
-.data-quality-page { min-height: 100%; padding: 2rem; }
+.dashboard-page { min-height: 100%; padding: 2rem; }
 .page-content { max-width: 1400px; margin: 0 auto; }
-@media (max-width: 768px) { .data-quality-page { padding: 1rem; } }
-@media (max-width: 576px) { .data-quality-page { padding: 0.75rem; } }
+@media (max-width: 768px) { .dashboard-page { padding: 1rem; } }
+@media (max-width: 576px) { .dashboard-page { padding: 0.75rem; } }
 </style>
