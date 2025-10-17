@@ -291,8 +291,12 @@ jobs:
     permissions:
       packages: write
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.7.0
 
       - name: Download agent image artifact
         uses: actions/download-artifact@v4
@@ -336,6 +340,18 @@ jobs:
             fi
           done
 
+      - name: Sign images with Cosign
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          # Sign each pushed image
+          echo "$TAGS" | while read -r tag; do
+            if [ -n "$tag" ]; then
+              echo "Signing: $tag"
+              cosign sign --yes "$tag"
+            fi
+          done
+
   build-server:
     name: Publish Server Image
     runs-on: ubuntu-latest
@@ -345,8 +361,12 @@ jobs:
     permissions:
       packages: write
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.7.0
 
       - name: Download server image artifact
         uses: actions/download-artifact@v4
@@ -387,6 +407,18 @@ jobs:
               echo "Tagging and pushing: $tag"
               docker tag "$LOADED_IMAGE" "$tag"
               docker push "$tag"
+            fi
+          done
+
+      - name: Sign images with Cosign
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          # Sign each pushed image
+          echo "$TAGS" | while read -r tag; do
+            if [ -n "$tag" ]; then
+              echo "Signing: $tag"
+              cosign sign --yes "$tag"
             fi
           done
 
