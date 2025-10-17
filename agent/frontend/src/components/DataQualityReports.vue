@@ -1,22 +1,5 @@
 <template>
   <div class="card mb-4">
-    <!-- Health Status Banner -->
-    <div v-if="healthStore.healthStatus"
-         :class="['alert', 'mb-0', healthStore.healthStatus.status === 'UP' ? 'alert-success' : 'alert-danger']">
-      <div class="d-flex justify-content-between align-items-center">
-        <span>
-          <i :class="['bi', healthStore.healthStatus.status === 'UP' ? 'bi-check-circle' : 'bi-exclamation-triangle']"></i>
-          FHIR Server: {{ healthStore.healthStatus.status }}
-          <span v-if="healthStore.healthStatus.details?.error"> - {{ healthStore.healthStatus.details.error }}</span>
-        </span>
-        <button class="btn btn-sm btn-outline-secondary"
-                @click="healthStore.checkHealth()"
-                :disabled="healthStore.isChecking">
-          <span v-if="healthStore.isChecking" class="spinner-border spinner-border-sm me-1"></span>
-          Refresh
-        </button>
-      </div>
-    </div>
     <div class="card-header d-flex justify-content-between align-items-center">
       <h2 class="mb-0">Data Quality Reports</h2>
       <button

@@ -10,6 +10,7 @@
     />
 
     <div class="page-content">
+      <HealthStatusBanner />
       <DataQualityReports />
     </div>
   </div>
@@ -17,6 +18,7 @@
 
 <script setup>
 import DataQualityReports from "@/components/DataQualityReports.vue";
+import HealthStatusBanner from "@/components/HealthStatusBanner.vue";
 import PasswordChangeModal from "@/components/PasswordChangeModal.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import { useUserStore } from '@/stores/userStore.js';
