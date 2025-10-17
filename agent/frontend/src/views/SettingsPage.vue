@@ -3,82 +3,88 @@
     <PageHeader
       title="Settings"
       mobileTitle="Settings"
-      subtitle="Configure your FHIR server connection"
+      subtitle="Manage your application preferences and configurations"
       icon="bi bi-gear-fill"
     />
 
     <div class="page-content">
-      <div class="settings-container">
-        <div class="card shadow-sm">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0 fw-semibold">
-              <i class="bi bi-database me-2"></i>
-              FHIR Server
-            </h5>
-            <button
-                v-if="!isEditingFhir"
-                class="btn btn-outline-primary btn-sm"
-                @click="startEditingFhir"
-            >
-              <i class="bi bi-pencil me-1"></i>
-              Edit
-            </button>
+      <HealthStatusBanner/>
+
+      <div class="settings-card">
+        <div class="settings-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">
+                <i class="bi bi-database"></i>
+                FHIR Server
+              </h2>
+              <p class="section-description">
+                Configure your FHIR server connection to access the data
+              </p>
+            </div>
           </div>
-          <div class="card-body">
-            <div v-if="!isEditingFhir">
-              <p class="mb-2"><strong>URL:</strong> {{ fhirSettings.url || 'Not configured' }}</p>
-              <p class="mb-2"><strong>FHIR Username:</strong> {{ fhirSettings.username || 'Not configured' }}</p>
-              <p class="mb-0"><strong>FHIR Password:</strong> {{ fhirSettings.password ? '••••••••' : 'Not configured' }}</p>
+
+          <form @submit.prevent="saveFhirSettings" class="settings-form">
+            <div class="form-group">
+              <label for="fhirUrl" class="form-label">
+                Server URL
+              </label>
+              <input
+                type="url"
+                class="form-control"
+                id="fhirUrl"
+                v-model="fhirSettings.url"
+                placeholder="https://fhir-server.example.com/fhir"
+                required
+              >
+              <small class="form-help">
+                The base URL of your FHIR server endpoint
+              </small>
             </div>
 
-            <div v-else>
-              <form @submit.prevent="saveFhirSettings">
-                <div class="mb-3">
-                  <label for="fhirUrl" class="form-label fw-semibold">FHIR Server URL</label>
-                  <input
-                      type="url"
-                      class="form-control"
-                      id="fhirUrl"
-                      v-model="editableFhirSettings.url"
-                      placeholder="https://fhir-server.com/fhir"
-                      required
-                  >
-                </div>
-                <div class="mb-3">
-                  <label for="fhirUsername" class="form-label fw-semibold">FHIR Username</label>
-                  <input
-                      type="text"
-                      class="form-control"
-                      id="fhirUsername"
-                      v-model="editableFhirSettings.username"
-                      placeholder="Enter FHIR username"
-                      required
-                  >
-                </div>
-                <div class="mb-3">
-                  <label for="fhirPassword" class="form-label fw-semibold">FHIR Password</label>
-                  <input
-                      type="password"
-                      class="form-control"
-                      id="fhirPassword"
-                      v-model="editableFhirSettings.password"
-                      placeholder="Enter FHIR password"
-                      required
-                  >
-                </div>
-                <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-primary" :disabled="isSaving">
-                    <i class="bi bi-check-lg me-1"></i>
-                    {{ isSaving ? 'Saving...' : 'Save' }}
-                  </button>
-                  <button type="button" class="btn btn-secondary" @click="cancelEditingFhir">
-                    <i class="bi bi-x-lg me-1"></i>
-                    Cancel
-                  </button>
-                </div>
-              </form>
+            <div class="form-group">
+              <label for="fhirUsername" class="form-label">
+                Username
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="fhirUsername"
+                v-model="fhirSettings.username"
+                placeholder="Enter username"
+                required
+                autocomplete="username"
+              >
+              <small class="form-help">
+                Username for authenticating with the FHIR server
+              </small>
             </div>
-          </div>
+
+            <div class="form-group">
+              <label for="fhirPassword" class="form-label">
+                Password
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="fhirPassword"
+                v-model="fhirSettings.password"
+                placeholder="Enter password"
+                required
+                autocomplete="current-password"
+              >
+              <small class="form-help">
+                Password for authenticating with the FHIR server
+              </small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" :disabled="isSaving">
+                <i class="bi bi-check-circle me-2"></i>
+                {{ isSaving ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -86,19 +92,16 @@
 </template>
 
 <script setup>
-import {ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, inject } from 'vue';
 import settingsStore from '../stores/settingsStore.js';
 import PageHeader from '../components/PageHeader.vue';
+import HealthStatusBanner from '../components/HealthStatusBanner.vue';
+import healthStore from '../stores/healthStore.js';
 
-const isEditingFhir = ref(false);
 const isSaving = ref(false);
-const fhirSettings = reactive({
-  url: '',
-  username: '',
-  password: ''
-});
+const notify = inject('notify');
 
-const editableFhirSettings = reactive({
+const fhirSettings = reactive({
   url: '',
   username: '',
   password: ''
@@ -122,36 +125,21 @@ function encodeBase64(text) {
   }
 }
 
-function startEditingFhir() {
-  editableFhirSettings.url = fhirSettings.url;
-  editableFhirSettings.username = fhirSettings.username;
-  editableFhirSettings.password = fhirSettings.password ? decodeBase64(fhirSettings.password) : '';
-  isEditingFhir.value = true;
-}
-
-function cancelEditingFhir() {
-  Object.assign(editableFhirSettings, { url: '', username: '', password: '' });
-  isEditingFhir.value = false;
-}
-
 async function saveFhirSettings() {
   isSaving.value = true;
 
   try {
     const payload = {
-      fhirUrl: editableFhirSettings.url,
-      fhirUsername: editableFhirSettings.username,
-      fhirPassword: encodeBase64(editableFhirSettings.password)
+      fhirUrl: fhirSettings.url,
+      fhirUsername: fhirSettings.username,
+      fhirPassword: encodeBase64(fhirSettings.password)
     };
 
     await settingsStore.updateSettings(payload);
-    fhirSettings.url = editableFhirSettings.url;
-    fhirSettings.username = editableFhirSettings.username;
-    fhirSettings.password = payload.fhirPassword;
-    isEditingFhir.value = false;
+    notify.success('Settings Saved', 'Your FHIR server settings have been updated successfully');
   } catch (error) {
     console.error('Error saving FHIR settings:', error);
-    alert('Error saving FHIR settings. Please try again.');
+    notify.error('Save Failed', 'Unable to save settings. Please try again.');
   } finally {
     isSaving.value = false;
   }
@@ -163,7 +151,7 @@ async function loadSettings() {
     if (data) {
       fhirSettings.url = data.fhirUrl || '';
       fhirSettings.username = data.fhirUsername || '';
-      fhirSettings.password = data.fhirPassword || '';
+      fhirSettings.password = data.fhirPassword ? decodeBase64(data.fhirPassword) : '';
     }
   } catch (error) {
     console.error('Error loading settings:', error);
@@ -176,24 +164,174 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.settings-page { min-height: 100%; padding: 2rem; }
-.page-content { margin-top: 1rem; }
-.settings-container { max-width: 800px; margin: 0 auto; }
+.settings-page {
+  min-height: 100%;
+  padding: 2rem;
+}
 
-.card { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
-.card-header { background: #f9fafb; border-bottom: 1px solid #e5e7eb; padding: 1.25rem 1.5rem; }
-.card-body { padding: 1.5rem; }
+.page-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
 
-.form-label { color: #374151; font-size: 0.9rem; margin-bottom: 0.5rem; }
-.form-control { border: 1px solid #d1d5db; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.95rem; transition: all 0.2s ease; }
-.form-control:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+/* Settings Card */
+.settings-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-.btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 8px; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2); }
-.btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3); }
-.btn-secondary { border-radius: 8px; }
-.btn-outline-primary { border-radius: 8px; color: #667eea; border-color: #667eea; }
-.btn-outline-primary:hover { background: #667eea; border-color: #667eea; }
+.settings-section {
+  padding: 2.5rem;
+}
 
-@media (max-width: 768px) { .settings-page { padding: 1rem; } .card-header { padding: 1rem; } .card-body { padding: 1rem; } }
-@media (max-width: 576px) { .settings-page { padding: 0.75rem; } }
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-title i {
+  color: #667eea;
+}
+
+.section-description {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Form Styles */
+.settings-form {
+  max-width: 600px;
+}
+
+.form-group {
+  margin-bottom: 1.75rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.form-help {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* Form Actions */
+.form-actions {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f3f4f6;
+}
+
+.btn {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 1rem;
+  }
+
+  .settings-section {
+    padding: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.35rem;
+  }
+
+  .settings-form {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .settings-page {
+    padding: 0.75rem;
+  }
+
+  .settings-section {
+    padding: 1.25rem;
+  }
+
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>

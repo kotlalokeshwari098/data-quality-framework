@@ -10,7 +10,7 @@
     />
 
     <div class="page-content">
-      <HealthStatusBanner />
+      <HealthStatusBanner v-if="healthStore.healthStatus?.status !== 'UP'" />
       <DataQualityReports />
     </div>
   </div>
@@ -22,6 +22,7 @@ import HealthStatusBanner from "@/components/HealthStatusBanner.vue";
 import PasswordChangeModal from "@/components/PasswordChangeModal.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import { useUserStore } from '@/stores/userStore.js';
+import healthStore from '@/stores/healthStore.js';
 import { ref, watch } from "vue";
 
 const showPasswordModal = ref(false);

@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, provide } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
 import TopNavbar from './components/TopNavbar.vue'
@@ -25,6 +25,22 @@ const router = useRouter()
 const route = useRoute()
 const notificationContainer = ref(null)
 const isAuth = ref(isAuthenticated())
+
+// Provide notification system globally
+provide('notify', {
+  success: (title, message = '', options = {}) => {
+    notificationContainer.value?.showSuccess(title, message, options)
+  },
+  error: (title, message = '', options = {}) => {
+    notificationContainer.value?.showError(title, message, options)
+  },
+  info: (title, message = '', options = {}) => {
+    notificationContainer.value?.showInfo(title, message, options)
+  },
+  warning: (title, message = '', options = {}) => {
+    notificationContainer.value?.showWarning(title, message, options)
+  }
+})
 
 // Watch for route changes to update auth status
 watch(() => route.path, () => {
