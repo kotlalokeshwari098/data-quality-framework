@@ -2,6 +2,7 @@ package eu.bbmri_eric.quality.agent.settings;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "FHIR server configuration settings")
@@ -9,6 +10,7 @@ public class SettingsDTO {
 
   @NotBlank(message = "FHIR URL is required")
   @Size(max = 500, message = "FHIR URL must not exceed 500 characters")
+  @Pattern(regexp = "^https?://.*", message = "FHIR URL must be a valid HTTP or HTTPS URL")
   @Schema(
       description = "FHIR server URL",
       example = "http://localhost:8080/fhir",

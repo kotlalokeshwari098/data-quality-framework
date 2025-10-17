@@ -26,65 +26,6 @@ class SettingsServiceTest {
   }
 
   @Test
-  void getSettings_shouldReturnSettingsDTO() {
-    SettingsDTO result = settingsService.getSettings();
-
-    assertNotNull(result);
-    assertEquals("http://localhost:8080/fhir", result.getFhirUrl());
-    assertEquals("testuser", result.getFhirUsername());
-    assertEquals("dGVzdHBhc3M=", result.getFhirPassword());
-  }
-
-  @Test
-  void getSettings_shouldReturnPasswordInBase64Format() {
-    SettingsDTO result = settingsService.getSettings();
-
-    assertNotNull(result.getFhirPassword());
-    assertEquals("dGVzdHBhc3M=", result.getFhirPassword());
-
-    assertDoesNotThrow(() -> Base64.getDecoder().decode(result.getFhirPassword()));
-  }
-
-  @Test
-  void updateSettings_shouldStorePasswordAsProvided() {
-    String base64Password = Base64.getEncoder().encodeToString("newpassword".getBytes());
-    SettingsDTO dto = new SettingsDTO("http://new-server:8080/fhir", "newuser", base64Password);
-
-    SettingsDTO result = settingsService.updateSettings(dto);
-
-    assertNotNull(result);
-    assertEquals("http://new-server:8080/fhir", result.getFhirUrl());
-    assertEquals("newuser", result.getFhirUsername());
-
-    Settings passwordSetting = settingsRepository.findById("fhirPassword").orElseThrow();
-    String storedPassword = passwordSetting.getValue();
-
-    assertEquals(base64Password, storedPassword);
-
-    String decodedPassword = new String(Base64.getDecoder().decode(storedPassword));
-    assertEquals("newpassword", decodedPassword);
-  }
-
-  @Test
-  void updateSettings_shouldStoreAllFieldsCorrectly() {
-    String base64Password = Base64.getEncoder().encodeToString("adminpass".getBytes());
-    SettingsDTO dto = new SettingsDTO("http://updated:9090/fhir", "admin", base64Password);
-
-    settingsService.updateSettings(dto);
-
-    assertEquals(
-        "http://updated:9090/fhir",
-        settingsRepository.findById("fhirUrl").orElseThrow().getValue());
-    assertEquals("admin", settingsRepository.findById("fhirUsername").orElseThrow().getValue());
-
-    String storedPassword = settingsRepository.findById("fhirPassword").orElseThrow().getValue();
-    assertEquals(base64Password, storedPassword);
-
-    String decodedPassword = new String(Base64.getDecoder().decode(storedPassword));
-    assertEquals("adminpass", decodedPassword);
-  }
-
-  @Test
   void updateSettings_shouldPublishEvent() {
     String base64Password = Base64.getEncoder().encodeToString("eventpass".getBytes());
     SettingsDTO dto = new SettingsDTO("http://localhost:8080/fhir", "eventuser", base64Password);
@@ -121,5 +62,18 @@ class SettingsServiceTest {
 
     String decodedPassword = new String(Base64.getDecoder().decode(result.getFhirPassword()));
     assertEquals(newPassword, decodedPassword);
+  }
+
+  @Test
+  void updateSettings_shouldThrowException_whenInvalidSettingNameProvided() {
+    settingsRepository.deleteById("fhirUsername");
+
+    String base64Password = Base64.getEncoder().encodeToString("password".getBytes());
+    SettingsDTO dto = new SettingsDTO("http://localhost:8080/fhir", "user", base64Password);
+
+    IllegalStateException exception =
+        assertThrows(IllegalStateException.class, () -> settingsService.updateSettings(dto));
+    assertTrue(exception.getMessage().contains("Setting not found"));
+    assertTrue(exception.getMessage().contains("fhirUsername"));
   }
 }

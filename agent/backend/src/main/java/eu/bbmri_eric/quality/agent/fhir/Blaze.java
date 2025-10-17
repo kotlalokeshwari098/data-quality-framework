@@ -7,7 +7,6 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import eu.bbmri_eric.quality.agent.settings.SettingsDTO;
-import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import eu.bbmri_eric.quality.agent.settings.SettingsUpdatedEvent;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -40,16 +39,15 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class Blaze implements FHIRStore {
-  private final SettingsService settingsService;
   private static final Logger log = LoggerFactory.getLogger(Blaze.class);
   private volatile IGenericClient client;
   private volatile RestTemplate restTemplate;
+  private volatile String fhirUrl;
   private final RestTemplateBuilder restTemplateBuilder;
   private final HttpHeaders headers;
   private final FhirContext ctx;
 
-  public Blaze(SettingsService settingsService, RestTemplateBuilder restTemplateBuilder) {
-    this.settingsService = settingsService;
+  public Blaze(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplateBuilder = restTemplateBuilder;
 
     this.ctx =
@@ -76,18 +74,16 @@ public class Blaze implements FHIRStore {
 
     headers = new HttpHeaders();
     headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-
-    initializeClients();
   }
 
   @EventListener
   public void onSettingsUpdated(SettingsUpdatedEvent event) {
     log.info("Settings updated, reinitializing FHIR clients");
-    initializeClients();
+    initializeClients(event.getSettings());
   }
 
-  private synchronized void initializeClients() {
-    SettingsDTO settings = settingsService.getSettings();
+  private synchronized void initializeClients(SettingsDTO settings) {
+
     String decodedPassword = new String(Base64.getDecoder().decode(settings.getFhirPassword()));
 
     IGenericClient newClient = ctx.newRestfulGenericClient(settings.getFhirUrl());
@@ -96,14 +92,19 @@ public class Blaze implements FHIRStore {
     newClient.registerInterceptor(newAuthInterceptor);
 
     RestTemplate newRestTemplate = createRestTemplate(settings.getFhirUsername(), decodedPassword);
+
     this.client = newClient;
     this.restTemplate = newRestTemplate;
+    this.fhirUrl = settings.getFhirUrl();
 
     log.info("FHIR clients reinitialized with URL: {}", settings.getFhirUrl());
   }
 
   private String getFhirUrl() {
-    return settingsService.getSettings().getFhirUrl();
+    if (fhirUrl == null) {
+      throw new IllegalStateException("FHIR clients not initialized. Waiting for settings event.");
+    }
+    return fhirUrl;
   }
 
   private RestTemplate createRestTemplate(String username, String password) {

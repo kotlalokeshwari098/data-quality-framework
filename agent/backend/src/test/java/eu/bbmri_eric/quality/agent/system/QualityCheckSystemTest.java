@@ -29,8 +29,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.HttpClientErrorException;
@@ -61,13 +59,6 @@ public class QualityCheckSystemTest {
     ctx.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
     client = ctx.newRestfulGenericClient(blazeFhirUrl);
     client.registerInterceptor(new PagingUrlInterceptor(blazeContainer.getMappedPort(8080)));
-  }
-
-  @DynamicPropertySource
-  static void dynamicProperties(DynamicPropertyRegistry registry) {
-    String fhirUrl =
-        "http://" + blazeContainer.getHost() + ":" + blazeContainer.getMappedPort(8080) + "/fhir";
-    registry.add("eu.bbmri_eric.quality.agent.fhir_url", () -> fhirUrl);
   }
 
   @BeforeAll

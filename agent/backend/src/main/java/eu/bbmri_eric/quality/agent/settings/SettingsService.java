@@ -33,7 +33,7 @@ public class SettingsService {
   public SettingsDTO updateSettings(SettingsDTO dto) {
     Map<String, Object> dtoMap = objectMapper.convertValue(dto, Map.class);
     dtoMap.forEach((name, value) -> updateSetting(name, value != null ? value.toString() : null));
-    eventPublisher.publishEvent(new SettingsUpdatedEvent(this));
+    eventPublisher.publishEvent(new SettingsUpdatedEvent(this, dto));
     return dto;
   }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Entity
 public class Settings {
@@ -26,6 +27,18 @@ public class Settings {
 
   public String getName() {
     return name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    Settings settings = (Settings) o;
+    return Objects.equals(name, settings.name) && Objects.equals(value, settings.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, value);
   }
 
   public String getValue() {

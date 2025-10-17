@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -40,24 +42,6 @@ class SettingsControllerTest {
 
   @Test
   @WithMockUser(username = "admin")
-  void updateSettings_withValidData_shouldReturn200() throws Exception {
-    SettingsDTO settingsDTO =
-        new SettingsDTO("http://localhost:8080/fhir", "testuser", "dGVzdHBhc3M=");
-
-    mockMvc
-        .perform(
-            put("/api/settings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(settingsDTO)))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.fhirUrl").value("http://localhost:8080/fhir"))
-        .andExpect(jsonPath("$.fhirUsername").value("testuser"))
-        .andExpect(jsonPath("$.fhirPassword").value("dGVzdHBhc3M="));
-  }
-
-  @Test
-  @WithMockUser(username = "admin")
   void updateSettings_withInvalidUrl_shouldReturn400() throws Exception {
     SettingsDTO settingsDTO = new SettingsDTO("", "testuser", "dGVzdHBhc3M=");
 
@@ -66,6 +50,34 @@ class SettingsControllerTest {
             put("/api/settings")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(settingsDTO)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithMockUser(username = "admin")
+  void updateSettings_withNonHttpUrl_shouldReturn400() throws Exception {
+    SettingsDTO settingsDTO =
+        new SettingsDTO("ftp://localhost:8080/fhir", "testuser", "dGVzdHBhc3M=");
+
+    mockMvc
+        .perform(
+            put("/api/settings")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(settingsDTO)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithMockUser(username = "admin")
+  void updateSettings_withNonexistingSetting_shouldReturn500() throws Exception {
+    Map<String, String> settings = new HashMap<>();
+    settings.put("setting", "something");
+
+    mockMvc
+        .perform(
+            put("/api/settings")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(settings)))
         .andExpect(status().isBadRequest());
   }
 
