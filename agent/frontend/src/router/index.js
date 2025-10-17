@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { isAuthenticated } from './api.js';
+import { isAuthenticated } from '@/js/api.js';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: '/login', component: () => import('../components/pages/LoginPage.vue') },
-        { path: '/', component: () => import('../components/pages/DataQualityPage.vue'), meta: { requiresAuth: true } },
-        { path: '/settings', component: () => import('../components/SettingsPage.vue'), meta: { requiresAuth: true } },
+        { path: '/login', component: () => import('@/views/LoginPage.vue') },
+        { path: '/', component: () => import('@/views/DataQualityPage.vue'), meta: { requiresAuth: true } },
+        { path: '/settings', component: () => import('@/views/SettingsPage.vue'), meta: { requiresAuth: true } },
     ],
 });
 

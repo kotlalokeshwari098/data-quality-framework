@@ -123,8 +123,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { authenticate } from '../../js/api.js'
-import { useUserStore } from '../../stores/userStore.js'
+import { authenticate } from '../js/api.js'
+import { useUserStore } from '../stores/userStore.js'
 
 const username = ref('')
 const password = ref('')

@@ -88,7 +88,7 @@
 <script setup>
 import {ref, reactive, onMounted } from 'vue';
 import settingsStore from '../stores/settingsStore.js';
-import PageHeader from './PageHeader.vue';
+import PageHeader from '../components/PageHeader.vue';
 
 const isEditingFhir = ref(false);
 const isSaving = ref(false);

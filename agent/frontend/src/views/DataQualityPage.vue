@@ -17,11 +17,11 @@
 </template>
 
 <script setup>
-import CQLCheckTable from "../CQLCheckTable.vue";
-import DataQualityReports from "../DataQualityReports.vue";
-import PasswordChangeModal from "../PasswordChangeModal.vue";
-import PageHeader from "../PageHeader.vue";
-import { useUserStore } from '../../stores/userStore.js';
+import CQLCheckTable from "@/components/CQLCheckTable.vue";
+import DataQualityReports from "@/components/DataQualityReports.vue";
+import PasswordChangeModal from "@/components/PasswordChangeModal.vue";
+import PageHeader from "@/components/PageHeader.vue";
+import { useUserStore } from '@/stores/userStore.js';
 import { ref, watch } from "vue";
 
 const showPasswordModal = ref(false);
