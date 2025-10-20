@@ -30,13 +30,12 @@
               Change Password
               <span v-if="defaultPasswordFlag" class="badge bg-warning text-dark ms-2">Required</span>
             </button>
+            <button class="dropdown-item-custom dropdown-item-signout" @click="handleLogout">
+              <i class="bi bi-box-arrow-right me-2"></i>
+              Sign Out
+            </button>
           </div>
         </div>
-
-        <button @click="handleLogout" class="signout-btn">
-          <i class="bi bi-box-arrow-right"></i>
-          <span>Sign Out</span>
-        </button>
       </div>
     </div>
   </header>
@@ -213,7 +212,7 @@ onUnmounted(() => {
 
 .dropdown-menu-custom {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 0.25rem);
   right: 0;
   background: white;
   border: 1px solid #e5e7eb;
@@ -221,6 +220,7 @@ onUnmounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-width: 200px;
   z-index: 1000;
+  overflow: hidden;
 }
 
 .dropdown-item-custom {
@@ -241,36 +241,12 @@ onUnmounted(() => {
   background: #f3f4f6;
 }
 
-.signout-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  color: #374151;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-.signout-btn:hover {
-  background: #fee2e2;
-  border-color: #fecaca;
+.dropdown-item-signout {
   color: #dc2626;
-  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
 }
 
-.signout-btn i {
-  font-size: 1.125rem;
-  transition: transform 0.2s ease;
-}
-
-.signout-btn:hover i {
-  transform: translateX(2px);
+.dropdown-item-signout:hover {
+  background: #fee2e2;
 }
 
 /* Mobile Responsive */
@@ -299,20 +275,9 @@ onUnmounted(() => {
     display: none;
   }
 
-  .signout-btn span {
-    display: none;
-  }
-
-  .signout-btn {
-    padding: 0.5rem;
-    min-width: 44px;
-    justify-content: center;
-  }
-
   .warning-tooltip {
     min-width: 200px;
     font-size: 0.75rem;
   }
 }
 </style>
-
