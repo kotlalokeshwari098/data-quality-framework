@@ -10,7 +10,7 @@
     />
 
     <div class="page-content">
-      <HealthStatusBanner v-if="healthStore.healthStatus?.status !== 'UP'" />
+      <HealthStatusBanner />
 
       <!-- Loading Spinner -->
       <div v-if="isLoading" class="text-center py-5">

@@ -137,6 +137,7 @@ async function saveFhirSettings() {
 
     await settingsStore.updateSettings(payload);
     notify.success('Settings Saved', 'Your FHIR server settings have been updated successfully');
+    await healthStore.checkHealth();
   } catch (error) {
     console.error('Error saving FHIR settings:', error);
     notify.error('Save Failed', 'Unable to save settings. Please try again.');
