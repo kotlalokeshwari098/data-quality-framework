@@ -24,12 +24,12 @@
 
 <style scoped>
 .not-found-container {
-  min-height: 100vh;
+  min-height: calc(100vh - 64px);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 8rem 2rem 2rem;
+  padding: 4rem 2rem;
 }
 
 .not-found-content {
@@ -39,26 +39,26 @@
 }
 
 .error-code {
-  font-size: 10rem;
+  font-size: 8rem;
   font-weight: 900;
   color: #dc3545;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   text-shadow: 4px 4px 8px rgba(220, 53, 69, 0.3);
   line-height: 1;
 }
 
 .error-title {
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 800;
   color: #343a40;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   line-height: 1.2;
 }
 
 .error-message {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: #6c757d;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   line-height: 1.6;
   max-width: 600px;
   margin-left: auto;
@@ -78,7 +78,8 @@
 /* Mobile responsive */
 @media (max-width: 768px) {
   .not-found-container {
-    padding: 4rem 1rem 2rem;
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 56px);
   }
 
   .not-found-content {
@@ -86,30 +87,7 @@
   }
 
   .error-code {
-    font-size: 6rem;
-  }
-
-  .error-title {
-    font-size: 2.5rem;
-  }
-
-  .error-message {
-    font-size: 1.2rem;
-  }
-
-  .error-illustration svg {
-    width: 250px;
-    height: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .not-found-container {
-    padding: 3rem 1rem 2rem;
-  }
-
-  .error-code {
-    font-size: 4rem;
+    font-size: 5rem;
   }
 
   .error-title {
@@ -122,7 +100,6 @@
 
   .error-illustration svg {
     width: 200px;
-    height: auto;
   }
 }
 </style>
