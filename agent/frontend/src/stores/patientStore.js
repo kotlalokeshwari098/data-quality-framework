@@ -1,11 +1,11 @@
 import { ref } from 'vue'
-import { api } from '../js/api'
+import { api } from '../js/api.js'
 
 const patientData = ref(null)
 
 async function fetchPatientData(patientId) {
     try {
-        const response = await api.get(`api/entities/Patient/${patientId}`)
+        const response = await api.get(`/api/entities/Patient/${patientId}`)
         patientData.value = response.data
         return response.data
     } catch (error) {

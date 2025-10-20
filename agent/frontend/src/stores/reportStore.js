@@ -3,6 +3,7 @@ import { api } from '../js/api.js'
 
 const store = reactive({
     reports: [],
+    currentReport: null,
     isGenerating: false,
     async fetchReports() {
         try {
@@ -11,6 +12,17 @@ const store = reactive({
         } catch (err) {
             console.error(err)
             store.reports = []
+        }
+    },
+    async fetchReportById(id) {
+        try {
+            const { data } = await api.get(`/api/reports/${id}`)
+            store.currentReport = data
+            return data
+        } catch (err) {
+            console.error(err)
+            store.currentReport = null
+            throw err
         }
     },
     async generateReport() {

@@ -24,7 +24,8 @@
             <tr
               v-for="report in reports"
               :key="report.id"
-              class="table-row-hover"
+              class="table-row-hover clickable"
+              @click="navigateToReport(report.id)"
             >
               <td class="ps-4">
                 <div class="d-flex align-items-center">
@@ -72,6 +73,10 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 const props = defineProps({
   reports: {
     type: Array,
@@ -79,6 +84,10 @@ const props = defineProps({
     default: () => []
   }
 })
+
+const navigateToReport = (reportId) => {
+  router.push(`/reports/${reportId}`)
+}
 
 const formatDateShort = (dateString) => {
   const date = new Date(dateString)
@@ -149,14 +158,16 @@ const getStatusBadgeClass = (report) => {
 }
 
 .table-row-hover {
-  transition: all 0.2s ease-in-out;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .table-row-hover:hover {
   background-color: #f8f9fa;
-  transform: translateX(2px);
-  box-shadow: inset 3px 0 0 #0d6efd;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .font-monospace {
@@ -234,4 +245,3 @@ const getStatusBadgeClass = (report) => {
   }
 }
 </style>
-

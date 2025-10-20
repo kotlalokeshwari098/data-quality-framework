@@ -64,16 +64,24 @@
         </div>
 
         <!-- No Reports State -->
-        <div v-if="!latestReport && !reportStore.isGenerating" class="text-center py-5">
-          <i class="bi bi-clipboard-data display-1 text-muted opacity-50"></i>
-          <p class="text-muted mt-3">No reports available.</p>
-          <button
-            class="btn btn-success"
-            @click="generateReportWithReset"
-            :disabled="healthStore.healthStatus?.status !== 'UP'"
-          >
-            Generate First Report
-          </button>
+        <div v-if="!latestReport" class="text-center py-5">
+          <template v-if="reportStore.isGenerating">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+              <span class="visually-hidden">Generating report...</span>
+            </div>
+            <p class="text-muted mt-3">Generating your first report...</p>
+          </template>
+          <template v-else>
+            <i class="bi bi-clipboard-data display-1 text-muted opacity-50"></i>
+            <p class="text-muted mt-3">No reports available.</p>
+            <button
+              class="btn btn-success"
+              @click="generateReportWithReset"
+              :disabled="healthStore.healthStatus?.status !== 'UP'"
+            >
+              Generate First Report
+            </button>
+          </template>
         </div>
 
         <!-- Quality Checks Grid -->
