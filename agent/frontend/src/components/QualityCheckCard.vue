@@ -10,11 +10,11 @@
       </div>
 
       <!-- Check Name -->
-      <div class="mb-3">
-        <p class="text-muted mb-0 fw-bold" style="font-size: 1rem; line-height: 1.3;">
+      <div class="mb-3 pe-5">
+        <p class="text-muted mb-0 fw-bold text-truncate" style="font-size: 1rem; line-height: 1.3;" :title="check.checkName">
           {{ check.checkName }}
         </p>
-        <small class="text-muted font-monospace d-block" style="font-size: 0.7rem; opacity: 0.6;">
+        <small class="text-muted d-block text-truncate" style="font-size: 0.7rem; opacity: 0.6;" :title="check.checkId + (check.stratum ? ` - ${check.stratum}` : '')">
           {{ check.checkId }}{{ check.stratum ? ` - ${check.stratum}` : '' }}
         </small>
       </div>
@@ -132,7 +132,35 @@ const navigateToCheck = () => {
   cursor: pointer;
 }
 
-.font-monospace {
-  font-family: var(--font-mono);
+/* Responsive adjustments for smaller screens */
+@media (max-width: 576px) {
+  .quality-check-card .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .quality-check-card .pe-5 {
+    padding-right: 3.5rem !important;
+  }
+
+  .quality-check-card .position-absolute.top-0.end-0 {
+    padding: 0.5rem !important;
+  }
+
+  .quality-check-card .position-absolute i {
+    font-size: 1.25rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .quality-check-card .pe-5 {
+    padding-right: 4rem !important;
+  }
+
+  .quality-check-card .text-truncate {
+    max-width: calc(100% - 0.5rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>
