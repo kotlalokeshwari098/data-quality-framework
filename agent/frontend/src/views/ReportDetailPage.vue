@@ -71,7 +71,7 @@
           <div class="card-header bg-white border-bottom">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
               <div>
-                <h5 class="mb-0">Quality Check Results</h5>
+                <h5 class="mb-0">Results</h5>
               </div>
               <div class="d-flex align-items-center gap-3">
                 <span class="badge rounded-pill" :class="getStatusBadgeClass(report)">
@@ -384,17 +384,17 @@ onMounted(async () => {
 }
 
 .result-card.bg-success {
-  background-color: rgba(25, 135, 84, 0.1) !important;
+  background-color: var(--bg-card) !important;
   border-left: 4px solid var(--color-success);
 }
 
 .result-card.bg-warning {
-  background-color: rgba(255, 193, 7, 0.1) !important;
+  background-color: var(--bg-card) !important;
   border-left: 4px solid var(--color-warning);
 }
 
 .result-card.bg-danger {
-  background-color: rgba(220, 53, 69, 0.1) !important;
+  background-color: var(--bg-card) !important;
   border-left: 4px solid var(--color-danger);
 }
 
@@ -404,10 +404,10 @@ onMounted(async () => {
 
 @keyframes highlightPulse {
   0%, 100% {
-    box-shadow: 0 0 0 rgba(13, 110, 253, 0);
+    box-shadow: 0 0 0 rgba(102, 126, 234, 0);
   }
   50% {
-    box-shadow: 0 0 20px 5px rgba(13, 110, 253, 0.5);
+    box-shadow: 0 0 20px 5px rgba(102, 126, 234, 0.5);
   }
 }
 
@@ -434,7 +434,7 @@ onMounted(async () => {
 }
 
 .patient-ids-section {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: var(--color-gray-50);
   padding: var(--spacing-md);
   border-radius: var(--radius-sm);
 }
@@ -446,7 +446,7 @@ onMounted(async () => {
 
 .patient-link {
   text-decoration: none;
-  color: #0d6efd;
+  color: var(--color-primary);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
   transition: background-color var(--transition-base);
@@ -454,7 +454,7 @@ onMounted(async () => {
 }
 
 .patient-link:hover {
-  background-color: rgba(13, 110, 253, 0.1);
+  background-color: var(--bg-hover);
   text-decoration: underline;
 }
 
