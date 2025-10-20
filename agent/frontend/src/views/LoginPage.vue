@@ -84,17 +84,28 @@
 
                     <div class="mb-4">
                       <label for="password" class="form-label fw-semibold">Password</label>
-                      <input
-                        id="password"
-                        v-model="password"
-                        type="password"
-                        class="form-control form-control-mobile"
-                        :class="{ 'is-invalid': error && !loading }"
-                        placeholder="Enter your password"
-                        :disabled="loading"
-                        required
-                        autocomplete="current-password"
-                      />
+                      <div class="password-input-container position-relative">
+                        <input
+                          id="password"
+                          v-model="password"
+                          :type="showPassword ? 'text' : 'password'"
+                          class="form-control form-control-mobile pe-5"
+                          :class="{ 'is-invalid': error && !loading }"
+                          placeholder="Enter your password"
+                          :disabled="loading"
+                          required
+                          autocomplete="current-password"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-link password-toggle-btn position-absolute top-50 end-0 translate-middle-y me-2"
+                          @click="showPassword = !showPassword"
+                          :disabled="loading"
+                          tabindex="-1"
+                        >
+                          <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'" class="text-muted"></i>
+                        </button>
+                      </div>
                     </div>
 
                     <button
@@ -132,6 +143,7 @@ const username = ref('')
 const password = ref('')
 const loading = ref(false)
 const error = ref('')
+const showPassword = ref(false)
 
 const route = useRoute()
 const router = useRouter()
@@ -250,6 +262,21 @@ async function login() {
 .btn-primary:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.password-input-container {
+  position: relative;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 @media (max-width: 991px) {
