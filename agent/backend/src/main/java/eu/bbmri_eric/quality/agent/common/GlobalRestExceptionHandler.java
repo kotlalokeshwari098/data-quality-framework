@@ -3,6 +3,8 @@ package eu.bbmri_eric.quality.agent.common;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
@@ -11,6 +13,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -128,6 +132,29 @@ public class GlobalRestExceptionHandler {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
     problemDetail.setTitle("Access Denied");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ApiResponse(
+      responseCode = "400",
+      description = "Validation Failed",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
+    logger.debug("Validation exception: {}", ex.getMessage());
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
+    problemDetail.setTitle("Validation Failed");
+
+    Map<String, String> validationErrors = new HashMap<>();
+    for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+      validationErrors.put(error.getField(), error.getDefaultMessage());
+    }
+    problemDetail.setProperty("validationErrors", validationErrors);
+
     return problemDetail;
   }
 }
