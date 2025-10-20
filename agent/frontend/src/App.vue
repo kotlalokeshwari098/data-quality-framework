@@ -54,21 +54,6 @@ onMounted(() => {
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f8fafc;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  touch-action: manipulation;
-}
-
 #app {
   min-height: 100vh;
   display: flex;
@@ -78,15 +63,14 @@ body {
 
 .main-content {
   flex: 1;
-  background: #f8fafc;
-  margin-left: 260px;
-  margin-top: 64px;
-  min-height: calc(100vh - 64px);
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  width: calc(100% - 260px);
+  background: var(--bg-page);
+  margin-left: var(--sidebar-width);
+  margin-top: var(--navbar-height);
+  min-height: calc(100vh - var(--navbar-height));
+  transition: margin-left var(--transition-smooth);
+  width: calc(100% - var(--sidebar-width));
 }
 
-/* When not authenticated (login page) */
 .main-content.no-sidebar {
   margin-left: 0;
   margin-top: 0;
@@ -94,13 +78,12 @@ body {
   width: 100%;
 }
 
-/* Mobile-specific styles */
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0;
-    margin-top: 56px;
-    padding: 1rem 0.5rem;
-    min-height: calc(100vh - 56px);
+    margin-top: var(--navbar-height-mobile);
+    padding: var(--spacing-md) var(--spacing-sm);
+    min-height: calc(100vh - var(--navbar-height-mobile));
     width: 100%;
   }
 
