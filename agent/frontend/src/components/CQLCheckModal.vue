@@ -307,25 +307,8 @@ const confirmDelete = () => {
   }, 500);
 };
 
-// Expose method to show notifications from parent
-const showSaveSuccess = () => {
-  const message = isEditing.value
-    ? 'Quality check has been updated successfully'
-    : 'Quality check has been created successfully';
-  notify?.success('Success', message);
-};
-
-const showSaveError = (errorMessage) => {
-  const defaultMessage = isEditing.value
-    ? 'Failed to update quality check'
-    : 'Failed to create quality check';
-  notify?.error('Error', errorMessage || defaultMessage);
-};
-
-defineExpose({
-  showSaveSuccess,
-  showSaveError
-});
+// Emit events for save success and error instead of exposing methods
+// Example usage: emit('save-success', { message: '...' }); emit('save-error', { errorMessage: '...' });
 </script>
 
 <style scoped>
