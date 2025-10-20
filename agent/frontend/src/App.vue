@@ -7,7 +7,6 @@
       <router-view />
     </main>
 
-    <AppFooter v-if="!isAuth" />
     <NotificationContainer ref="notificationContainer" />
   </div>
 </template>

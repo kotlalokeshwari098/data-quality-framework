@@ -3,7 +3,7 @@
     <div class="row w-100 justify-content-center">
       <div class="col-12 col-xl-10">
         <div class="card shadow-lg border-0 overflow-hidden mobile-card">
-          <div class="row g-0 min-vh-75">
+          <div class="row g-0 min-vh-50">
             <!-- Left side - Info panel (hidden on small screens) -->
             <div class="col-lg-6 d-none d-lg-flex">
               <div class="info-panel p-4 p-xl-5 d-flex flex-column justify-content-center w-100">
@@ -115,6 +115,7 @@
             </div>
           </div>
         </div>
+        <Copyright />
       </div>
     </div>
   </div>
@@ -125,6 +126,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { authenticate } from '../js/api.js'
 import { useUserStore } from '../stores/userStore.js'
+import Copyright from '../components/Copyright.vue'
 
 const username = ref('')
 const password = ref('')
@@ -152,8 +154,8 @@ async function login() {
 </script>
 
 <style scoped>
-.min-vh-75 {
-  min-height: 75vh;
+.min-vh-50 {
+  min-height: 50vh;
 }
 
 .mobile-card {
@@ -259,7 +261,7 @@ async function login() {
     margin: 1rem;
   }
 
-  .min-vh-75 {
+  .min-vh-50 {
     min-height: auto;
   }
 }
