@@ -7,14 +7,14 @@
   >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow-lg">
-        <div class="modal-header bg-gradient-purple border-0 text-white py-3">
+        <div class="modal-header bg-gradient-purple border-0 text-white py-4">
           <div class="d-flex align-items-center">
-            <div class="icon-wrapper me-3">
-              <i class="bi bi-key fs-4"></i>
+            <div class="icon-wrapper me-4">
+              <i class="bi bi-key fs-3"></i>
             </div>
             <div>
-              <h5 class="modal-title mb-0">Change Password</h5>
-              <small class="opacity-90">Update your account password</small>
+              <h4 class="modal-title mb-1">Change Password</h4>
+              <p class="opacity-90 mb-0" style="font-size: 0.95rem;">Update your account password</p>
             </div>
           </div>
           <button
@@ -24,54 +24,52 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body p-4">
+        <div class="modal-body p-5">
           <form @submit.prevent="changePassword">
-            <div class="form-section mb-3">
-              <div class="mb-3">
-                <label for="currentPassword" class="form-label fw-semibold">
-                  Current Password <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="currentPassword"
-                  v-model="passwordForm.currentPassword"
-                  placeholder="Enter current password"
-                  required
-                >
-              </div>
-              <div class="mb-3">
-                <label for="newPassword" class="form-label fw-semibold">
-                  New Password <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="newPassword"
-                  v-model="passwordForm.newPassword"
-                  placeholder="Enter new password"
-                  minlength="8"
-                  required
-                >
-                <small class="form-text text-muted">
-                  <i class="bi bi-info-circle me-1"></i>
-                  Password must be at least 8 characters long
-                </small>
-              </div>
-              <div class="mb-3">
-                <label for="confirmPassword" class="form-label fw-semibold">
-                  Confirm New Password <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="confirmPassword"
-                  v-model="passwordForm.confirmPassword"
-                  placeholder="Confirm new password"
-                  minlength="8"
-                  required
-                >
-              </div>
+            <div class="mb-4">
+              <label for="currentPassword" class="form-label fw-semibold">
+                Current Password <span class="text-danger">*</span>
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="currentPassword"
+                v-model="passwordForm.currentPassword"
+                placeholder="Enter current password"
+                required
+              >
+            </div>
+            <div class="mb-4">
+              <label for="newPassword" class="form-label fw-semibold">
+                New Password <span class="text-danger">*</span>
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="newPassword"
+                v-model="passwordForm.newPassword"
+                placeholder="Enter new password"
+                minlength="8"
+                required
+              >
+              <small class="form-text text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Password must be at least 8 characters long
+              </small>
+            </div>
+            <div class="mb-4">
+              <label for="confirmPassword" class="form-label fw-semibold">
+                Confirm New Password <span class="text-danger">*</span>
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="confirmPassword"
+                v-model="passwordForm.confirmPassword"
+                placeholder="Confirm new password"
+                minlength="8"
+                required
+              >
             </div>
             <div v-if="passwordError" class="alert alert-danger py-2 mb-3" role="alert">
               <i class="bi bi-exclamation-circle me-2"></i>
@@ -81,21 +79,14 @@
               <i class="bi bi-check-circle me-2"></i>
               {{ passwordSuccess }}
             </div>
-            <div class="modal-footer-custom bg-light border-0 py-3 d-flex justify-content-center">
+            <div class="modal-footer-custom border-0 py-3 d-flex justify-content-center">
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-secondary" @click="handleClose">
-                  <i class="bi bi-x-circle me-2"></i>
-                  Cancel
-                </button>
-                <button
+                <CancelButton @click="handleClose" />
+                <SaveButton
                   type="submit"
-                  class="btn btn-primary-gradient"
-                  :disabled="isChangingPassword"
-                >
-                  <span v-if="isChangingPassword" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  <i v-else class="bi bi-check-circle me-2"></i>
-                  Change Password
-                </button>
+                  :loading="isChangingPassword"
+                  text="Change Password"
+                />
               </div>
             </div>
           </form>
@@ -108,6 +99,8 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useUserStore } from '../stores/userStore.js';
+import SaveButton from './SaveButton.vue';
+import CancelButton from './CancelButton.vue';
 
 const props = defineProps({
   isVisible: {
@@ -171,11 +164,15 @@ watch(() => props.isVisible, (newValue) => {
   display: flex;
   align-items: center;
   min-height: calc(100% - 3.5rem);
+  max-width: 600px;
+  width: 90%;
+  margin: 0 auto;
 }
 
 .modal-content {
   border-radius: var(--radius-lg);
   overflow: hidden;
+  width: 100%;
 }
 
 .bg-gradient-purple {
@@ -250,24 +247,19 @@ watch(() => props.isVisible, (newValue) => {
 }
 
 .modal-body {
-  background: linear-gradient(to bottom, var(--color-gray-50) 0%, var(--bg-card) 100%);
+  background: var(--bg-card);
 }
 
-.form-section {
-  background: var(--bg-card);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-200);
-}
 
 .form-label {
-  margin-bottom: var(--spacing-sm);
-  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
+  font-size: 1rem;
   color: var(--color-gray-600);
 }
 
 .form-control {
-  font-size: 0.875rem;
+  font-size: 1rem;
+  padding: 0.875rem 1rem;
   border: 1px solid var(--color-gray-300);
   transition: all var(--transition-base);
 }
@@ -279,56 +271,10 @@ watch(() => props.isVisible, (newValue) => {
 
 .form-text {
   display: block;
-  margin-top: var(--spacing-xs);
-  font-size: 0.813rem;
+  margin-top: var(--spacing-sm);
+  font-size: 0.875rem;
 }
 
-.btn-primary-gradient {
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  transition: all var(--transition-slow);
-  box-shadow: var(--shadow-primary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-primary-gradient:hover:not(:disabled) {
-  background: var(--gradient-primary-reverse);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-primary-hover);
-  color: white;
-}
-
-.btn-primary-gradient:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: var(--shadow-primary);
-}
-
-.btn-primary-gradient:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: var(--color-gray-500);
-  border-color: var(--color-gray-500);
-  color: white;
-  padding: var(--spacing-sm) 1.25rem;
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-  transition: all var(--transition-base);
-}
-
-.btn-secondary:hover {
-  background: var(--color-gray-600);
-  border-color: var(--color-gray-600);
-  transform: translateY(-1px);
-}
 
 .alert {
   border-radius: var(--radius-md);

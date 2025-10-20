@@ -79,10 +79,11 @@
             </div>
 
             <div class="form-actions">
-              <button type="submit" class="btn btn-primary" :disabled="isSaving">
-                <i class="bi bi-check-circle me-2"></i>
-                {{ isSaving ? 'Saving...' : 'Save Changes' }}
-              </button>
+              <SaveButton
+                type="submit"
+                :loading="isSaving"
+                :text="isSaving ? 'Saving...' : 'Save Changes'"
+              />
             </div>
           </form>
         </div>
@@ -96,6 +97,7 @@ import { ref, reactive, onMounted, inject } from 'vue';
 import settingsStore from '../stores/settingsStore.js';
 import PageHeader from '../components/PageHeader.vue';
 import HealthStatusBanner from '../components/HealthStatusBanner.vue';
+import SaveButton from '../components/SaveButton.vue';
 import healthStore from '../stores/healthStore.js';
 
 const isSaving = ref(false);
