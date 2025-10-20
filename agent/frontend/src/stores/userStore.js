@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import {getUsername, getDefaultPasswordFlag, getUserId} from '../js/api.js';
+import {getUsername, getDefaultPasswordFlag, getUserId, getAuthToken} from '../js/api.js';
 
 export function useUserStore() {
   const isChangingPassword = ref(false);
@@ -35,13 +35,19 @@ export function useUserStore() {
 
     isChangingPassword.value = true;
     try {
-      const username = getUsername();
       const userId = getUserId();
+      const token = getAuthToken();
+
+      if (!token) {
+        passwordError.value = 'Not authenticated';
+        return false;
+      }
+
       const response = await fetch(`/api/users/${userId}/password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${btoa(username + ':' + currentPassword)}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           currentPassword,

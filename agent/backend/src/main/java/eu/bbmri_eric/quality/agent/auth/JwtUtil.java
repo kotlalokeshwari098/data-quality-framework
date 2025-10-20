@@ -1,15 +1,15 @@
-package eu.bbmri_eric.quality.server.auth;
+package eu.bbmri_eric.quality.agent.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -26,9 +26,9 @@ public class JwtUtil {
   private final SecretKey key;
   private final long jwtExpiration;
 
-  JwtUtil(@Value("${app.jwt.expiration:3600000}") long jwtExpiration) {
+  JwtUtil() {
     this.key = Jwts.SIG.HS256.key().build();
-    this.jwtExpiration = jwtExpiration;
+    this.jwtExpiration = 3600000L;
   }
 
   /**

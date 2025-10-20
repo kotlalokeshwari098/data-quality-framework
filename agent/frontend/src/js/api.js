@@ -1,18 +1,19 @@
 import axios from 'axios';
 
 const state = {
-    authHeader: null,
+    authToken: null,
 };
 
 export function clearAuth() {
-    state.authHeader = null;
+    state.authToken = null;
+    sessionStorage.removeItem('authToken');
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('defaultPasswordFlag');
     sessionStorage.removeItem('userId');
 }
 
 export function isAuthenticated() {
-    return !!state.authHeader;
+    return !!state.authToken;
 }
 
 export function getUsername() {
@@ -28,13 +29,28 @@ export function getDefaultPasswordFlag() {
     return stored === 'true';
 }
 
+export function getAuthToken() {
+    return state.authToken || sessionStorage.getItem('authToken');
+}
+
+// Initialize token from sessionStorage on page load
+function initializeAuth() {
+    const storedToken = sessionStorage.getItem('authToken');
+    if (storedToken) {
+        state.authToken = storedToken;
+    }
+}
+
+initializeAuth();
+
 export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
     config.headers = config.headers || {};
-    if (state.authHeader && !config.__skipAuth) {
-        config.headers['Authorization'] = state.authHeader;
+    const token = getAuthToken();
+    if (token && !config.__skipAuth) {
+        config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
 });
@@ -54,43 +70,54 @@ api.interceptors.response.use(
 );
 
 export async function authenticate(username, password) {
-    const authHeader = `Basic ${baseToken(username, password)}`;
-    const res = await api.get('/api/login', {
-        headers: {
-            Authorization: authHeader,
-            Accept: 'application/json',
-        },
-        validateStatus: () => true,
-        __skipAuth: true,
-    });
+    try {
+        const res = await api.post('/api/auth/login', {
+            username,
+            password
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            validateStatus: () => true,
+            __skipAuth: true,
+        });
 
-    if (res.status !== 200) {
-        throw new Error('Invalid username or password');
+        if (res.status !== 200) {
+            throw new Error('Invalid username or password');
+        }
+
+        const { token, user } = res.data;
+
+        if (!token) {
+            throw new Error('No token received from server');
+        }
+
+        state.authToken = token;
+        sessionStorage.setItem('authToken', token);
+
+        const serverUsername = user?.username && String(user.username).trim()
+            ? user.username
+            : username;
+
+        sessionStorage.setItem('username', serverUsername);
+
+        if (user && typeof user.defaultPassword === 'boolean') {
+            sessionStorage.setItem('defaultPasswordFlag', user.defaultPassword.toString());
+        }
+
+        if (user && user.id) {
+            sessionStorage.setItem('userId', user.id.toString());
+        }
+
+        return {
+            username: serverUsername,
+            defaultPassword: user?.defaultPassword || false,
+            userId: user?.id || null
+        };
+    } catch (error) {
+        if (error.response?.status === 401) {
+            throw new Error('Invalid username or password');
+        }
+        throw error;
     }
-
-    state.authHeader = authHeader;
-
-    const serverUsername = res?.data?.username && String(res.data.username).trim()
-        ? res.data.username
-        : username;
-
-    sessionStorage.setItem('username', serverUsername);
-
-    if (res.data && typeof res.data.defaultPassword === 'boolean') {
-        sessionStorage.setItem('defaultPasswordFlag', res.data.defaultPassword.toString());
-    }
-
-    if (res.data && res.data.userId) {
-        sessionStorage.setItem('userId', res.data.userId.toString());
-    }
-
-    return {
-        username: serverUsername,
-        defaultPassword: res.data?.defaultPassword || false,
-        userId: res.data?.userId || null
-    };
-}
-
-function baseToken(username, password) {
-    return btoa(`${username}:${password}`);
 }
