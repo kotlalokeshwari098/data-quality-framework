@@ -8,84 +8,86 @@
     />
 
     <div class="page-content">
-      <HealthStatusBanner/>
+      <div class="settings-card-container">
+        <HealthStatusBanner/>
 
-      <div class="settings-card">
-        <div class="settings-section">
-          <div class="section-header">
-            <div>
-              <h2 class="section-title">
-                <i class="bi bi-database"></i>
-                FHIR Server
-              </h2>
-              <p class="section-description">
-                Configure your FHIR server connection to access the data
-              </p>
+        <div class="settings-card">
+          <div class="settings-section">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">
+                  <i class="bi bi-database"></i>
+                  FHIR Server
+                </h2>
+                <p class="section-description">
+                  Configure your FHIR server connection to access the data
+                </p>
+              </div>
             </div>
+
+            <form @submit.prevent="saveFhirSettings" class="settings-form">
+              <div class="form-group">
+                <label for="fhirUrl" class="form-label">
+                  Server URL
+                </label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="fhirUrl"
+                  v-model="fhirSettings.url"
+                  placeholder="https://fhir-server.example.com/fhir"
+                  required
+                >
+                <small class="form-help">
+                  The base URL of your FHIR server endpoint
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label for="fhirUsername" class="form-label">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fhirUsername"
+                  v-model="fhirSettings.username"
+                  placeholder="Enter username"
+                  required
+                  autocomplete="username"
+                >
+                <small class="form-help">
+                  Username for authenticating with the FHIR server
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label for="fhirPassword" class="form-label">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="fhirPassword"
+                  v-model="fhirSettings.password"
+                  placeholder="Enter password"
+                  required
+                  autocomplete="current-password"
+                >
+                <small class="form-help">
+                  Password for authenticating with the FHIR server
+                </small>
+              </div>
+
+              <div class="form-actions">
+                <SaveButton
+                  type="submit"
+                  :loading="isSaving"
+                  :text="isSaving ? 'Saving...' : 'Save Changes'"
+                />
+              </div>
+            </form>
           </div>
-
-          <form @submit.prevent="saveFhirSettings" class="settings-form">
-            <div class="form-group">
-              <label for="fhirUrl" class="form-label">
-                Server URL
-              </label>
-              <input
-                type="url"
-                class="form-control"
-                id="fhirUrl"
-                v-model="fhirSettings.url"
-                placeholder="https://fhir-server.example.com/fhir"
-                required
-              >
-              <small class="form-help">
-                The base URL of your FHIR server endpoint
-              </small>
-            </div>
-
-            <div class="form-group">
-              <label for="fhirUsername" class="form-label">
-                Username
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="fhirUsername"
-                v-model="fhirSettings.username"
-                placeholder="Enter username"
-                required
-                autocomplete="username"
-              >
-              <small class="form-help">
-                Username for authenticating with the FHIR server
-              </small>
-            </div>
-
-            <div class="form-group">
-              <label for="fhirPassword" class="form-label">
-                Password
-              </label>
-              <input
-                type="password"
-                class="form-control"
-                id="fhirPassword"
-                v-model="fhirSettings.password"
-                placeholder="Enter password"
-                required
-                autocomplete="current-password"
-              >
-              <small class="form-help">
-                Password for authenticating with the FHIR server
-              </small>
-            </div>
-
-            <div class="form-actions">
-              <SaveButton
-                type="submit"
-                :loading="isSaving"
-                :text="isSaving ? 'Saving...' : 'Save Changes'"
-              />
-            </div>
-          </form>
         </div>
       </div>
     </div>
@@ -177,12 +179,15 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+.settings-card-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
 .settings-card {
   background: var(--bg-card);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
-  max-width: 900px;
-  margin: 0 auto;
 }
 
 .settings-section {
