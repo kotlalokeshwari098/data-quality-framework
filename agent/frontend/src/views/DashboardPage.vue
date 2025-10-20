@@ -202,7 +202,7 @@ const generateReportWithReset = async () => {
 <style scoped>
 .dashboard-page {
   min-height: 100%;
-  padding: 2rem;
+  padding: var(--spacing-xl);
 }
 
 .page-content {
@@ -212,14 +212,14 @@ const generateReportWithReset = async () => {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .quality-checks-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
+  gap: var(--spacing-md);
   align-items: start;
 }
 
@@ -227,7 +227,6 @@ const generateReportWithReset = async () => {
   min-height: 150px;
 }
 
-/* Desktop Layout */
 @media (min-width: 992px) {
   .quality-checks-grid {
     grid-template-columns: repeat(auto-fill, 480px);
@@ -239,15 +238,19 @@ const generateReportWithReset = async () => {
 }
 
 @media (max-width: 768px) {
-  .dashboard-page { padding: 1rem; }
+  .dashboard-page {
+    padding: var(--spacing-md);
+  }
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: var(--spacing-md);
   }
 }
 
 @media (max-width: 576px) {
-  .dashboard-page { padding: 0.75rem; }
+  .dashboard-page {
+    padding: 0.75rem;
+  }
   .stats-grid {
     grid-template-columns: 1fr;
     gap: 0.75rem;

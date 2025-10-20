@@ -99,18 +99,17 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Top Navigation Bar */
 .top-navbar {
   position: fixed;
   top: 0;
-  left: 260px;
+  left: var(--sidebar-width);
   right: 0;
-  height: 64px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  z-index: 900;
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: var(--navbar-height);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--color-gray-200);
+  box-shadow: var(--shadow-sm);
+  z-index: var(--z-navbar);
+  transition: left var(--transition-smooth);
 }
 
 .top-navbar-content {
@@ -118,18 +117,17 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
+  padding: 0 var(--spacing-lg);
 }
 
 .top-navbar-spacer {
   flex: 1;
 }
 
-/* User Section */
 .user-section {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-md);
 }
 
 .password-warning {
@@ -145,15 +143,15 @@ onUnmounted(() => {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 0.5rem;
+  margin-top: var(--spacing-sm);
   padding: 0.75rem;
-  background: #1f2937;
+  background: var(--color-gray-800);
   color: white;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
   min-width: 250px;
 }
 
@@ -161,10 +159,10 @@ onUnmounted(() => {
   content: '';
   position: absolute;
   top: -4px;
-  right: 1rem;
+  right: var(--spacing-md);
   width: 8px;
   height: 8px;
-  background: #1f2937;
+  background: var(--color-gray-800);
   transform: rotate(45deg);
 }
 
@@ -176,50 +174,50 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .user-dropdown-toggle:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: var(--bg-hover);
+  border-color: var(--color-gray-300);
 }
 
 .user-avatar {
   width: 36px;
   height: 36px;
   min-width: 36px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 0.85rem;
   color: white;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
 .username {
   font-weight: 500;
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.9rem;
 }
 
 .dropdown-menu-custom {
   position: absolute;
-  top: calc(100% + 0.25rem);
+  top: calc(100% + var(--spacing-xs));
   right: 0;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: var(--bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
   min-width: 200px;
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   overflow: hidden;
 }
 
@@ -227,37 +225,36 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem var(--spacing-md);
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background var(--transition-base);
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--color-gray-700);
 }
 
 .dropdown-item-custom:hover {
-  background: #f3f4f6;
+  background: var(--color-gray-100);
 }
 
 .dropdown-item-signout {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .dropdown-item-signout:hover {
   background: #fee2e2;
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
   .top-navbar {
     left: 0;
-    height: 56px;
+    height: var(--navbar-height-mobile);
   }
 
   .top-navbar-content {
-    padding: 0 4rem 0 1rem;
+    padding: 0 4rem 0 var(--spacing-md);
   }
 
   .user-section {

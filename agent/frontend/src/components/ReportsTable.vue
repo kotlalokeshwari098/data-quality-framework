@@ -141,15 +141,15 @@ const getStatusBadgeClass = (report) => {
   font-size: 0.813rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #6c757d;
-  padding: 1rem 0.75rem;
-  border-bottom: 2px solid #dee2e6;
+  color: var(--color-gray-500);
+  padding: var(--spacing-md) 0.75rem;
+  border-bottom: 2px solid var(--color-gray-200);
   white-space: nowrap;
 }
 
 .table td {
   vertical-align: middle;
-  padding: 1rem 0.75rem;
+  padding: var(--spacing-md) 0.75rem;
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -159,11 +159,11 @@ const getStatusBadgeClass = (report) => {
 
 .table-row-hover {
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--transition-base);
 }
 
 .table-row-hover:hover {
-  background-color: #f8f9fa;
+  background-color: var(--bg-hover);
 }
 
 .clickable {
@@ -171,7 +171,7 @@ const getStatusBadgeClass = (report) => {
 }
 
 .font-monospace {
-  font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+  font-family: var(--font-mono);
   font-size: 0.875rem;
 }
 
@@ -186,7 +186,6 @@ const getStatusBadgeClass = (report) => {
   padding: 0.35rem 0.85rem;
 }
 
-/* Status indicator animation */
 .badge.bg-danger,
 .badge.bg-warning {
   animation: pulse-subtle 2s ease-in-out infinite;
@@ -201,11 +200,10 @@ const getStatusBadgeClass = (report) => {
   }
 }
 
-/* Responsive adjustments */
 @media (max-width: 992px) {
   .table th,
   .table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem var(--spacing-sm);
   }
 }
 
@@ -216,12 +214,12 @@ const getStatusBadgeClass = (report) => {
 
   .table th,
   .table td {
-    padding: 0.5rem 0.35rem;
+    padding: var(--spacing-sm) 0.35rem;
   }
 
   .badge {
     font-size: 0.65rem;
-    padding: 0.25rem 0.45rem;
+    padding: var(--spacing-xs) 0.45rem;
   }
 
   .badge i {
@@ -234,7 +232,6 @@ const getStatusBadgeClass = (report) => {
     overflow-x: auto;
   }
 
-  /* Hide less important columns on mobile */
   .table th:nth-child(4),
   .table td:nth-child(4),
   .table th:nth-child(5),

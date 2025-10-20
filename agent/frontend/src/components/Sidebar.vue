@@ -64,16 +64,15 @@ const closeMobileMenu = () => {
 </script>
 
 <style scoped>
-/* Sidebar */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  width: 260px;
-  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  width: var(--sidebar-width);
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-sidebar);
   display: flex;
   flex-direction: column;
 }
@@ -82,19 +81,18 @@ const closeMobileMenu = () => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 1.5rem 0;
+  padding: var(--spacing-lg) 0;
 }
 
-/* Brand Section */
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0 1.5rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
   color: white;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: transform var(--transition-base);
 }
 
 .sidebar-brand:hover {
@@ -111,7 +109,7 @@ const closeMobileMenu = () => {
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .sidebar-brand:hover .brand-icon {
@@ -131,26 +129,25 @@ const closeMobileMenu = () => {
   font-size: 0.875rem;
 }
 
-/* Navigation */
 .sidebar-nav {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0 1rem;
+  gap: var(--spacing-sm);
+  padding: 0 var(--spacing-md);
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.875rem 1rem;
+  gap: var(--spacing-md);
+  padding: 0.875rem var(--spacing-md);
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   border-radius: 12px;
   font-weight: 500;
   font-size: 0.95rem;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
   position: relative;
   overflow: hidden;
 }
@@ -158,7 +155,7 @@ const closeMobileMenu = () => {
 .nav-link i {
   font-size: 1.25rem;
   min-width: 1.25rem;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base);
 }
 
 .nav-link:hover {
@@ -174,7 +171,7 @@ const closeMobileMenu = () => {
 .nav-link.active {
   background: rgba(255, 255, 255, 0.25);
   color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-link.active::before {
@@ -189,10 +186,9 @@ const closeMobileMenu = () => {
   border-radius: 0 4px 4px 0;
 }
 
-/* Sidebar Footer */
 .sidebar-footer {
-  padding: 1rem 1.5rem;
-  margin-top: 1rem;
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-top: var(--spacing-md);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -211,39 +207,37 @@ const closeMobileMenu = () => {
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Mobile Menu Toggle */
 .mobile-menu-toggle {
   display: none;
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   border: none;
   border-radius: 12px;
   color: white;
   font-size: 1.5rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  z-index: 1001;
-  transition: all 0.2s ease;
+  box-shadow: var(--shadow-primary);
+  z-index: calc(var(--z-sidebar) + 1);
+  transition: all var(--transition-base);
 }
 
 .mobile-menu-toggle:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+  box-shadow: var(--shadow-primary-hover);
 }
 
 .mobile-overlay {
   display: none;
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform var(--transition-smooth);
   }
 
   .sidebar.show {
@@ -266,8 +260,8 @@ const closeMobileMenu = () => {
     background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 999;
+    transition: all var(--transition-slow);
+    z-index: var(--z-overlay);
   }
 
   .mobile-overlay.show {

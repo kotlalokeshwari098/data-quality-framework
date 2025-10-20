@@ -325,7 +325,7 @@ onMounted(async () => {
 <style scoped>
 .report-detail-page {
   min-height: 100%;
-  padding: 2rem;
+  padding: var(--spacing-xl);
 }
 
 .page-content {
@@ -335,7 +335,7 @@ onMounted(async () => {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  gap: var(--spacing-md);
 }
 
 .results-container {
@@ -344,32 +344,31 @@ onMounted(async () => {
 }
 
 .result-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid #dee2e6;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  border: 1px solid var(--color-gray-200);
   scroll-margin-top: 100px;
 }
 
 .result-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .result-card.bg-success {
   background-color: rgba(25, 135, 84, 0.1) !important;
-  border-left: 4px solid #198754;
+  border-left: 4px solid var(--color-success);
 }
 
 .result-card.bg-warning {
   background-color: rgba(255, 193, 7, 0.1) !important;
-  border-left: 4px solid #ffc107;
+  border-left: 4px solid var(--color-warning);
 }
 
 .result-card.bg-danger {
   background-color: rgba(220, 53, 69, 0.1) !important;
-  border-left: 4px solid #dc3545;
+  border-left: 4px solid var(--color-danger);
 }
 
-/* Highlight animation when navigating to a specific check */
 .highlight-check {
   animation: highlightPulse 2s ease-in-out;
 }
@@ -386,42 +385,42 @@ onMounted(async () => {
 .result-details {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 }
 
 .detail-row {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   font-size: 0.9rem;
 }
 
 .detail-label {
   font-weight: 600;
-  color: #6c757d;
+  color: var(--color-gray-500);
   min-width: 120px;
 }
 
 .detail-value {
-  color: #212529;
+  color: var(--color-gray-900);
 }
 
 .patient-ids-section {
   background-color: rgba(0, 0, 0, 0.02);
-  padding: 1rem;
-  border-radius: 0.375rem;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
 }
 
 .patient-cell {
-  padding: 0.5rem;
+  padding: var(--spacing-sm);
   width: 16.66%;
 }
 
 .patient-link {
   text-decoration: none;
   color: #0d6efd;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s ease;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-base);
   display: inline-block;
 }
 
@@ -432,14 +431,13 @@ onMounted(async () => {
 
 .badge {
   font-weight: 500;
-  padding: 0.5rem 1rem;
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: 0.875rem;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .report-detail-page {
-    padding: 1rem;
+    padding: var(--spacing-md);
   }
 
   .stats-grid {
@@ -470,4 +468,3 @@ onMounted(async () => {
   }
 }
 </style>
-

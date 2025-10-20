@@ -45,18 +45,18 @@ defineProps({
 
 <style scoped>
 .page-header {
-  padding-bottom: 1rem;
+  padding-bottom: var(--spacing-md);
 }
 
 .page-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: var(--color-gray-800);
   margin: 0;
 }
 
 .page-subtitle {
-  color: #6c757d;
+  color: var(--color-gray-500);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -75,4 +75,3 @@ defineProps({
   }
 }
 </style>
-

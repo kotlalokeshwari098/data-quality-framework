@@ -159,14 +159,13 @@ async function login() {
 }
 
 .mobile-card {
-  border-radius: 1rem;
+  border-radius: var(--radius-xl);
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Info Panel - Gradient Background */
 .info-panel {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   color: white;
 }
 
@@ -191,59 +190,57 @@ async function login() {
   border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Mobile Header */
 .brand-icon-mobile {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 2rem;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
-/* Form Styling */
 .login-form-container {
   max-width: 400px;
   margin: 0 auto;
 }
 
 .form-label {
-  color: #374151;
+  color: var(--color-gray-700);
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 .form-control,
 .form-control-mobile {
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  padding: 0.75rem var(--spacing-md);
   font-size: 0.95rem;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .form-control:focus,
 .form-control-mobile:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 1rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-primary-hover);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -255,10 +252,9 @@ async function login() {
   cursor: not-allowed;
 }
 
-/* Mobile Responsive */
 @media (max-width: 991px) {
   .mobile-card {
-    margin: 1rem;
+    margin: var(--spacing-md);
   }
 
   .min-vh-50 {
@@ -268,7 +264,7 @@ async function login() {
 
 @media (max-width: 768px) {
   .mobile-header {
-    padding: 1rem 0;
+    padding: var(--spacing-md) 0;
   }
 
   .form-control-mobile {
@@ -284,8 +280,8 @@ async function login() {
 
 @media (max-width: 576px) {
   .mobile-card {
-    margin: 0.5rem;
-    border-radius: 0.75rem;
+    margin: var(--spacing-sm);
+    border-radius: var(--radius-lg);
   }
 }
 </style>

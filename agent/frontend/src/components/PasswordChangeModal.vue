@@ -162,7 +162,6 @@ watch(() => props.isVisible, (newValue) => {
 </script>
 
 <style scoped>
-/* Modal Backdrop */
 .modal-backdrop-custom {
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(2px);
@@ -175,16 +174,14 @@ watch(() => props.isVisible, (newValue) => {
 }
 
 .modal-content {
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
-/* Header Gradient */
 .bg-gradient-purple {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
 }
 
-/* Custom Close Button */
 .btn-close-custom {
   background: transparent;
   border: none;
@@ -194,8 +191,8 @@ watch(() => props.isVisible, (newValue) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.375rem;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
   position: relative;
   opacity: 1;
   cursor: pointer;
@@ -211,7 +208,7 @@ watch(() => props.isVisible, (newValue) => {
   height: 2px;
   background-color: white;
   border-radius: 1px;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .btn-close-custom::before {
@@ -242,79 +239,74 @@ watch(() => props.isVisible, (newValue) => {
   outline-offset: 2px;
 }
 
-/* Icon Wrapper */
 .icon-wrapper {
   width: 50px;
   height: 50px;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Modal Body */
 .modal-body {
-  background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+  background: linear-gradient(to bottom, var(--color-gray-50) 0%, var(--bg-card) 100%);
 }
 
-/* Form Sections */
 .form-section {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e9ecef;
+  background: var(--bg-card);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-200);
 }
 
-/* Form Controls */
 .form-label {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
   font-size: 0.875rem;
-  color: #495057;
+  color: var(--color-gray-600);
 }
 
 .form-control {
   font-size: 0.875rem;
-  border: 1px solid #dee2e6;
-  transition: all 0.2s ease;
+  border: 1px solid var(--color-gray-300);
+  transition: all var(--transition-base);
 }
 
 .form-control:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
 .form-text {
   display: block;
-  margin-top: 0.25rem;
+  margin-top: var(--spacing-xs);
   font-size: 0.813rem;
 }
 
-/* Buttons */
 .btn-primary-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   color: white;
   border: none;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.375rem;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-sm);
   font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  transition: all var(--transition-slow);
+  box-shadow: var(--shadow-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .btn-primary-gradient:hover:not(:disabled) {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: var(--gradient-primary-reverse);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-primary-hover);
   color: white;
 }
 
 .btn-primary-gradient:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn-primary-gradient:disabled {
@@ -323,24 +315,23 @@ watch(() => props.isVisible, (newValue) => {
 }
 
 .btn-secondary {
-  background: #6c757d;
-  border-color: #6c757d;
+  background: var(--color-gray-500);
+  border-color: var(--color-gray-500);
   color: white;
-  padding: 0.5rem 1.25rem;
-  border-radius: 0.375rem;
+  padding: var(--spacing-sm) 1.25rem;
+  border-radius: var(--radius-sm);
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .btn-secondary:hover {
-  background: #5c636a;
-  border-color: #565e64;
+  background: var(--color-gray-600);
+  border-color: var(--color-gray-600);
   transform: translateY(-1px);
 }
 
-/* Alert Styling */
 .alert {
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   border: none;
   display: flex;
   align-items: center;

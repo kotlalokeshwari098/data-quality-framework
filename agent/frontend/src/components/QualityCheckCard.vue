@@ -119,13 +119,13 @@ const navigateToCheck = () => {
 
 <style scoped>
 .quality-check-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
   will-change: transform, box-shadow;
 }
 
 .quality-check-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .clickable {
@@ -133,6 +133,6 @@ const navigateToCheck = () => {
 }
 
 .font-monospace {
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
 }
 </style>

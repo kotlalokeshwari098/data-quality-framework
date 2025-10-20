@@ -98,9 +98,9 @@ onUnmounted(() => {
 
 <style scoped>
 .mobile-toast {
-  margin-bottom: 0.5rem;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
-  border-radius: 0.5rem;
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-md);
 }
 
 .notification-icon {
@@ -122,7 +122,6 @@ onUnmounted(() => {
   min-height: 24px;
 }
 
-/* Mobile-specific adjustments */
 @media (max-width: 768px) {
   .mobile-toast {
     margin-bottom: 0.75rem;
@@ -130,7 +129,7 @@ onUnmounted(() => {
   }
 
   .toast-body {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem var(--spacing-md);
   }
 
   .notification-title {
@@ -139,23 +138,23 @@ onUnmounted(() => {
 
   .notification-message {
     font-size: 0.85rem;
-    margin-top: 0.25rem;
+    margin-top: var(--spacing-xs);
   }
 
   .mobile-close-btn {
     min-width: 32px;
     min-height: 32px;
-    margin-right: 0.5rem !important;
+    margin-right: var(--spacing-sm) !important;
   }
 }
 
 @media (max-width: 576px) {
   .mobile-toast {
-    border-radius: 0.75rem;
+    border-radius: var(--radius-lg);
   }
 
   .toast-body {
-    padding: 1rem;
+    padding: var(--spacing-md);
   }
 }
 </style>

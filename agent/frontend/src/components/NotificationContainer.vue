@@ -77,9 +77,9 @@ defineExpose({
 <style scoped>
 .notification-container {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1050;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: var(--z-modal);
   max-width: 400px;
   width: 100%;
 }
@@ -88,8 +88,8 @@ defineExpose({
 @media (max-width: 768px) {
   .mobile-notification-container {
     top: 80px;
-    right: 0.5rem;
-    left: 0.5rem;
+    right: var(--spacing-sm);
+    left: var(--spacing-sm);
     max-width: none;
   }
 }
@@ -97,9 +97,8 @@ defineExpose({
 @media (max-width: 576px) {
   .mobile-notification-container {
     top: 80px;
-    right: 0.25rem;
-    left: 0.25rem;
+    right: var(--spacing-xs);
+    left: var(--spacing-xs);
   }
 }
 </style>
-

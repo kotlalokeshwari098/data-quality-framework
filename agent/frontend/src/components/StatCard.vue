@@ -24,16 +24,16 @@ defineProps({
 
 <style scoped>
 .stat-card {
-  background: white;
-  border-radius: 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
   padding: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-number {
@@ -45,10 +45,9 @@ defineProps({
 
 .stat-label {
   font-size: 0.813rem;
-  color: #6c757d;
+  color: var(--color-gray-500);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 </style>
-
