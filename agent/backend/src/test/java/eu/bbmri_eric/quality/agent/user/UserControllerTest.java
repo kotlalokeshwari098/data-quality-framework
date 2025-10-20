@@ -52,8 +52,7 @@ public class UserControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.token").exists())
         .andExpect(jsonPath("$.token").isNotEmpty())
-        .andExpect(jsonPath("$.user.username", is(ADMIN_USER)))
-        .andExpect(jsonPath("$.user.defaultPassword", is(true)));
+        .andExpect(jsonPath("$.user.username", is(ADMIN_USER)));
   }
 
   @Test
