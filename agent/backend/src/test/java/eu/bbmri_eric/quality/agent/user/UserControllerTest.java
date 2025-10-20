@@ -37,8 +37,8 @@ public class UserControllerTest {
   void tearDown() {
     User adminUser =
         userRepository.findByUsername(ADMIN_USER).orElseThrow(EntityNotFoundException::new);
-      adminUser.setPassword(passwordEncoder.encode(ADMIN_PASS));
-      userRepository.save(adminUser);
+    adminUser.setPassword(passwordEncoder.encode(ADMIN_PASS));
+    userRepository.save(adminUser);
   }
 
   @Test
@@ -95,10 +95,7 @@ public class UserControllerTest {
   @Test
   void login_nullCredentials_returnsBadRequest() throws Exception {
     mockMvc
-        .perform(
-            post(AUTH_LOGIN_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{}"))
+        .perform(post(AUTH_LOGIN_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content("{}"))
         .andExpect(status().isBadRequest());
   }
 
@@ -106,9 +103,7 @@ public class UserControllerTest {
   void login_invalidContentType_returnsUnsupportedMediaType() throws Exception {
     mockMvc
         .perform(
-            post(AUTH_LOGIN_ENDPOINT)
-                .contentType(MediaType.TEXT_PLAIN)
-                .content("invalid content"))
+            post(AUTH_LOGIN_ENDPOINT).contentType(MediaType.TEXT_PLAIN).content("invalid content"))
         .andExpect(status().isUnsupportedMediaType());
   }
 
@@ -227,8 +222,9 @@ public class UserControllerTest {
             put("/api/users/" + adminUserId + "/password")
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                    new PasswordChangeRequest("adminpass", "newPass123!", "newPass123!"))))
+                .content(
+                    objectMapper.writeValueAsString(
+                        new PasswordChangeRequest("adminpass", "newPass123!", "newPass123!"))))
         .andExpect(status().isOk());
   }
 
@@ -240,24 +236,24 @@ public class UserControllerTest {
             put("/api/users/1/password")
                 .header("Authorization", "Bearer totally-invalid-token")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                    new PasswordChangeRequest("current", "newPass123!", "newPass123!"))))
+                .content(
+                    objectMapper.writeValueAsString(
+                        new PasswordChangeRequest("current", "newPass123!", "newPass123!"))))
         .andExpect(status().isUnauthorized());
   }
 
-  /**
-   * Helper method to authenticate and extract JWT token from response
-   */
+  /** Helper method to authenticate and extract JWT token from response */
   private String authenticateAndGetToken() throws Exception {
     LoginRequest loginRequest = new LoginRequest(ADMIN_USER, ADMIN_PASS);
 
-    MvcResult result = mockMvc
-        .perform(
-            post(AUTH_LOGIN_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
-        .andExpect(status().isOk())
-        .andReturn();
+    MvcResult result =
+        mockMvc
+            .perform(
+                post(AUTH_LOGIN_ENDPOINT)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(loginRequest)))
+            .andExpect(status().isOk())
+            .andReturn();
 
     String responseContent = result.getResponse().getContentAsString();
     var response = objectMapper.readTree(responseContent);

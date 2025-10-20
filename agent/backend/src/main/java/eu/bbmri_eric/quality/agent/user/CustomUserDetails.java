@@ -13,7 +13,9 @@ public class CustomUserDetails implements UserDetails {
   CustomUserDetails(User user) {
     this.user = new UserDTO(user.getUsername(), user.getId());
     this.password = user.getPassword();
-    this.user.setDefaultPassword(this.password.equals("$argon2id$v=19$m=19456,t=2,p=1$SQGK8wXpQw5b+qjuq/Ih1A$WP87YsUIErq6O+7rMk65U0cH4OHBRdrnM3yIG50gwpE"));
+    this.user.setDefaultPassword(
+        this.password.equals(
+            "$argon2id$v=19$m=19456,t=2,p=1$SQGK8wXpQw5b+qjuq/Ih1A$WP87YsUIErq6O+7rMk65U0cH4OHBRdrnM3yIG50gwpE"));
   }
 
   @Override

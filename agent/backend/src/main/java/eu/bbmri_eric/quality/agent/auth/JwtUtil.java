@@ -3,7 +3,6 @@ package eu.bbmri_eric.quality.agent.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 import java.util.stream.Collectors;
