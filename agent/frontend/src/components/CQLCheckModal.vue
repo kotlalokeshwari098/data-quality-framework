@@ -140,20 +140,13 @@
         </div>
         <div class="modal-footer bg-light border-0 py-3 d-flex justify-content-center">
           <div class="d-flex gap-2">
-            <button type="button" class="btn btn-secondary" @click="handleClose">
-              <i class="bi bi-x-circle me-2"></i>
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary-gradient"
+            <CancelButton @click="handleClose" />
+            <SaveButton
               @click="handleSave"
+              :loading="saving"
               :disabled="saving"
-            >
-              <span v-if="saving" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              <i v-else class="bi bi-check-circle me-2"></i>
-              Save Changes
-            </button>
+              text="Save Changes"
+            />
           </div>
         </div>
       </div>
@@ -188,10 +181,7 @@
           <p class="mb-0 text-muted small">This action cannot be undone and will permanently remove the check configuration.</p>
         </div>
         <div class="modal-footer bg-light border-0 py-3">
-          <button type="button" class="btn btn-secondary" @click="cancelDelete">
-            <i class="bi bi-x-circle me-2"></i>
-            Cancel
-          </button>
+          <CancelButton @click="cancelDelete" />
           <button
             type="button"
             class="btn btn-danger"
@@ -210,6 +200,8 @@
 
 <script setup>
 import { ref, watch, computed, inject } from 'vue';
+import CancelButton from './CancelButton.vue';
+import SaveButton from './SaveButton.vue';
 
 const props = defineProps({
   show: {
@@ -307,8 +299,63 @@ const confirmDelete = () => {
   }, 500);
 };
 
-// Emit events for save success and error instead of exposing methods
-// Example usage: emit('save-success', { message: '...' }); emit('save-error', { errorMessage: '...' });
+// Add methods for parent component to call
+const showSaveSuccess = (message = 'Quality check saved successfully!') => {
+  if (notify) {
+    notify.success(message);
+  } else {
+    console.log('Save success:', message);
+  }
+};
+
+const showSaveError = (message = 'Failed to save quality check') => {
+  if (notify) {
+    notify.error(message);
+  } else {
+    console.error('Save error:', message);
+  }
+};
+
+const showDeleteSuccess = (message = 'Quality check deleted successfully!') => {
+  if (notify) {
+    notify.success(message);
+  } else {
+    console.log('Delete success:', message);
+  }
+};
+
+const showDeleteError = (message = 'Failed to delete quality check') => {
+  if (notify) {
+    notify.error(message);
+  } else {
+    console.error('Delete error:', message);
+  }
+};
+
+const resetForm = () => {
+  formData.value = {
+    id: null,
+    name: '',
+    description: '',
+    query: '',
+    warningThreshold: 10,
+    errorThreshold: 30,
+    epsilonBudget: 1.0
+  };
+  errors.value = {};
+};
+
+// Expose methods for parent component
+defineExpose({
+  showSaveSuccess,
+  showSaveError,
+  showDeleteSuccess,
+  showDeleteError,
+  resetForm,
+  showDeleteModal: () => {
+    showDeleteModal.value = true;
+  }
+});
 </script>
 
 <style scoped>
