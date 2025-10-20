@@ -39,19 +39,24 @@
             number-class="text-primary"
           />
           <StatCard
-            :number="report.epsilonBudget?.toFixed(2) || 'N/A'"
-            label="Epsilon Budget"
-            number-class="text-info"
-          />
-          <StatCard
-            :number="calculateEpsilonUsed().toFixed(2)"
-            label="Epsilon Used"
-            :number-class="isOverBudget() ? 'text-danger' : 'text-success'"
-          />
-          <StatCard
             :number="report.results?.length || 0"
-            label="Quality Checks"
+            label="Total Checks"
             number-class="text-secondary"
+          />
+          <StatCard
+            :number="countErrors()"
+            label="Errors"
+            number-class="text-danger"
+          />
+          <StatCard
+            :number="countWarnings()"
+            label="Warnings"
+            number-class="text-warning"
+          />
+          <StatCard
+            :number="countPassed()"
+            label="Passed"
+            number-class="text-success"
           />
         </div>
 
@@ -254,6 +259,30 @@ const calculateEpsilonUsed = () => {
 
 const isOverBudget = () => {
   return calculateEpsilonUsed() > report.value.epsilonBudget
+}
+
+const countErrors = () => {
+  if (!report.value?.results) return 0
+  return report.value.results.filter(result => {
+    const percentage = parseFloat(calculatePercentage(result.obfuscatedValue))
+    return percentage >= result.errorThreshold || result.error
+  }).length
+}
+
+const countWarnings = () => {
+  if (!report.value?.results) return 0
+  return report.value.results.filter(result => {
+    const percentage = parseFloat(calculatePercentage(result.obfuscatedValue))
+    return percentage >= result.warningThreshold && percentage < result.errorThreshold && !result.error
+  }).length
+}
+
+const countPassed = () => {
+  if (!report.value?.results) return 0
+  return report.value.results.filter(result => {
+    const percentage = parseFloat(calculatePercentage(result.obfuscatedValue))
+    return percentage < result.warningThreshold && !result.error
+  }).length
 }
 
 const getResultClass = (result) => {
