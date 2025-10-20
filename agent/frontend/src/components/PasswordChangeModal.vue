@@ -1,109 +1,130 @@
 <template>
-  <div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel"
-       aria-hidden="true" ref="modalElement">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="passwordChangeModalLabel">Change Password</h5>
-          <button type="button" class="btn-close" @click="_close" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form @submit.prevent="changePassword">
-            <div class="mb-3">
-              <label for="currentPassword" class="form-label">Current Password</label>
-              <input
-                  type="password"
-                  class="form-control"
-                  id="currentPassword"
-                  v-model="passwordForm.currentPassword"
-                  required
-              >
-            </div>
-            <div class="mb-3">
-              <label for="newPassword" class="form-label">New Password</label>
-              <input
-                  type="password"
-                  class="form-control"
-                  id="newPassword"
-                  v-model="passwordForm.newPassword"
-                  minlength="8"
-                  required
-              >
-            </div>
-            <div class="mb-3">
-              <label for="confirmPassword" class="form-label">Confirm New Password</label>
-              <input
-                  type="password"
-                  class="form-control"
-                  id="confirmPassword"
-                  v-model="passwordForm.confirmPassword"
-                  minlength="8"
-                  required
-              >
-            </div>
-            <div v-if="passwordError" class="alert alert-danger py-2" role="alert">
-              {{ passwordError }}
-            </div>
-            <div v-if="passwordSuccess" class="alert alert-success py-2" role="alert">
-              {{ passwordSuccess }}
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="_close">Cancel</button>
-          <button type="button" class="btn btn-primary" @click="changePassword" :disabled="isChangingPassword">
-            <span v-if="isChangingPassword" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            Change Password
-          </button>
+  <BaseModal
+    :show="isVisible"
+    title="Change Password"
+    subtitle="Update your account password"
+    icon="bi bi-key fs-3"
+    size="sm"
+    variant="primary"
+    :loading="isChangingPassword"
+    :save-button-props="{ text: 'Change Password' }"
+    @close="handleClose"
+    @save="changePassword"
+  >
+    <form @submit.prevent="changePassword">
+      <div class="mb-4">
+        <label for="currentPassword" class="form-label fw-semibold">
+          Current Password <span class="text-danger">*</span>
+        </label>
+        <input
+          type="password"
+          class="form-control"
+          :class="{ 'is-invalid': validationErrors.currentPassword }"
+          id="currentPassword"
+          v-model="passwordForm.currentPassword"
+          placeholder="Enter current password"
+        >
+        <div v-if="validationErrors.currentPassword" class="invalid-feedback">
+          {{ validationErrors.currentPassword }}
         </div>
       </div>
-    </div>
-  </div>
+
+      <div class="mb-4">
+        <label for="newPassword" class="form-label fw-semibold">
+          New Password <span class="text-danger">*</span>
+        </label>
+        <input
+          type="password"
+          class="form-control"
+          :class="{ 'is-invalid': validationErrors.newPassword }"
+          id="newPassword"
+          v-model="passwordForm.newPassword"
+          placeholder="Enter new password"
+        >
+        <div v-if="validationErrors.newPassword" class="invalid-feedback">
+          {{ validationErrors.newPassword }}
+        </div>
+        <small v-else class="form-text text-muted">
+          <i class="bi bi-info-circle me-1"></i>
+          Password must be at least 8 characters long
+        </small>
+      </div>
+
+      <div class="mb-4">
+        <label for="confirmPassword" class="form-label fw-semibold">
+          Confirm New Password <span class="text-danger">*</span>
+        </label>
+        <input
+          type="password"
+          class="form-control"
+          :class="{ 'is-invalid': validationErrors.confirmPassword }"
+          id="confirmPassword"
+          v-model="passwordForm.confirmPassword"
+          placeholder="Confirm new password"
+        >
+        <div v-if="validationErrors.confirmPassword" class="invalid-feedback">
+          {{ validationErrors.confirmPassword }}
+        </div>
+      </div>
+
+      <div v-if="passwordError" class="alert alert-danger py-2 mb-3" role="alert">
+        <i class="bi bi-exclamation-circle me-2"></i>
+        {{ passwordError }}
+      </div>
+
+      <div v-if="passwordSuccess" class="alert alert-success py-2 mb-3" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        {{ passwordSuccess }}
+      </div>
+    </form>
+  </BaseModal>
 </template>
 
 <script setup>
-import { ref, onMounted, defineExpose, watch } from 'vue';
-import { Modal } from 'bootstrap';
-import { getUsername } from '../js/api.js';
+import { ref, watch } from 'vue';
 import { useUserStore } from '../stores/userStore.js';
+import BaseModal from './BaseModal.vue';
+
 const props = defineProps({
   isVisible: {
     type: Boolean,
     default: false
   }
 });
+
 const emit = defineEmits(['close']);
-let modalElement = ref(null);
-let modalInstance = null;
-const username = getUsername();
-const { isChangingPassword, passwordError, passwordSuccess, changePassword: storeChangePassword } = useUserStore();
+
+const {
+  isChangingPassword,
+  passwordError,
+  passwordSuccess,
+  validationErrors,
+  changePassword: storeChangePassword,
+  resetPasswordState
+} = useUserStore();
+
 const passwordForm = ref({
   currentPassword: '',
   newPassword: '',
   confirmPassword: ''
 });
-function _open() {
-  if (modalInstance) {
-    resetPasswordForm();
-    modalInstance.show();
-  }
+
+function handleClose() {
+  resetPasswordForm();
+  emit('close');
 }
-function _close() {
-  if (modalInstance) {
-    modalInstance.hide();
-    emit('close');
-  }
-}
+
 function resetPasswordForm() {
   passwordForm.value = {
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   };
-  passwordError.value = '';
-  passwordSuccess.value = '';
+  resetPasswordState();
 }
+
 async function changePassword() {
+
   const success = await storeChangePassword(
     passwordForm.value.currentPassword,
     passwordForm.value.newPassword,
@@ -111,38 +132,58 @@ async function changePassword() {
   );
   if (success) {
     setTimeout(() => {
-      _close();
-    }, 2000);
+      handleClose();
+    }, 1000);
   }
 }
+
 watch(() => props.isVisible, (newValue) => {
   if (newValue) {
-    _open();
-  } else {
-    _close();
+    resetPasswordForm();
   }
 });
-onMounted(() => {
-  modalInstance = new Modal(modalElement.value, {
-    backdrop: true,
-    keyboard: true,
-    focus: true,
-  });
-
-  modalElement.value.addEventListener('hidden.bs.modal', () => {
-    resetPasswordForm();
-    emit('close');
-  });
-
-  modalElement.value.addEventListener('shown.bs.modal', () => {
-    const firstInput = modalElement.value.querySelector('#currentPassword');
-    if (firstInput) {
-      firstInput.focus();
-    }
-  });
-});
-defineExpose({ open: _open, close: _close });
 </script>
 
 <style scoped>
+.form-label {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #495057;
+}
+
+.form-control {
+  font-size: 1rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-text {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.alert {
+  border-radius: 0.5rem;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.alert-danger {
+  background-color: #fee;
+  color: #c00;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
 </style>

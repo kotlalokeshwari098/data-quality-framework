@@ -5,6 +5,7 @@ export function useUserStore() {
   const isChangingPassword = ref(false);
   const passwordError = ref('');
   const passwordSuccess = ref('');
+  const validationErrors = ref({});
   const defaultPasswordFlag = ref(getDefaultPasswordFlag());
 
   function initializeDefaultPasswordStatus() {
@@ -17,9 +18,15 @@ export function useUserStore() {
       sessionStorage.setItem('defaultPasswordFlag', status.toString());
     }
   }
+  function resetPasswordState() {
+    passwordError.value = '';
+    passwordSuccess.value = '';
+    validationErrors.value = {};
+  }
   async function changePassword(currentPassword, newPassword, confirmPassword) {
     passwordError.value = '';
     passwordSuccess.value = '';
+    validationErrors.value = {};
 
     if (newPassword !== confirmPassword) {
       passwordError.value = 'New password and confirmation do not match';
@@ -51,7 +58,16 @@ export function useUserStore() {
         if (response.status === 401) {
           passwordError.value = 'Invalid current password';
         } else if (response.status === 400) {
-          passwordError.value = 'Invalid password format or passwords do not match';
+          try {
+            const errorData = await response.json();
+            if (errorData.validationErrors) {
+              validationErrors.value = errorData.validationErrors;
+            } else {
+              passwordError.value = errorData.detail || 'Invalid password format or passwords do not match';
+            }
+          } catch (parseError) {
+            passwordError.value = 'Invalid password format or passwords do not match';
+          }
         } else if (response.status === 404) {
           passwordError.value = 'User not found';
         } else {
@@ -72,8 +88,10 @@ export function useUserStore() {
     isChangingPassword,
     passwordError,
     passwordSuccess,
+    validationErrors,
     defaultPasswordFlag,
     changePassword,
+    resetPasswordState,
     initializeDefaultPasswordStatus,
     updateDefaultPasswordStatus
   };
