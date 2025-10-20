@@ -52,14 +52,12 @@
               <h5 class="mb-0">Latest Report</h5>
               <small class="text-muted">Generated: {{ formatDate(latestReport.generatedAt) }}</small>
             </div>
-            <button
-              class="btn btn-success"
+            <GenerateReportButton
               @click="generateReportWithReset"
-              :disabled="reportStore.isGenerating || healthStore.healthStatus?.status !== 'UP'"
-            >
-              <span v-if="reportStore.isGenerating" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              {{ reportStore.isGenerating ? 'Generating...' : 'Generate New Report' }}
-            </button>
+              :loading="reportStore.isGenerating"
+              :disabled="healthStore.healthStatus?.status !== 'UP'"
+              text="Generate New Report"
+            />
           </div>
         </div>
 
@@ -74,13 +72,11 @@
           <template v-else>
             <i class="bi bi-clipboard-data display-1 text-muted opacity-50"></i>
             <p class="text-muted mt-3">No reports available.</p>
-            <button
-              class="btn btn-success"
+            <GenerateReportButton
               @click="generateReportWithReset"
               :disabled="healthStore.healthStatus?.status !== 'UP'"
-            >
-              Generate First Report
-            </button>
+              text="Generate First Report"
+            />
           </template>
         </div>
 
@@ -105,6 +101,7 @@ import PasswordChangeModal from "@/components/PasswordChangeModal.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import StatCard from "@/components/StatCard.vue";
 import QualityCheckCard from "@/components/QualityCheckCard.vue";
+import GenerateReportButton from "@/components/GenerateReportButton.vue";
 import { useUserStore } from '@/stores/userStore.js';
 import healthStore from '@/stores/healthStore.js';
 import reportStore from '@/stores/reportStore.js';

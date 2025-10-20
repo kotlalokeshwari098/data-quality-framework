@@ -9,6 +9,16 @@
           icon="bi bi-file-earmark-text-fill"
         />
 
+        <!-- Action Section -->
+        <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
+          <div></div>
+          <GenerateReportButton
+            @click="generateReport"
+            :loading="reportStore.isGenerating"
+            text="Generate Report"
+          />
+        </div>
+
         <!-- Stats Cards -->
         <div class="stats-grid mb-3 mb-md-4">
           <StatCard
@@ -42,6 +52,7 @@ import { computed, onMounted } from 'vue'
 import PageHeader from '@/components/PageHeader.vue'
 import ReportsTable from '@/components/ReportsTable.vue'
 import StatCard from '@/components/StatCard.vue'
+import GenerateReportButton from '@/components/GenerateReportButton.vue'
 import reportStore from '@/stores/reportStore.js'
 
 const sortedReports = computed(() => {
@@ -65,6 +76,10 @@ const formatDateShort = (dateString) => {
     day: 'numeric',
     year: 'numeric'
   })
+}
+
+const generateReport = async () => {
+  await reportStore.generateReport()
 }
 
 onMounted(() => {
