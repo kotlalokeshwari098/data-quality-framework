@@ -91,6 +91,7 @@
             :key="getCheckKey(result)"
             :check="result"
             :total-entities="latestReport.numberOfEntities"
+            :report-id="latestReport.id"
           />
         </div>
       </template>

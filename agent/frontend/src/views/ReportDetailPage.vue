@@ -92,6 +92,7 @@
               <div
                 v-for="result in report.results"
                 :key="getCheckIdKey(result)"
+                :id="getCheckIdKey(result)"
                 :class="['result-card', 'card', 'mb-3', getResultClass(result)]"
               >
                 <div class="card-body">
@@ -177,7 +178,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageHeader from '@/components/PageHeader.vue'
 import PatientModal from '@/components/PatientModal.vue'
@@ -241,18 +242,6 @@ function getCheckIdKey(result) {
   return result.checkId + '_' + (result.stratum || 'all')
 }
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
-}
-
 const calculatePercentage = (value) => {
   const total = report.value?.numberOfEntities || 1
   return ((value / total) * 100).toFixed(2)
@@ -290,11 +279,41 @@ const getStatusBadgeClass = (report) => {
   }
 }
 
+const scrollToCheck = async () => {
+  if (route.hash) {
+    // Remove the # from the hash
+    const checkId = route.hash.substring(1)
+
+    // Wait for DOM to be fully rendered
+    await nextTick()
+
+    // Small additional delay to ensure everything is rendered
+    setTimeout(() => {
+      const element = document.getElementById(checkId)
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+
+        // Add a highlight animation
+        element.classList.add('highlight-check')
+        setTimeout(() => {
+          element.classList.remove('highlight-check')
+        }, 2000)
+      }
+    }, 100)
+  }
+}
+
 onMounted(async () => {
   try {
     loading.value = true
     const reportId = route.params.id
     report.value = await reportStore.fetchReportById(reportId)
+
+    // Scroll to the specific check if hash is present
+    await scrollToCheck()
   } catch (err) {
     error.value = `Failed to load report: ${err.message || 'Unknown error'}`
   } finally {
@@ -327,6 +346,7 @@ onMounted(async () => {
 .result-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: 1px solid #dee2e6;
+  scroll-margin-top: 100px;
 }
 
 .result-card:hover {
@@ -347,6 +367,20 @@ onMounted(async () => {
 .result-card.bg-danger {
   background-color: rgba(220, 53, 69, 0.1) !important;
   border-left: 4px solid #dc3545;
+}
+
+/* Highlight animation when navigating to a specific check */
+.highlight-check {
+  animation: highlightPulse 2s ease-in-out;
+}
+
+@keyframes highlightPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(13, 110, 253, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(13, 110, 253, 0.5);
+  }
 }
 
 .result-details {

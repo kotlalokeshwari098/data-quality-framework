@@ -1,5 +1,8 @@
 <template>
-  <div class="card border-0 shadow-sm h-100 quality-check-card">
+  <div
+    class="card border-0 shadow-sm h-100 quality-check-card clickable"
+    @click="navigateToCheck"
+  >
     <div class="card-body p-3 position-relative d-flex flex-column">
       <!-- Icon in top right corner -->
       <div class="position-absolute top-0 end-0 p-3">
@@ -66,6 +69,10 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 const props = defineProps({
   check: {
     type: Object,
@@ -73,6 +80,10 @@ const props = defineProps({
   },
   totalEntities: {
     type: Number,
+    required: true
+  },
+  reportId: {
+    type: [String, Number],
     required: true
   }
 })
@@ -92,6 +103,18 @@ const getResultColorClass = (check) => {
   }
   return 'text-success'
 }
+
+const getCheckIdKey = (check) => {
+  return check.checkId + '_' + (check.stratum || 'all')
+}
+
+const navigateToCheck = () => {
+  const checkId = getCheckIdKey(props.check)
+  router.push({
+    path: `/reports/${props.reportId}`,
+    hash: `#${checkId}`
+  })
+}
 </script>
 
 <style scoped>
@@ -103,6 +126,10 @@ const getResultColorClass = (check) => {
 .quality-check-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .font-monospace {
