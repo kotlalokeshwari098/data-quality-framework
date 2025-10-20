@@ -152,50 +152,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Delete Confirmation Modal -->
-  <div
-    v-if="showDeleteModal"
-    class="modal fade show d-block modal-backdrop-custom"
-    tabindex="-1"
-    @click.self="cancelDelete"
-  >
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg">
-        <div class="modal-header bg-danger text-white border-0 py-3">
-          <div class="d-flex align-items-center">
-            <div class="icon-wrapper-small me-3">
-              <i class="bi bi-exclamation-triangle fs-4"></i>
-            </div>
-            <h5 class="modal-title mb-0">Confirm Deletion</h5>
-          </div>
-          <button
-            type="button"
-            class="btn-close-custom"
-            @click="cancelDelete"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body p-4">
-          <p class="mb-2 fw-semibold">Are you sure you want to delete this quality check?</p>
-          <p class="mb-0 text-muted small">This action cannot be undone and will permanently remove the check configuration.</p>
-        </div>
-        <div class="modal-footer bg-light border-0 py-3">
-          <CancelButton @click="cancelDelete" />
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="confirmDelete"
-            :disabled="deleting"
-          >
-            <span v-if="deleting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-            <i v-else class="bi bi-trash me-2"></i>
-            Delete Permanently
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup>
@@ -218,7 +174,12 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close', 'save', 'delete']);
+const emit = defineEmits([
+  'close',
+  'save',
+  'save-success',
+  'save-error'
+]);
 
 // Inject notification system
 const notify = inject('notify')
@@ -234,8 +195,6 @@ const formData = ref({
 });
 
 const errors = ref({});
-const showDeleteModal = ref(false);
-const deleting = ref(false);
 
 const isEditing = computed(() => !!formData.value.id);
 
@@ -285,51 +244,13 @@ const handleSave = () => {
   emit('save', { ...formData.value });
 };
 
-const cancelDelete = () => {
-  showDeleteModal.value = false;
+// Add methods for internal use that emit events
+const handleSaveSuccess = (message = 'Quality check saved successfully!') => {
+  emit('save-success', { message });
 };
 
-const confirmDelete = () => {
-  deleting.value = true;
-  emit('delete', formData.value.id);
-  showDeleteModal.value = false;
-  // Reset deleting state after a short delay
-  setTimeout(() => {
-    deleting.value = false;
-  }, 500);
-};
-
-// Add methods for parent component to call
-const showSaveSuccess = (message = 'Quality check saved successfully!') => {
-  if (notify) {
-    notify.success(message);
-  } else {
-    console.log('Save success:', message);
-  }
-};
-
-const showSaveError = (message = 'Failed to save quality check') => {
-  if (notify) {
-    notify.error(message);
-  } else {
-    console.error('Save error:', message);
-  }
-};
-
-const showDeleteSuccess = (message = 'Quality check deleted successfully!') => {
-  if (notify) {
-    notify.success(message);
-  } else {
-    console.log('Delete success:', message);
-  }
-};
-
-const showDeleteError = (message = 'Failed to delete quality check') => {
-  if (notify) {
-    notify.error(message);
-  } else {
-    console.error('Delete error:', message);
-  }
+const handleSaveError = (message = 'Failed to save quality check') => {
+  emit('save-error', { message });
 };
 
 const resetForm = () => {
@@ -344,18 +265,6 @@ const resetForm = () => {
   };
   errors.value = {};
 };
-
-// Expose methods for parent component
-defineExpose({
-  showSaveSuccess,
-  showSaveError,
-  showDeleteSuccess,
-  showDeleteError,
-  resetForm,
-  showDeleteModal: () => {
-    showDeleteModal.value = true;
-  }
-});
 </script>
 
 <style scoped>
