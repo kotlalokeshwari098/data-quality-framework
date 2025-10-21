@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -42,8 +41,8 @@ public class ServerInteraction {
 
   /** Timestamp when the interaction occurred. */
   @NotNull
-  @Column(name = "timestamp", nullable = false)
-  private LocalDateTime timestamp;
+  @Column(name = "timestamp")
+  private LocalDateTime timestamp = LocalDateTime.now();
 
   /** The ID of the server this interaction belongs to. */
   @NotNull
@@ -64,14 +63,6 @@ public class ServerInteraction {
   public ServerInteraction(InteractionType type, String description) {
     this.type = type;
     this.description = description;
-  }
-
-  /** Automatically sets the timestamp before persisting the entity. */
-  @PrePersist
-  protected void onCreate() {
-    if (timestamp == null) {
-      timestamp = LocalDateTime.now();
-    }
   }
 
   /**
