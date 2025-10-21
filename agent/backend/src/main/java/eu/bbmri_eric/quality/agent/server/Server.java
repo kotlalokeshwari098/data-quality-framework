@@ -48,7 +48,6 @@ public class Server {
   private String clientId = "";
 
   @Size(max = 500)
-  @Base64Encoded(message = "Client secret must be Base64 encoded")
   @Column(name = "client_secret", nullable = false, length = 500)
   private String clientSecret = "";
 

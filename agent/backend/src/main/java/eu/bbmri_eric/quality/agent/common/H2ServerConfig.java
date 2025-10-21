@@ -16,9 +16,4 @@ public class H2ServerConfig {
   public Server h2Server() throws SQLException {
     return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092");
   }
-
-  @Bean
-  public RestTemplate restTemplate() {
-    return new RestTemplate();
-  }
 }

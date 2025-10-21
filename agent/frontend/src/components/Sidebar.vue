@@ -26,6 +26,10 @@
           <i class="bi bi-file-earmark-text-fill"></i>
           <span>Reports</span>
         </router-link>
+        <router-link to="/servers" class="nav-link" :class="{ active: $route.path === '/servers' }" @click="closeMobileMenu">
+          <i class="bi bi-server"></i>
+          <span>Servers</span>
+        </router-link>
         <router-link to="/settings" class="nav-link" :class="{ active: $route.path === '/settings' }" @click="closeMobileMenu">
           <i class="bi bi-gear-fill"></i>
           <span>Settings</span>
