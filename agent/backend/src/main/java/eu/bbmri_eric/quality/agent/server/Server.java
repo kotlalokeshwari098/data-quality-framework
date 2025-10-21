@@ -1,6 +1,5 @@
 package eu.bbmri_eric.quality.agent.server;
 
-import eu.bbmri_eric.quality.agent.common.Base64Encoded;
 import eu.bbmri_eric.quality.agent.server.dto.AgentRegistrationRequest;
 import eu.bbmri_eric.quality.agent.server.dto.AgentRegistrationResponse;
 import jakarta.persistence.CascadeType;
