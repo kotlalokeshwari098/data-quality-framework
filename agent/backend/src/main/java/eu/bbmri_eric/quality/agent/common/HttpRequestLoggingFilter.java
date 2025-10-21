@@ -18,6 +18,11 @@ class HttpRequestLoggingFilter extends OncePerRequestFilter {
 
   private static final Logger logger = LoggerFactory.getLogger(HttpRequestLoggingFilter.class);
 
+  // ANSI color codes
+  private static final String ANSI_RESET = "\u001B[0m";
+  private static final String ANSI_GREEN = "\u001B[32m";
+  private static final String ANSI_RED = "\u001B[31m";
+
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -35,7 +40,7 @@ class HttpRequestLoggingFilter extends OncePerRequestFilter {
           "Response: {} {} -> {} ({}ms)",
           request.getMethod(),
           request.getRequestURI(),
-          response.getStatus(),
+          getColoredStatusCode(response.getStatus()),
           duration.toMillis());
     }
   }
@@ -52,5 +57,15 @@ class HttpRequestLoggingFilter extends OncePerRequestFilter {
       return forwarded.split(",")[0].trim();
     }
     return request.getRemoteAddr();
+  }
+
+  private String getColoredStatusCode(int statusCode) {
+    if (statusCode >= 200 && statusCode < 300) {
+      return ANSI_GREEN + statusCode + ANSI_RESET;
+    } else if (statusCode >= 400) {
+      return ANSI_RED + statusCode + ANSI_RESET;
+    } else {
+      return String.valueOf(statusCode);
+    }
   }
 }

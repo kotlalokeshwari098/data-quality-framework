@@ -1,11 +1,8 @@
 package eu.bbmri_eric.quality.agent.user;
 
-import static org.springframework.security.core.userdetails.User.withUsername;
-
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,7 +12,7 @@ import org.springframework.stereotype.Service;
  * UserDetailsService interface for integration with Spring Security.
  */
 @Service
-class UserDetailService implements UserDetailsService {
+public class UserDetailService implements UserDetailsService {
 
   private static final Logger logger = LoggerFactory.getLogger(UserDetailService.class);
 
@@ -26,7 +23,7 @@ class UserDetailService implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+  public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Objects.requireNonNull(username, "Username cannot be null");
     var user =
         userRepository
@@ -37,6 +34,6 @@ class UserDetailService implements UserDetailsService {
                   return new UsernameNotFoundException("User not found: " + username);
                 });
     logger.debug("Successfully loaded user details for: {}", username);
-    return withUsername(user.getUsername()).password(user.getPassword()).build();
+    return new CustomUserDetails(user);
   }
 }
