@@ -1,12 +1,12 @@
 package eu.bbmri_eric.quality.agent.server;
 
+import eu.bbmri_eric.quality.agent.common.Base64Encoded;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,30 +43,24 @@ public class Server {
   private String name;
 
   /** Client ID used for authentication with the server. */
-  @NotBlank
   @Size(max = 255)
   @Column(name = "client_id", nullable = false, length = 255)
-  private String clientId;
+  private String clientId = "";
 
   /** Client secret used for authentication with the server. */
-  @NotBlank
   @Size(max = 500)
   @Base64Encoded(message = "Client secret must be Base64 encoded")
   @Column(name = "client_secret", nullable = false, length = 500)
-  private String clientSecret;
+  private String clientSecret = "";
 
   /** Current status of the server connection. */
   @NotNull
   @Enumerated(EnumType.STRING)
-  private ServerStatus status;
+  private ServerStatus status = ServerStatus.PENDING;
 
   /** List of interactions logged for this server. */
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "server_id")
+  @OneToMany(mappedBy = "serverId", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ServerInteraction> interactions = new ArrayList<>();
-
-  // Note: Interactions are managed separately via serverId foreign key
-  // No JPA relationship mapping to avoid cascade deletion issues with non-nullable foreign key
 
   /** Default constructor required by JPA. */
   protected Server() {}
@@ -78,12 +72,13 @@ public class Server {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.status = status;
-    addInteraction(
-        new ServerInteraction(
-            InteractionType.UPDATE,
-            String.format(
-                "Server created with name='%s', url='%s', clientId='%s', status=%s",
-                name, url, clientId, status)));
+    addInteraction(new ServerInteraction(InteractionType.UPDATE, "Initial Registration"));
+  }
+
+  public Server(String url, String name) {
+    this.url = url;
+    this.name = name;
+    addInteraction(new ServerInteraction(InteractionType.UPDATE, "Initial Registration"));
   }
 
   /**

@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.agent.server.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -15,6 +16,9 @@ public class ServerUpdateDto {
   /** URL of the central server. */
   @Size(max = 500, message = "URL must not exceed 500 characters")
   @Schema(description = "URL of the central server", example = "https://central.example.com")
+  @Pattern(
+      regexp = "^https?://[^\\s/$.?#].[^\\s]*$",
+      message = "URL must be a valid HTTP or HTTPS URL")
   private String url;
 
   /** Display name for the server. */

@@ -16,7 +16,7 @@ public class ServerDto {
 
   /** Unique identifier for the server. */
   @Schema(description = "Unique identifier for the server", example = "1")
-  private Long id;
+  private String id;
 
   /** URL of the central server. */
   @Schema(description = "URL of the central server", example = "https://central.example.com")
@@ -41,7 +41,7 @@ public class ServerDto {
    * @param name the server name
    * @param status the server status
    */
-  public ServerDto(Long id, String url, String name, ServerStatus status) {
+  public ServerDto(String id, String url, String name, ServerStatus status) {
     this.id = id;
     this.url = url;
     this.name = name;
@@ -53,7 +53,7 @@ public class ServerDto {
    *
    * @return the ID
    */
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
@@ -62,7 +62,7 @@ public class ServerDto {
    *
    * @param id the ID
    */
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

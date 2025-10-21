@@ -38,7 +38,7 @@ public class DetailedServerDto extends ServerDto {
    * @param interactions the list of interactions
    */
   public DetailedServerDto(
-      Long id,
+      String id,
       String url,
       String name,
       ServerStatus status,

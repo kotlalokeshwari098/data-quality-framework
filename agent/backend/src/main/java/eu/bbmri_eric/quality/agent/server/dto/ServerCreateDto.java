@@ -2,6 +2,7 @@ package eu.bbmri_eric.quality.agent.server.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.util.HtmlUtils;
 
@@ -16,10 +17,13 @@ public class ServerCreateDto {
   /** URL of the central server. */
   @NotBlank(message = "URL is required")
   @Size(max = 500, message = "URL must not exceed 500 characters")
+  @Pattern(
+      regexp = "^https?://[^\\s/$.?#].[^\\s]*$",
+      message = "URL must be a valid HTTP or HTTPS URL")
   @Schema(
       description = "URL of the central server",
       example = "https://central.example.com",
-      required = true)
+      requiredMode = Schema.RequiredMode.REQUIRED)
   private String url;
 
   /** Display name for the server. */
@@ -28,7 +32,7 @@ public class ServerCreateDto {
   @Schema(
       description = "Display name for the server",
       example = "Production Central Server",
-      required = true)
+      requiredMode = Schema.RequiredMode.REQUIRED)
   private String name;
 
   /** Default constructor. */

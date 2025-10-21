@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.server;
+package eu.bbmri_eric.quality.agent.common;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
