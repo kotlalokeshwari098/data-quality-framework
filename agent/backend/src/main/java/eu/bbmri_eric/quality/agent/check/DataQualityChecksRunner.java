@@ -49,6 +49,7 @@ class DataQualityChecksRunner {
           eventPublisher.publishEvent(
               new DataQualityCheckResult(
                   this,
+                  event.getReportId(),
                   dataQualityCheck.getId(),
                   dataQualityCheck.getName() + " (%s)".formatted(result.getKey()),
                   result.getValue().numberOfEntities(),
@@ -65,6 +66,7 @@ class DataQualityChecksRunner {
         eventPublisher.publishEvent(
             new DataQualityCheckResult(
                 this,
+                event.getReportId(),
                 dataQualityCheck.getId(),
                 dataQualityCheck.getName(),
                 result.numberOfEntities(),

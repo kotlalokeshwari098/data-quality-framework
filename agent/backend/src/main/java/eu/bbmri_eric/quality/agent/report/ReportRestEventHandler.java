@@ -3,7 +3,6 @@ package eu.bbmri_eric.quality.agent.report;
 import eu.bbmri_eric.quality.agent.events.FinishedReportEvent;
 import eu.bbmri_eric.quality.agent.events.NewReportEvent;
 import eu.bbmri_eric.quality.agent.fhir.FHIRStore;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -11,6 +10,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RepositoryEventHandler
@@ -30,6 +30,10 @@ class ReportRestEventHandler {
 
   @HandleAfterCreate
   public void onAfterCreate(Report report) {
+    triggerReportGeneration(report);
+  }
+
+  public void triggerReportGeneration(Report report) {
     publisher.publishEvent(new NewReportEvent(this, report.getId()));
     int count = fhirStore.countResources("Patient");
     report.setNumberOfEntities(count);

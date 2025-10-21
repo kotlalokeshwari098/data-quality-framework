@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import eu.bbmri_eric.quality.agent.events.DataQualityCheckResult;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -20,14 +20,16 @@ class ResultEventHandlerTest {
   void onNewReport_setsPatientListCorrectly() {
     ReportRepository mockRepo = mock(ReportRepository.class);
     Report mockReport = new Report();
+    mockReport.setId(123L);
     mockReport.setStatus(Status.GENERATING);
-    when(mockRepo.findAllByStatusIs(Status.GENERATING)).thenReturn(List.of(mockReport));
+    when(mockRepo.findById(123L)).thenReturn(Optional.of(mockReport));
     ResultEventHandler handler = new ResultEventHandler(mockRepo);
     Set<String> expectedPatients = Set.of("patientA", "patientB", "patientC");
     DataQualityCheckResult event =
         new DataQualityCheckResult(
             this,
             123L,
+            1L,
             "Patient List Check",
             3,
             expectedPatients,

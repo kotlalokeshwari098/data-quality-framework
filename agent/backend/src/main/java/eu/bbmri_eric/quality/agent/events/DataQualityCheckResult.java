@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEvent;
 
 public class DataQualityCheckResult extends ApplicationEvent {
 
+  private final Long reportId;
   private final Long checkId;
   private final String checkName;
   private final int rawValue;
@@ -19,6 +20,7 @@ public class DataQualityCheckResult extends ApplicationEvent {
 
   public DataQualityCheckResult(
       Object source,
+      Long reportId,
       Long checkId,
       String checkName,
       int rawValue,
@@ -30,6 +32,7 @@ public class DataQualityCheckResult extends ApplicationEvent {
       float epsilon,
       String stratum) {
     super(source);
+    this.reportId = reportId;
     this.checkId = checkId;
     this.checkName = checkName;
     this.rawValue = rawValue;
@@ -40,6 +43,10 @@ public class DataQualityCheckResult extends ApplicationEvent {
     this.errorThreshold = errorThreshold;
     this.epsilon = epsilon;
     this.stratum = stratum;
+  }
+
+  public Long getReportId() {
+    return reportId;
   }
 
   public Long getCheckId() {
