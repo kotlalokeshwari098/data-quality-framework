@@ -206,7 +206,8 @@ public class UserControllerTest {
     // Verify the token is not null and has the expected JWT structure
     assertNotNull(token, "Token should not be null");
     assertEquals(3, token.split("\\.").length, "JWT token should have 3 parts separated by dots");
-    assertTrue(token.startsWith("eyJ"), "JWT token should start with 'eyJ' (Base64 encoded header)");
+    assertTrue(
+        token.startsWith("eyJ"), "JWT token should start with 'eyJ' (Base64 encoded header)");
   }
 
   @Test
