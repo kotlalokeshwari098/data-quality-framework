@@ -4,12 +4,14 @@ import eu.bbmri_eric.quality.agent.server.dto.DetailedServerDto;
 import eu.bbmri_eric.quality.agent.server.dto.ServerCreateDto;
 import eu.bbmri_eric.quality.agent.server.dto.ServerDto;
 import eu.bbmri_eric.quality.agent.server.dto.ServerUpdateDto;
+import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional
@@ -17,10 +19,18 @@ public class ServerServiceImpl implements ServerService {
 
   private final ServerRepository serverRepository;
   private final ModelMapper modelMapper;
+  private final RestTemplate restTemplate;
+  private final SettingsService settingsService;
 
-  public ServerServiceImpl(ServerRepository serverRepository, ModelMapper modelMapper) {
+  public ServerServiceImpl(
+      ServerRepository serverRepository,
+      ModelMapper modelMapper,
+      RestTemplate restTemplate,
+      SettingsService settingsService) {
     this.serverRepository = serverRepository;
     this.modelMapper = modelMapper;
+    this.restTemplate = restTemplate;
+    this.settingsService = settingsService;
   }
 
   @Override
@@ -45,6 +55,7 @@ public class ServerServiceImpl implements ServerService {
   public ServerDto create(ServerCreateDto createDto) {
     Server server = new Server(createDto.getUrl(), createDto.getName());
     Server savedServer = serverRepository.save(server);
+    savedServer.register(settingsService.getSettings().getAgentId(), restTemplate);
     return modelMapper.map(savedServer, ServerDto.class);
   }
 

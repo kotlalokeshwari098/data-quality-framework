@@ -1,5 +1,4 @@
 package eu.bbmri_eric.quality.agent.server;
-;
 
 /**
  * Enumeration representing the type of interaction with a central server.
@@ -13,5 +12,8 @@ public enum InteractionType {
   /**
    * Interaction involving communication with the server (e.g., sending reports, authentication).
    */
-  COMMUNICATION
+  COMMUNICATION,
+
+  /** Interaction involving agent registration with the central server. */
+  REGISTRATION
 }

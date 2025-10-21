@@ -23,3 +23,5 @@ CREATE INDEX idx_server_interaction_server_id ON server_interaction(server_id);
 
 -- Create index on timestamp for better query performance when sorting by time
 CREATE INDEX idx_server_interaction_timestamp ON server_interaction(timestamp);
+
+INSERT INTO settings (setting_name, setting_value) VALUES ('agentId', LOWER(UUID()));
