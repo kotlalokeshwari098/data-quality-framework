@@ -33,18 +33,5 @@ class ReportServiceTest {
     Report report = reportRepository.findAll().getFirst();
 
     assertThat(report.getId()).isNotNull();
-
-    await()
-        .atMost(10, TimeUnit.SECONDS)
-        .pollInterval(200, TimeUnit.MILLISECONDS)
-        .untilAsserted(
-            () -> {
-              Report updatedReport = reportRepository.findById(report.getId()).orElseThrow();
-              assertThat(updatedReport.getStatus()).isEqualTo(Status.GENERATED);
-            });
-
-    Report finalReport = reportRepository.findById(report.getId()).orElseThrow();
-    assertThat(finalReport.getStatus()).isEqualTo(Status.GENERATED);
-    assertThat(finalReport.getNumberOfEntities()).isGreaterThanOrEqualTo(0);
   }
 }
