@@ -74,7 +74,6 @@
                         v-model="username"
                         type="text"
                         class="form-control form-control-mobile"
-                        :class="{ 'is-invalid': error && !loading }"
                         placeholder="Enter your username"
                         :disabled="loading"
                         required
@@ -90,7 +89,6 @@
                           v-model="password"
                           :type="showPassword ? 'text' : 'password'"
                           class="form-control form-control-mobile pe-5"
-                          :class="{ 'is-invalid': error && !loading }"
                           placeholder="Enter your password"
                           :disabled="loading"
                           required
@@ -241,6 +239,7 @@ async function login() {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+
 .btn-primary {
   background: var(--gradient-primary);
   border: none;
@@ -277,6 +276,12 @@ async function login() {
   border: none;
   background: none;
   cursor: pointer;
+  z-index: 10;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 @media (max-width: 991px) {

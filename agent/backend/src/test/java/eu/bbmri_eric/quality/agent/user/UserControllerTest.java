@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.agent.user;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -203,9 +204,9 @@ public class UserControllerTest {
     String token = authenticateAndGetToken();
 
     // Verify the token is not null and has the expected JWT structure
-    assert token != null : "Token should not be null";
-    assert token.split("\\.").length == 3 : "JWT token should have 3 parts separated by dots";
-    assert token.startsWith("eyJ") : "JWT token should start with 'eyJ' (Base64 encoded header)";
+    assertNotNull(token, "Token should not be null");
+    assertEquals(3, token.split("\\.").length, "JWT token should have 3 parts separated by dots");
+    assertTrue(token.startsWith("eyJ"), "JWT token should start with 'eyJ' (Base64 encoded header)");
   }
 
   @Test
