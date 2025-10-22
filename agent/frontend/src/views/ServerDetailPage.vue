@@ -9,12 +9,9 @@
 
     <div class="page-content">
       <!-- Back button -->
-      <div class="mb-3 d-flex justify-content-between align-items-center">
+      <div class="mb-3">
         <button class="btn btn-outline-secondary btn-sm" @click="goBack">
           <i class="bi bi-arrow-left me-2"></i>Back to Servers
-        </button>
-        <button class="btn btn-danger btn-sm" @click="handleDelete">
-          <i class="bi bi-trash me-2"></i>Delete Server
         </button>
       </div>
 
@@ -319,7 +316,8 @@ function getStatusBadgeClass(status) {
   const classes = {
     'ACTIVE': 'bg-success',
     'INACTIVE': 'bg-warning',
-    'ERROR': 'bg-danger'
+    'ERROR': 'bg-danger',
+    'PENDING': 'bg-warning'
   };
   return classes[status] || 'bg-secondary';
 }
@@ -328,7 +326,8 @@ function getStatusIcon(status) {
   const icons = {
     'ACTIVE': 'bi bi-check-circle-fill',
     'INACTIVE': 'bi bi-pause-circle-fill',
-    'ERROR': 'bi bi-x-circle-fill'
+    'ERROR': 'bi bi-x-circle-fill',
+    'PENDING': 'bi bi-clock-fill'
   };
   return icons[status] || 'bi bi-question-circle-fill';
 }

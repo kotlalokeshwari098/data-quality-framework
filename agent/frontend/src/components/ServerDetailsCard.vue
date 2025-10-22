@@ -2,7 +2,10 @@
   <div class="server-details-card">
     <div class="server-header">
       <h3 class="server-name">{{ server?.name || 'Unknown Server' }}</h3>
-      <span :class="['status-badge-large', getStatusClass(server?.status)]">
+      <span
+        :class="['status-badge-large', getStatusClass(server?.status)]"
+        :title="getStatusTooltip(server?.status)"
+      >
         <i :class="getStatusIcon(server?.status)"></i>
         <span class="status-text">{{ formatStatus(server?.status) }}</span>
       </span>
@@ -59,7 +62,8 @@ function getStatusClass(status) {
   const classes = {
     'ACTIVE': 'status-active',
     'INACTIVE': 'status-inactive',
-    'ERROR': 'status-error'
+    'ERROR': 'status-error',
+    'PENDING': 'status-pending'
   };
   return classes[status] || 'status-unknown';
 }
@@ -68,7 +72,8 @@ function getStatusIcon(status) {
   const icons = {
     'ACTIVE': 'bi bi-check-circle-fill',
     'INACTIVE': 'bi bi-pause-circle-fill',
-    'ERROR': 'bi bi-x-circle-fill'
+    'ERROR': 'bi bi-x-circle-fill',
+    'PENDING': 'bi bi-hourglass-split'
   };
   return icons[status] || 'bi bi-question-circle-fill';
 }
@@ -76,6 +81,16 @@ function getStatusIcon(status) {
 function formatStatus(status) {
   if (!status) return 'Unknown';
   return status.charAt(0) + status.slice(1).toLowerCase();
+}
+
+function getStatusTooltip(status) {
+  const tooltips = {
+    'ACTIVE': 'Server connection is active. Reports are being sent to this central server.',
+    'INACTIVE': 'Server connection is inactive. Reports will not be sent until the connection is reactivated.',
+    'ERROR': 'Connection error detected. Please check server configuration or contact your administrator.',
+    'PENDING': 'Registration submitted successfully. Waiting for administrator approval on the central server before reports can be sent.'
+  };
+  return tooltips[status] || 'Server status is unknown. Please refresh or contact support.';
 }
 </script>
 
@@ -116,6 +131,7 @@ function formatStatus(status) {
   box-shadow: var(--shadow-sm);
   border: 2px solid transparent;
   transition: all var(--transition-base);
+  cursor: help;
 }
 
 .status-badge-large i {
@@ -138,6 +154,12 @@ function formatStatus(status) {
   background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
   color: #991b1b;
   border-color: #ef4444;
+}
+
+.status-badge-large.status-pending {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  color: #7a5800;
+  border-color: #f59e0b;
 }
 
 .status-badge-large.status-unknown {
