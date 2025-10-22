@@ -1,7 +1,10 @@
 package eu.bbmri_eric.quality.agent.server;
 
+import eu.bbmri_eric.quality.agent.auth.LoginRequest;
 import eu.bbmri_eric.quality.agent.server.dto.AgentRegistrationRequest;
 import eu.bbmri_eric.quality.agent.server.dto.AgentRegistrationResponse;
+import eu.bbmri_eric.quality.agent.server.dto.AgentStatusResponse;
+import eu.bbmri_eric.quality.agent.server.dto.LoginResponse;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -192,7 +195,68 @@ public class Server {
       setStatus(ServerStatus.ERROR);
     }
   }
-  ;
+
+  public void checkStatus(String agentId, RestTemplate restTemplate) {
+    try {
+      // First, authenticate to get the JWT token
+      String loginUrl = url + "/api/auth/login";
+      LoginRequest loginRequest = new LoginRequest(clientId, clientSecret);
+
+      HttpHeaders loginHeaders = new HttpHeaders();
+      loginHeaders.setContentType(MediaType.APPLICATION_JSON);
+      HttpEntity<LoginRequest> loginEntity = new HttpEntity<>(loginRequest, loginHeaders);
+
+      ResponseEntity<LoginResponse> loginResponse =
+          restTemplate.exchange(loginUrl, HttpMethod.POST, loginEntity, LoginResponse.class);
+
+      LoginResponse loginBody = loginResponse.getBody();
+      if (loginBody == null || loginBody.getToken() == null) {
+        log.error("Failed to authenticate - no token received");
+        setStatus(ServerStatus.ERROR);
+        addInteraction(
+            new ServerInteraction(
+                InteractionType.STATUS_CHECK, "Failed to authenticate: No token received"));
+        return;
+      }
+
+      String token = loginBody.getToken();
+
+      // Now check the agent status using the token
+      String checkUrl = url + "/api/v1/agents/" + agentId;
+
+      HttpHeaders headers = new HttpHeaders();
+      headers.setBearerAuth(token);
+      HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+      ResponseEntity<AgentStatusResponse> response =
+          restTemplate.exchange(checkUrl, HttpMethod.GET, requestEntity, AgentStatusResponse.class);
+
+      AgentStatusResponse agentStatus = response.getBody();
+      if (agentStatus != null && agentStatus.getStatus() != null) {
+        AgentStatus newStatus = agentStatus.getStatus();
+        if (status == ServerStatus.PENDING && newStatus == AgentStatus.ACTIVE) {
+          setStatus(ServerStatus.ACTIVE);
+          addInteraction(
+              new ServerInteraction(
+                  InteractionType.STATUS_CHECK,
+                  String.format("Agent status changed to %s", newStatus)));
+        } else if (newStatus == AgentStatus.INACTIVE && status == ServerStatus.ACTIVE) {
+          setStatus(ServerStatus.INACTIVE);
+          addInteraction(
+              new ServerInteraction(
+                  InteractionType.STATUS_CHECK,
+                  String.format("Agent status changed to %s", newStatus)));
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error checking agent status for agent {}", agentId, e);
+      setStatus(ServerStatus.ERROR);
+      addInteraction(
+          new ServerInteraction(
+              InteractionType.STATUS_CHECK,
+              String.format("Failed to check agent status: %s", e.getMessage())));
+    }
+  }
 
   @Override
   public boolean equals(Object o) {

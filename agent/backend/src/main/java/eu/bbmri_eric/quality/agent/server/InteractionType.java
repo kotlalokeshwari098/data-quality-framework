@@ -15,5 +15,8 @@ public enum InteractionType {
   COMMUNICATION,
 
   /** Interaction involving agent registration with the central server. */
-  REGISTRATION
+  REGISTRATION,
+
+  /** Interaction involving periodic status check with the central server. */
+  STATUS_CHECK
 }

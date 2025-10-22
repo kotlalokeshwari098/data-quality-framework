@@ -15,6 +15,8 @@ public class Agent {
 
   private String name;
 
+  private String version = "Unknown";
+
   public Agent(String id) {
     this.id = id;
   }
@@ -41,17 +43,26 @@ public class Agent {
     this.name = name;
   }
 
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     Agent agent = (Agent) o;
     return Objects.equals(id, agent.id)
         && status == agent.status
-        && Objects.equals(name, agent.name);
+        && Objects.equals(name, agent.name)
+        && Objects.equals(version, agent.version);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, status, name);
+    return Objects.hash(id, status, name, version);
   }
 }

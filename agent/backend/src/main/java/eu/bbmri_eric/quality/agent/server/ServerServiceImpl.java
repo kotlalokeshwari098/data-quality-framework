@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.modelmapper.ModelMapper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -89,5 +90,17 @@ public class ServerServiceImpl implements ServerService {
       throw new EntityNotFoundException("Server not found with id: " + id);
     }
     serverRepository.deleteById(id);
+  }
+
+  @Scheduled(fixedRate = 60000) // Run every 60 seconds (1 minute)
+  public void checkAllServerStatuses() {
+    String agentId = settingsService.getSettings().getAgentId();
+    serverRepository
+        .findAll()
+        .forEach(
+            server -> {
+              server.checkStatus(agentId, restTemplate);
+              serverRepository.save(server);
+            });
   }
 }

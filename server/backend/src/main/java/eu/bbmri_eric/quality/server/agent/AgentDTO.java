@@ -18,6 +18,8 @@ public class AgentDTO {
 
   private String name;
 
+  private String version;
+
   public AgentDTO() {}
 
   public String getId() {
@@ -42,5 +44,13 @@ public class AgentDTO {
 
   public void setStatus(AgentStatus status) {
     this.status = status;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }

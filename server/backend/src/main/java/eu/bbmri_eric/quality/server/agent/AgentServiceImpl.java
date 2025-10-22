@@ -2,12 +2,15 @@ package eu.bbmri_eric.quality.server.agent;
 
 import eu.bbmri_eric.quality.server.common.EntityAlreadyExistsException;
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
+import eu.bbmri_eric.quality.server.user.AuthenticationContextService;
 import eu.bbmri_eric.quality.server.user.UserCreateDTO;
 import eu.bbmri_eric.quality.server.user.UserDTO;
+import eu.bbmri_eric.quality.server.user.UserRole;
 import eu.bbmri_eric.quality.server.user.UserService;
 import java.util.List;
 import java.util.Objects;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +21,17 @@ public class AgentServiceImpl implements AgentService {
   private final AgentRepository agentRepository;
   private final ModelMapper modelMapper;
   private final UserService userService;
+  private final AuthenticationContextService authenticationContextService;
 
   public AgentServiceImpl(
-      AgentRepository agentRepository, ModelMapper modelMapper, UserService userService) {
+      AgentRepository agentRepository,
+      ModelMapper modelMapper,
+      UserService userService,
+      AuthenticationContextService authenticationContextService) {
     this.agentRepository = agentRepository;
     this.modelMapper = modelMapper;
     this.userService = userService;
+    this.authenticationContextService = authenticationContextService;
   }
 
   @Override
@@ -42,12 +50,20 @@ public class AgentServiceImpl implements AgentService {
 
   @Override
   public AgentDTO update(AgentUpdateRequest updateAgentDto, String agentId) {
+    UserDTO currentUser = authenticationContextService.getCurrentUser();
+    if (!isAuthorizedToUpdate(currentUser, agentId)) {
+      throw new AccessDeniedException(
+          "User is not authorized to create reports for agent: " + agentId);
+    }
     Agent agent = agentRepository.findById(agentId).orElseThrow(EntityNotFoundException::new);
     if (!Objects.isNull(updateAgentDto.getName())) {
       agent.setName(updateAgentDto.getName());
     }
     if (!Objects.isNull(updateAgentDto.getStatus())) {
       agent.setStatus(updateAgentDto.getStatus());
+    }
+    if (!Objects.isNull(updateAgentDto.getVersion())) {
+      agent.setVersion(updateAgentDto.getVersion());
     }
     return modelMapper.map(agent, AgentDTO.class);
   }
@@ -69,5 +85,11 @@ public class AgentServiceImpl implements AgentService {
     return agentRepository.findAll().stream()
         .map(agent -> modelMapper.map(agent, AgentDTO.class))
         .toList();
+  }
+
+  private boolean isAuthorizedToUpdate(UserDTO user, String agentId) {
+    boolean isAdmin = user.getRoles() != null && user.getRoles().contains(UserRole.ADMIN);
+    boolean isLinkedToAgent = agentId.equals(user.getAgentId());
+    return isAdmin || isLinkedToAgent;
   }
 }
