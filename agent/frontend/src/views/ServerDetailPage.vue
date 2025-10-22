@@ -99,11 +99,9 @@
                 <label class="form-label small text-muted">Filter by Type</label>
                 <select v-model="filterType" class="form-select form-select-sm">
                   <option value="">All Types</option>
-                  <option value="CREATE">Create</option>
                   <option value="UPDATE">Update</option>
-                  <option value="DELETE">Delete</option>
-                  <option value="HEALTH_CHECK">Health Check</option>
-                  <option value="REPORT_SENT">Report Sent</option>
+                  <option value="COMMUNICATION">Communication</option>
+                  <option value="REGISTRATION">Registration</option>
                 </select>
               </div>
               <div class="col-md-4">
@@ -147,7 +145,6 @@
                     </td>
                     <td>
                       <span class="badge" :class="getInteractionTypeBadge(interaction.type)">
-                        <i :class="getInteractionTypeIcon(interaction.type)" class="me-1"></i>
                         {{ interaction.type }}
                       </span>
                     </td>
@@ -199,12 +196,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, inject } from 'vue';
+import { ref, computed, onMounted, inject, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '@/js/api.js';
 import PageHeader from '@/components/PageHeader.vue';
 import Pagination from '@/components/Pagination.vue';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal.vue';
+import {
+  getStatusBadgeClass,
+  getStatusIcon,
+  formatStatus
+} from '@/utils/serverStatus.js';
+import {
+  getInteractionTypeBadge
+} from '@/utils/interactionTypes.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -288,7 +293,6 @@ function resetPagination() {
 }
 
 // Watch for filter changes
-import { watch } from 'vue';
 watch([filterType, searchQuery], () => {
   resetPagination();
 });
@@ -310,53 +314,6 @@ async function fetchServerDetails() {
 
 function goBack() {
   router.push('/servers');
-}
-
-function getStatusBadgeClass(status) {
-  const classes = {
-    'ACTIVE': 'bg-success',
-    'INACTIVE': 'bg-warning',
-    'ERROR': 'bg-danger',
-    'PENDING': 'bg-warning'
-  };
-  return classes[status] || 'bg-secondary';
-}
-
-function getStatusIcon(status) {
-  const icons = {
-    'ACTIVE': 'bi bi-check-circle-fill',
-    'INACTIVE': 'bi bi-pause-circle-fill',
-    'ERROR': 'bi bi-x-circle-fill',
-    'PENDING': 'bi bi-clock-fill'
-  };
-  return icons[status] || 'bi bi-question-circle-fill';
-}
-
-function formatStatus(status) {
-  if (!status) return 'Unknown';
-  return status.charAt(0) + status.slice(1).toLowerCase();
-}
-
-function getInteractionTypeBadge(type) {
-  const classes = {
-    'CREATE': 'bg-success',
-    'UPDATE': 'bg-primary',
-    'DELETE': 'bg-danger',
-    'HEALTH_CHECK': 'bg-info',
-    'REPORT_SENT': 'bg-secondary'
-  };
-  return classes[type] || 'bg-secondary';
-}
-
-function getInteractionTypeIcon(type) {
-  const icons = {
-    'CREATE': 'bi bi-plus-circle',
-    'UPDATE': 'bi bi-pencil',
-    'DELETE': 'bi bi-trash',
-    'HEALTH_CHECK': 'bi bi-heart-pulse',
-    'REPORT_SENT': 'bi bi-send'
-  };
-  return icons[type] || 'bi bi-circle';
 }
 
 function formatDateShort(dateString) {

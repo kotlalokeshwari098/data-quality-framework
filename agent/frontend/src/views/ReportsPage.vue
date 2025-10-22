@@ -1,48 +1,46 @@
 <template>
-  <div class="container-fluid px-2 px-md-3 py-3 py-md-4">
-    <div class="row">
-      <div class="col-12">
-        <PageHeader
-          title="Reports"
-          mobileTitle="Reports"
-          subtitle="View and analyze all data quality reports"
-          icon="bi bi-file-earmark-text-fill"
+  <div class="reports-page">
+    <PageHeader
+      title="Reports"
+      mobileTitle="Reports"
+      subtitle="View and analyze all data quality reports"
+      icon="bi bi-file-earmark-text"
+    />
+
+    <div class="page-content">
+      <!-- Action Section -->
+      <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
+        <div></div>
+        <GenerateReportButton
+          @click="generateReport"
+          :loading="reportStore.isGenerating"
+          text="Generate Report"
         />
-
-        <!-- Action Section -->
-        <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
-          <div></div>
-          <GenerateReportButton
-            @click="generateReport"
-            :loading="reportStore.isGenerating"
-            text="Generate Report"
-          />
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-grid mb-3 mb-md-4">
-          <StatCard
-            :number="reportStore.reports.length"
-            label="Total Reports"
-            number-class="text-dark"
-          />
-          <StatCard
-            :number="latestReportTime"
-            label="Latest Report"
-            number-class="text-primary"
-          />
-        </div>
-
-        <!-- Loading state -->
-        <div v-if="reportStore.isGenerating && reportStore.reports.length === 0" class="loading-state">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-
-        <!-- Reports table -->
-        <ReportsTable v-else :reports="sortedReports" />
       </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid mb-3 mb-md-4">
+        <StatCard
+          :number="reportStore.reports.length"
+          label="Total Reports"
+          number-class="text-dark"
+        />
+        <StatCard
+          :number="latestReportTime"
+          label="Latest Report"
+          number-class="text-primary"
+        />
+      </div>
+
+      <!-- Loading state -->
+      <div v-if="reportStore.isGenerating && reportStore.reports.length === 0" class="loading-state">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Reports table -->
+      <ReportsTable v-else :reports="sortedReports" />
     </div>
   </div>
 </template>
@@ -88,6 +86,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.reports-page {
+  min-height: 100%;
+  padding: 2rem;
+}
+
+.page-content {
+  width: 100%;
+}
+
 .loading-state {
   display: flex;
   justify-content: center;
@@ -100,5 +107,17 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .reports-page {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .reports-page {
+    padding: 0.75rem;
+  }
 }
 </style>

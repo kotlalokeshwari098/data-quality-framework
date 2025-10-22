@@ -41,6 +41,13 @@
 </template>
 
 <script setup>
+import {
+  getStatusClass,
+  getStatusIcon,
+  formatStatus,
+  getStatusTooltip
+} from '@/utils/serverStatus.js';
+
 const props = defineProps({
   server: {
     type: Object,
@@ -56,41 +63,6 @@ function handleViewDetails() {
 
 function handleDelete() {
   emit('delete', props.server);
-}
-
-function getStatusClass(status) {
-  const classes = {
-    'ACTIVE': 'status-active',
-    'INACTIVE': 'status-inactive',
-    'ERROR': 'status-error',
-    'PENDING': 'status-pending'
-  };
-  return classes[status] || 'status-unknown';
-}
-
-function getStatusIcon(status) {
-  const icons = {
-    'ACTIVE': 'bi bi-check-circle-fill',
-    'INACTIVE': 'bi bi-pause-circle-fill',
-    'ERROR': 'bi bi-x-circle-fill',
-    'PENDING': 'bi bi-hourglass-split'
-  };
-  return icons[status] || 'bi bi-question-circle-fill';
-}
-
-function formatStatus(status) {
-  if (!status) return 'Unknown';
-  return status.charAt(0) + status.slice(1).toLowerCase();
-}
-
-function getStatusTooltip(status) {
-  const tooltips = {
-    'ACTIVE': 'Server connection is active. Reports are being sent to this central server.',
-    'INACTIVE': 'Server connection is inactive. Reports will not be sent until the connection is reactivated.',
-    'ERROR': 'Connection error detected. Please check server configuration or contact your administrator.',
-    'PENDING': 'Registration submitted successfully. Waiting for administrator approval on the central server before reports can be sent.'
-  };
-  return tooltips[status] || 'Server status is unknown. Please refresh or contact support.';
 }
 </script>
 
