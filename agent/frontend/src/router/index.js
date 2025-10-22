@@ -11,6 +11,7 @@ const router = createRouter({
         { path: '/reports', component: () => import('@/views/ReportsPage.vue'), meta: { requiresAuth: true } },
         { path: '/reports/:id', component: () => import('@/views/ReportDetailPage.vue'), meta: { requiresAuth: true } },
         { path: '/servers', component: () => import('@/views/ServersPage.vue'), meta: { requiresAuth: true } },
+        { path: '/servers/:id', component: () => import('@/views/ServerDetailPage.vue'), meta: { requiresAuth: true } },
         { path: '/settings', component: () => import('@/views/SettingsPage.vue'), meta: { requiresAuth: true } },
         { path: '/:pathMatch(.*)*', component: () => import('@/views/NotFound.vue'),  meta: { requiresAuth: true }},
     ],

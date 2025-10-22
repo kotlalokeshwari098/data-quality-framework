@@ -1,14 +1,14 @@
 <template>
   <div class="server-details-card">
-    <div class="server-info-grid">
-      <div class="info-item">
-        <div class="info-label">
-          <i class="bi bi-tag"></i>
-          Server Name
-        </div>
-        <div class="info-value">{{ server?.name || 'N/A' }}</div>
-      </div>
+    <div class="server-header">
+      <h3 class="server-name">{{ server?.name || 'Unknown Server' }}</h3>
+      <span :class="['status-badge-large', getStatusClass(server?.status)]">
+        <i :class="getStatusIcon(server?.status)"></i>
+        <span class="status-text">{{ formatStatus(server?.status) }}</span>
+      </span>
+    </div>
 
+    <div class="server-info-grid">
       <div class="info-item">
         <div class="info-label">
           <i class="bi bi-link-45deg"></i>
@@ -22,37 +22,16 @@
           <span v-else>N/A</span>
         </div>
       </div>
-
-      <div class="info-item">
-        <div class="info-label">
-          <i class="bi bi-activity"></i>
-          Status
-        </div>
-        <div class="info-value">
-          <span :class="['status-badge', getStatusClass(server?.status)]">
-            <i :class="getStatusIcon(server?.status)"></i>
-            {{ formatStatus(server?.status) }}
-          </span>
-        </div>
-      </div>
-
-      <div class="info-item">
-        <div class="info-label">
-          <i class="bi bi-key"></i>
-          Server ID
-        </div>
-        <div class="info-value server-id">{{ server?.id || 'N/A' }}</div>
-      </div>
     </div>
 
     <div class="server-actions-bar">
-      <button class="btn btn-edit" @click="handleEdit">
-        <i class="bi bi-pencil"></i>
-        Edit Server
+      <button class="btn btn-primary" @click="handleViewDetails">
+        <i class="bi bi-info-circle"></i>
+        View Details
       </button>
       <button class="btn btn-delete" @click="handleDelete">
         <i class="bi bi-trash"></i>
-        Delete Server
+        Remove
       </button>
     </div>
   </div>
@@ -66,10 +45,10 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['edit', 'delete']);
+const emit = defineEmits(['delete', 'viewDetails']);
 
-function handleEdit() {
-  emit('edit', props.server);
+function handleViewDetails() {
+  emit('viewDetails', props.server);
 }
 
 function handleDelete() {
@@ -108,6 +87,65 @@ function formatStatus(status) {
   border: 2px solid var(--color-gray-100);
 }
 
+.server-header {
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.server-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-gray-800);
+  margin: 0;
+  flex: 1;
+}
+
+.status-badge-large {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid transparent;
+  transition: all var(--transition-base);
+}
+
+.status-badge-large i {
+  font-size: 1.1rem;
+}
+
+.status-badge-large.status-active {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border-color: #10b981;
+}
+
+.status-badge-large.status-inactive {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border-color: #f59e0b;
+}
+
+.status-badge-large.status-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border-color: #ef4444;
+}
+
+.status-badge-large.status-unknown {
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+  color: var(--color-gray-800);
+  border-color: var(--color-gray-400);
+}
+
 .server-info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -143,12 +181,6 @@ function formatStatus(status) {
   word-break: break-word;
 }
 
-.server-id {
-  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-  font-size: 0.9rem;
-  color: var(--color-gray-600);
-}
-
 .server-link {
   color: var(--color-primary);
   text-decoration: none;
@@ -161,37 +193,6 @@ function formatStatus(status) {
 .server-link:hover {
   color: var(--color-primary-dark);
   text-decoration: underline;
-}
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: 600;
-  width: fit-content;
-}
-
-.status-active {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status-inactive {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-error {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.status-unknown {
-  background: var(--color-gray-100);
-  color: var(--color-gray-800);
 }
 
 .server-actions-bar {
@@ -214,13 +215,13 @@ function formatStatus(status) {
   gap: var(--spacing-sm);
 }
 
-.btn-edit {
-  background: #3b82f6;
+.btn-primary {
+  background: var(--color-primary);
   color: white;
 }
 
-.btn-edit:hover {
-  background: #2563eb;
+.btn-primary:hover {
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -239,6 +240,11 @@ function formatStatus(status) {
 @media (max-width: 768px) {
   .server-details-card {
     padding: var(--spacing-lg);
+  }
+
+  .server-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .server-info-grid {

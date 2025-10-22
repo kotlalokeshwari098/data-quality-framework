@@ -40,8 +40,8 @@
 
         <ServerDetailsCard
           :server="firstServer"
-          @edit="handleEdit"
           @delete="handleDelete"
+          @viewDetails="handleViewDetails"
         />
 
         <div v-if="servers.length > 1" class="additional-servers-notice">
@@ -50,15 +50,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Edit Modal -->
-    <ServerEditModal
-      v-if="showEditModal && editingServer"
-      :server="editingServer"
-      :loading="isUpdating"
-      @close="closeEditModal"
-      @submit="updateServer"
-    />
 
     <!-- Delete Confirmation Modal -->
     <DeleteConfirmModal
@@ -73,23 +64,21 @@
 
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue';
+import { useRouter } from 'vue-router';
 import serverStore from '../stores/serverStore.js';
 import PageHeader from '../components/PageHeader.vue';
 import ServerRegistrationForm from '../components/ServerRegistrationForm.vue';
 import ServerDetailsCard from '../components/ServerDetailsCard.vue';
-import ServerEditModal from '../components/ServerEditModal.vue';
 import DeleteConfirmModal from '../components/DeleteConfirmModal.vue';
 
 const notify = inject('notify');
+const router = useRouter();
 
 const isRegistering = ref(false);
-const isUpdating = ref(false);
 const isDeleting = ref(false);
-const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const registrationForm = ref(null);
 
-const editingServer = ref(null);
 const deletingServer = ref(null);
 
 const servers = computed(() => serverStore.servers);
@@ -113,42 +102,8 @@ async function registerServer(data) {
   }
 }
 
-function handleEdit(server) {
-  editingServer.value = server;
-  showEditModal.value = true;
-}
-
-function closeEditModal() {
-  showEditModal.value = false;
-  editingServer.value = null;
-}
-
-async function updateServer(data) {
-  if (!data.name || !data.url) {
-    notify.error('Validation Error', 'Please fill in all required fields');
-    return;
-  }
-
-  isUpdating.value = true;
-  try {
-    await serverStore.updateServer(data.id, { name: data.name, url: data.url });
-    notify.success('Server Updated', `${data.name} has been updated successfully`);
-    closeEditModal();
-  } catch (error) {
-    notify.error('Update Failed', serverStore.error || 'Unable to update server. Please try again.');
-  } finally {
-    isUpdating.value = false;
-  }
-}
-
-function handleDelete(server) {
-  deletingServer.value = server;
-  showDeleteModal.value = true;
-}
-
-function closeDeleteModal() {
-  showDeleteModal.value = false;
-  deletingServer.value = null;
+function handleViewDetails(server) {
+  router.push(`/servers/${server.id}`);
 }
 
 async function deleteServer() {
@@ -164,6 +119,16 @@ async function deleteServer() {
   } finally {
     isDeleting.value = false;
   }
+}
+
+function handleDelete(server) {
+  deletingServer.value = server;
+  showDeleteModal.value = true;
+}
+
+function closeDeleteModal() {
+  showDeleteModal.value = false;
+  deletingServer.value = null;
 }
 
 async function refreshServers() {
