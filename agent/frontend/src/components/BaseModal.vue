@@ -478,12 +478,15 @@ onUnmounted(() => {
   border-top: 1px solid #e5e7eb;
   background: #f9fafb;
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
 .modal-footer-actions {
   display: flex;
   gap: 0.75rem;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 /* Backdrop transitions - delayed to appear after modal loads */
