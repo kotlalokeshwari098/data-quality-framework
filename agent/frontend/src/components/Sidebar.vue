@@ -26,14 +26,24 @@
           <i class="bi bi-file-earmark-text-fill"></i>
           <span>Reports</span>
         </router-link>
-        <router-link to="/servers" class="nav-link" :class="{ active: $route.path === '/servers' }" @click="closeMobileMenu">
-          <i class="bi bi-server"></i>
-          <span>Servers</span>
-        </router-link>
-        <router-link to="/settings" class="nav-link" :class="{ active: $route.path === '/settings' }" @click="closeMobileMenu">
-          <i class="bi bi-gear-fill"></i>
-          <span>Settings</span>
-        </router-link>
+
+        <!-- Settings Section (non-clickable parent) -->
+        <div class="nav-section">
+          <div class="nav-section-title">
+            <i class="bi bi-gear-fill"></i>
+            <span>Settings</span>
+          </div>
+          <div class="nav-section-items">
+            <router-link to="/settings" class="nav-link nav-sublink" :class="{ active: $route.path === '/settings' }" @click="closeMobileMenu">
+              <i class="bi bi-sliders"></i>
+              <span>General</span>
+            </router-link>
+            <router-link to="/servers" class="nav-link nav-sublink" :class="{ active: $route.path === '/servers' }" @click="closeMobileMenu">
+              <i class="bi bi-file-earmark-text-fill"></i>
+              <span>Reporting</span>
+            </router-link>
+          </div>
+        </div>
       </nav>
 
       <!-- Copyright -->
@@ -188,6 +198,46 @@ const closeMobileMenu = () => {
   height: 60%;
   background: white;
   border-radius: 0 4px 4px 0;
+}
+
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.nav-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 0.875rem var(--spacing-md);
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: default;
+}
+
+.nav-section-title i {
+  font-size: 1.1rem;
+  min-width: 1.1rem;
+}
+
+.nav-section-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.nav-sublink {
+  padding-left: calc(var(--spacing-md) + 1.25rem + var(--spacing-md));
+  font-size: 0.9rem;
+}
+
+.nav-sublink i {
+  font-size: 1.1rem;
 }
 
 .sidebar-footer {

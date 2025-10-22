@@ -1,16 +1,14 @@
 <template>
   <div class="servers-page">
     <PageHeader
-      title="Server Management"
+      title="Reporting Management"
       mobileTitle="Servers"
-      subtitle="Manage and register central servers for data quality framework"
-      icon="bi bi-server"
+      subtitle="Manage and register central servers to which reports should be sent"
+      icon="bi bi-file-earmark-text-fill"
     />
 
     <div class="page-content">
       <div class="servers-container">
-        <HealthStatusBanner/>
-
         <!-- Server Registration Card -->
         <div class="servers-card">
           <div class="servers-section">
