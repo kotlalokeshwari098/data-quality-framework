@@ -81,7 +81,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void findById_shouldReturnAgentWithHateoasLinksWhenExists() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -147,7 +147,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void endToEndFlow_createAndRetrieveAgent() throws Exception {
     String agentId = UUID.randomUUID().toString();
     AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
@@ -309,7 +309,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void findById_shouldNotIncludeInteractionsByDefault() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -325,7 +325,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void findById_shouldIncludeInteractionsWhenExpandParameterProvided() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -348,7 +348,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void findById_shouldIgnoreInvalidExpandParameter() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
