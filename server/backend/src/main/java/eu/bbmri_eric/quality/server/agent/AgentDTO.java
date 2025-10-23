@@ -2,6 +2,7 @@ package eu.bbmri_eric.quality.server.agent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import org.springframework.hateoas.server.core.Relation;
 
 @Schema(description = "Agent data transfer object")
@@ -19,6 +20,9 @@ public class AgentDTO {
   private String name;
 
   private String version;
+
+  @Schema(description = "List of agent interactions (only included when expand=interactions)")
+  private List<AgentInteractionDTO> interactions;
 
   public AgentDTO() {}
 
@@ -52,5 +56,13 @@ public class AgentDTO {
 
   public void setVersion(String version) {
     this.version = version;
+  }
+
+  public List<AgentInteractionDTO> getInteractions() {
+    return interactions;
+  }
+
+  public void setInteractions(List<AgentInteractionDTO> interactions) {
+    this.interactions = interactions;
   }
 }

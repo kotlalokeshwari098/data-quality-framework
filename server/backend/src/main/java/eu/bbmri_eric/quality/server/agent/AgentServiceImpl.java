@@ -71,12 +71,26 @@ public class AgentServiceImpl implements AgentService {
   @Override
   @Transactional(readOnly = true)
   public AgentDTO findById(String id) {
-    return modelMapper.map(
+    return findById(id, false);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public AgentDTO findById(String id, boolean expandInteractions) {
+    Agent agent =
         agentRepository
             .findById(id)
             .orElseThrow(
-                () -> new EntityNotFoundException("Agent with ID %s not found".formatted(id))),
-        AgentDTO.class);
+                () -> new EntityNotFoundException("Agent with ID %s not found".formatted(id)));
+    AgentDTO agentDTO = modelMapper.map(agent, AgentDTO.class);
+    if (expandInteractions) {
+      List<AgentInteractionDTO> interactions =
+          agent.getInteractions().stream()
+              .map(interaction -> modelMapper.map(interaction, AgentInteractionDTO.class))
+              .toList();
+      agentDTO.setInteractions(interactions);
+    }
+    return agentDTO;
   }
 
   @Override
