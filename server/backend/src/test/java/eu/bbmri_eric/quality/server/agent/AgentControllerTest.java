@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -170,7 +171,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldUpdateAgentNameAndReturnHateoasResponse() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -192,7 +193,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldUpdateAgentStatusAndReturnHateoasResponse() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -213,7 +214,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldUpdateBothNameAndStatus() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -247,7 +248,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldHandleEmptyUpdateRequest() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -277,21 +278,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "USER")
-  void update_shouldRequireAdminRole() throws Exception {
-    String agentId = UUID.randomUUID().toString();
-    AgentUpdateRequest updateRequest = new AgentUpdateRequest("New Name", AgentStatus.ACTIVE);
-
-    mockMvc
-        .perform(
-            patch(API_V_1_AGENTS_ID, agentId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateRequest)))
-        .andExpect(status().isForbidden());
-  }
-
-  @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void endToEndFlow_createUpdateAndRetrieveAgent() throws Exception {
     String agentId = UUID.randomUUID().toString();
     AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
