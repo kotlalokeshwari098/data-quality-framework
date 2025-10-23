@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.server.dto;
+package eu.bbmri_eric.quality.agent.server.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;

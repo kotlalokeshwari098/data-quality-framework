@@ -3,10 +3,6 @@ package eu.bbmri_eric.quality.agent.server;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import eu.bbmri_eric.quality.agent.server.dto.DetailedServerDto;
-import eu.bbmri_eric.quality.agent.server.dto.ServerCreateDto;
-import eu.bbmri_eric.quality.agent.server.dto.ServerDto;
-import eu.bbmri_eric.quality.agent.server.dto.ServerUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

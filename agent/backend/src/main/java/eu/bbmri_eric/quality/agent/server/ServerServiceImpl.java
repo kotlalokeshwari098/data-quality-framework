@@ -1,9 +1,5 @@
 package eu.bbmri_eric.quality.agent.server;
 
-import eu.bbmri_eric.quality.agent.server.dto.DetailedServerDto;
-import eu.bbmri_eric.quality.agent.server.dto.ServerCreateDto;
-import eu.bbmri_eric.quality.agent.server.dto.ServerDto;
-import eu.bbmri_eric.quality.agent.server.dto.ServerUpdateDto;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.config;
+package eu.bbmri_eric.quality.agent.common;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

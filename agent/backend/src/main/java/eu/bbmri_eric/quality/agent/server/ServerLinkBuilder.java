@@ -2,8 +2,6 @@ package eu.bbmri_eric.quality.agent.server;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
-import eu.bbmri_eric.quality.agent.server.dto.DetailedServerDto;
-import eu.bbmri_eric.quality.agent.server.dto.ServerDto;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

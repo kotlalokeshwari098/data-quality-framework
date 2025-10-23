@@ -1,10 +1,8 @@
-package eu.bbmri_eric.quality.agent.server;
+package eu.bbmri_eric.quality.agent.server.client;
 
 import eu.bbmri_eric.quality.agent.auth.LoginRequest;
-import eu.bbmri_eric.quality.agent.server.dto.AgentRegistrationRequest;
-import eu.bbmri_eric.quality.agent.server.dto.AgentRegistrationResponse;
-import eu.bbmri_eric.quality.agent.server.dto.AgentStatusResponse;
-import eu.bbmri_eric.quality.agent.server.dto.LoginResponse;
+import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
+
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

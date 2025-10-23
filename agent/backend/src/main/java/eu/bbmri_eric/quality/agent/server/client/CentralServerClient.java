@@ -1,6 +1,8 @@
-package eu.bbmri_eric.quality.agent.server;
+package eu.bbmri_eric.quality.agent.server.client;
 
-interface CentralServerClient {
+import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
+
+public interface CentralServerClient {
   RegistrationCredentials register(String agentId, String serverUrl);
 
   ServerConnectionStatus checkRegistrationStatus(

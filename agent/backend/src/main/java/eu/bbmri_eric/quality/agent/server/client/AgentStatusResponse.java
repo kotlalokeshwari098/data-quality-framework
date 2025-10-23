@@ -1,6 +1,4 @@
-package eu.bbmri_eric.quality.agent.server.dto;
-
-import eu.bbmri_eric.quality.agent.server.AgentStatus;
+package eu.bbmri_eric.quality.agent.server.client;
 
 public class AgentStatusResponse {
   private String id;

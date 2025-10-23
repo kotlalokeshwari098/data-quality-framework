@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.server;
 
+import eu.bbmri_eric.quality.agent.server.client.CentralServerClient;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -61,8 +62,13 @@ class ServerHealthCheckScheduler {
 
   private void handleStatusCheckError(Server server, Exception e) {
     server.setStatus(ServerConnectionStatus.ERROR);
-    String errorMessage = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+    String errorMessage = extractErrorMessage(e);
     server.addInteraction(new ServerInteraction(InteractionType.STATUS_CHECK, errorMessage));
     log.error("Error checking status for server {}", server.getUrl(), e);
+  }
+
+  private String extractErrorMessage(Exception e) {
+    String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+    return message.length() > 500 ? message.substring(0, 500) : message;
   }
 }

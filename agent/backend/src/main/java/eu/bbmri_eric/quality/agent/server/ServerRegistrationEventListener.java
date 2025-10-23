@@ -1,8 +1,11 @@
 package eu.bbmri_eric.quality.agent.server;
 
+import eu.bbmri_eric.quality.agent.server.client.CentralServerClient;
+import eu.bbmri_eric.quality.agent.server.client.RegistrationCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ class ServerRegistrationEventListener {
   }
 
   @EventListener
+  @Async("asyncEventExecutor")
   @Transactional
   void handleServerRegistration(ServerRegistrationEvent event) {
     try {
@@ -62,6 +66,7 @@ class ServerRegistrationEventListener {
   }
 
   private String extractErrorMessage(Exception e) {
-    return e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+    String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+    return message.length() > 500 ? message.substring(0, 500) : message;
   }
 }

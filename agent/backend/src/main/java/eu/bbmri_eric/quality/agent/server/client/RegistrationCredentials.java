@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.server;
+package eu.bbmri_eric.quality.agent.server.client;
 
 import java.util.Objects;
 

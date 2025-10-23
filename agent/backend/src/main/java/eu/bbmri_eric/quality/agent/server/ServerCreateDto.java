@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.server.dto;
+package eu.bbmri_eric.quality.agent.server;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

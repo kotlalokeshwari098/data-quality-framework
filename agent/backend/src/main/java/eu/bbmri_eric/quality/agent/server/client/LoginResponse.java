@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.server.dto;
+package eu.bbmri_eric.quality.agent.server.client;
 
 public class LoginResponse {
   private String token;
