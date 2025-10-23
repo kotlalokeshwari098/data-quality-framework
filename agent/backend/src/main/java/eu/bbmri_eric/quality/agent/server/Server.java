@@ -148,7 +148,7 @@ public class Server {
 
   public void addInteraction(ServerInteraction interaction) {
     interaction.setServerId(this.id);
-    interactions.add(interaction);
+    this.interactions.add(interaction);
   }
 
   @Override

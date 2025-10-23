@@ -9,10 +9,14 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.modelmapper.ModelMapper;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service for managing server operations. Decoupled from server communication concerns through
+ * event publishing.
+ */
 @Service
 @Transactional
 public class ServerServiceImpl implements ServerService {
@@ -20,17 +24,17 @@ public class ServerServiceImpl implements ServerService {
   private final ServerRepository serverRepository;
   private final ModelMapper modelMapper;
   private final SettingsService settingsService;
-  private final CentralServerClient centralServerClient;
+  private final ApplicationEventPublisher eventPublisher;
 
-  ServerServiceImpl(
+  public ServerServiceImpl(
       ServerRepository serverRepository,
       ModelMapper modelMapper,
       SettingsService settingsService,
-      CentralServerClient centralServerClient) {
+      ApplicationEventPublisher eventPublisher) {
     this.serverRepository = serverRepository;
     this.modelMapper = modelMapper;
     this.settingsService = settingsService;
-    this.centralServerClient = centralServerClient;
+    this.eventPublisher = eventPublisher;
   }
 
   @Override
@@ -56,7 +60,7 @@ public class ServerServiceImpl implements ServerService {
     Server server = new Server(createDto.getUrl(), createDto.getName());
     Server savedServer = serverRepository.save(server);
     String agentId = settingsService.getSettings().getAgentId();
-    centralServerClient.register(agentId, savedServer.getUrl());
+    eventPublisher.publishEvent(new ServerRegistrationEvent(this, agentId, savedServer.getUrl()));
     return modelMapper.map(savedServer, ServerDto.class);
   }
 
@@ -90,21 +94,5 @@ public class ServerServiceImpl implements ServerService {
       throw new EntityNotFoundException("Server not found with id: " + id);
     }
     serverRepository.deleteById(id);
-  }
-
-  @Scheduled(fixedRate = 60000) // Run every 60 seconds (1 minute)
-  public void checkAllServerStatuses() {
-    String agentId = settingsService.getSettings().getAgentId();
-    serverRepository
-        .findAll()
-        .forEach(
-            server -> {
-              ServerConnectionStatus newStatus =
-                  centralServerClient.checkRegistrationStatus(agentId, server.getUrl());
-              if (newStatus != server.getStatus()) {
-                server.setStatus(newStatus);
-                serverRepository.save(server);
-              }
-            });
   }
 }

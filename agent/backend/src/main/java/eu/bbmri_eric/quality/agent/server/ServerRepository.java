@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.server;
 
+import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,6 @@ import org.springframework.stereotype.Repository;
  * <p>Provides CRUD operations for managing central server configurations in the database.
  */
 @Repository
-public interface ServerRepository extends CrudRepository<Server, String> {}
+public interface ServerRepository extends CrudRepository<Server, String> {
+  Optional<Server> findByUrl(String url);
+}

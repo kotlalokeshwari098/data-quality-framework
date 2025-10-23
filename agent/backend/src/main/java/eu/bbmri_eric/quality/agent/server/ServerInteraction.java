@@ -46,7 +46,7 @@ public class ServerInteraction {
 
   /** The ID of the server this interaction belongs to. */
   @NotNull
-  @Column(name = "server_id", nullable = false)
+  @Column(nullable = false)
   private String serverId;
 
   /** Default constructor required by JPA. */
