@@ -11,6 +11,19 @@
       </div>
     </div>
 
+    <!-- Agent Actions -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <button
+          class="btn btn-outline-primary btn-sm d-flex align-items-center"
+          @click="goToInteractions"
+        >
+          <i class="bi bi-clock-history me-2"></i>
+          View Logs
+        </button>
+      </div>
+    </div>
+
     <!-- Pending Agent Banner -->
     <div v-if="agent && agent.status === 'PENDING'" class="row mb-4">
       <div class="col-12">
@@ -279,6 +292,10 @@ const declineAgent = async (agent) => {
   } finally {
     processing.value = false
   }
+}
+
+const goToInteractions = () => {
+  router.push({ name: 'AgentInteractions', params: { uuid: agentId.value } })
 }
 
 onMounted(() => {
