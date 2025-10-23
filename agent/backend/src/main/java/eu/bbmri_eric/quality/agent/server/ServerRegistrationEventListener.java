@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.agent.server;
 
 import eu.bbmri_eric.quality.agent.server.client.CentralServerClient;
+import eu.bbmri_eric.quality.agent.server.client.CentralServerClientFactory;
 import eu.bbmri_eric.quality.agent.server.client.RegistrationCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,12 @@ class ServerRegistrationEventListener {
 
   private static final Logger log = LoggerFactory.getLogger(ServerRegistrationEventListener.class);
 
-  private final CentralServerClient centralServerClient;
+  private final CentralServerClientFactory clientFactory;
   private final ServerRepository serverRepository;
 
   ServerRegistrationEventListener(
-      CentralServerClient centralServerClient, ServerRepository serverRepository) {
-    this.centralServerClient = centralServerClient;
+      CentralServerClientFactory clientFactory, ServerRepository serverRepository) {
+    this.clientFactory = clientFactory;
     this.serverRepository = serverRepository;
   }
 
@@ -32,8 +33,9 @@ class ServerRegistrationEventListener {
   @Transactional
   void handleServerRegistration(ServerRegistrationEvent event) {
     try {
-      RegistrationCredentials credentials =
-          centralServerClient.register(event.getAgentId(), event.getServerUrl());
+      CentralServerClient client =
+          clientFactory.createClient(event.getAgentId(), event.getServerUrl(), "", "");
+      RegistrationCredentials credentials = client.register();
       updateServerWithCredentials(event.getServerUrl(), credentials);
     } catch (Exception e) {
       log.error("Error registering with server {}", event.getServerUrl(), e);
@@ -46,6 +48,8 @@ class ServerRegistrationEventListener {
         .findByUrl(serverUrl)
         .ifPresentOrElse(
             server -> {
+              server.addInteraction(
+                  new ServerInteraction(InteractionType.REGISTRATION, "Registration request sent"));
               server.setClientId(credentials.getClientId());
               server.setClientSecret(credentials.getClientSecret());
               serverRepository.save(server);

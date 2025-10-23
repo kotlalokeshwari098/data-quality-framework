@@ -1,6 +1,6 @@
 package eu.bbmri_eric.quality.agent.server;
 
-import eu.bbmri_eric.quality.agent.server.client.CentralServerClient;
+import eu.bbmri_eric.quality.agent.server.client.CentralServerClientFactory;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -20,15 +20,15 @@ class ServerHealthCheckScheduler {
 
   private final ServerRepository serverRepository;
   private final SettingsService settingsService;
-  private final CentralServerClient centralServerClient;
+  private final CentralServerClientFactory clientFactory;
 
   ServerHealthCheckScheduler(
       ServerRepository serverRepository,
       SettingsService settingsService,
-      CentralServerClient centralServerClient) {
+      CentralServerClientFactory clientFactory) {
     this.serverRepository = serverRepository;
     this.settingsService = settingsService;
-    this.centralServerClient = centralServerClient;
+    this.clientFactory = clientFactory;
   }
 
   /**
@@ -44,9 +44,10 @@ class ServerHealthCheckScheduler {
 
   private void checkServerStatus(Server server, String agentId) {
     try {
-      ServerConnectionStatus newStatus =
-          centralServerClient.checkRegistrationStatus(
+      var client =
+          clientFactory.createClient(
               agentId, server.getUrl(), server.getClientId(), server.getClientSecret());
+      var newStatus = client.checkRegistrationStatus();
       updateServerStatus(server, newStatus);
     } catch (Exception e) {
       handleStatusCheckError(server, e);

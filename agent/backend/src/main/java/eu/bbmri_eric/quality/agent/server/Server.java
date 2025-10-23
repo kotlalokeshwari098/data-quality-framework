@@ -22,7 +22,7 @@ public class Server {
 
   @NotBlank
   @Size(max = 500)
-  @Column(name = "url", nullable = false, length = 500)
+  @Column(name = "url", nullable = false, length = 500, unique = true)
   private String url;
 
   @NotBlank
@@ -58,13 +58,15 @@ public class Server {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.status = status;
-    addInteraction(new ServerInteraction(InteractionType.UPDATE, "Initial Registration"));
+    addInteraction(
+        new ServerInteraction(InteractionType.UPDATE, "Central server added to the database"));
   }
 
   public Server(String url, String name) {
     this.url = url;
     this.name = name;
-    addInteraction(new ServerInteraction(InteractionType.UPDATE, "Initial Registration"));
+    addInteraction(
+        new ServerInteraction(InteractionType.UPDATE, "Central server added to the database"));
   }
 
   public String getId() {

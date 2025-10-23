@@ -10,7 +10,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,7 +37,6 @@ class ReportRestEventHandler {
   }
 
   @EventListener
-  @Async("asyncEventExecutor")
   @Transactional
   void onFinished(FinishedReportEvent event) {
     reportRepository

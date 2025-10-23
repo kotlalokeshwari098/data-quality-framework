@@ -56,7 +56,7 @@ class ServerTest {
     assertEquals(1, server.getInteractions().size());
     ServerInteraction interaction = server.getInteractions().get(0);
     assertEquals(InteractionType.UPDATE, interaction.getType());
-    assertTrue(interaction.getDescription().contains("Initial Registration"));
+    assertTrue(interaction.getDescription().contains("Central server added to the database"));
   }
 
   @Test
@@ -386,7 +386,8 @@ class ServerTest {
     server.setName("Updated Server");
 
     assertEquals(4, server.getInteractions().size());
-    assertEquals("Initial Registration", server.getInteractions().get(0).getDescription());
+    assertEquals(
+        "Central server added to the database", server.getInteractions().get(0).getDescription());
     assertTrue(server.getInteractions().get(1).getDescription().contains("Status changed"));
     assertTrue(server.getInteractions().get(2).getDescription().contains("URL updated"));
     assertTrue(server.getInteractions().get(3).getDescription().contains("Name updated"));

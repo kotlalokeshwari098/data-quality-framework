@@ -3,10 +3,9 @@ package eu.bbmri_eric.quality.agent.server.client;
 import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
 
 public interface CentralServerClient {
-  RegistrationCredentials register(String agentId, String serverUrl);
+  RegistrationCredentials register();
 
-  ServerConnectionStatus checkRegistrationStatus(
-      String agentId, String serverUrl, String clientId, String clientSecret);
+  ServerConnectionStatus checkRegistrationStatus();
 
-  void healthCheck(String agentId, String serverUrl);
+  void healthCheck();
 }

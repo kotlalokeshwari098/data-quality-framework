@@ -10,14 +10,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 /**
  * Production-grade async configuration for event handling.
  *
- * <p>Configures thread pools with reasonable settings for handling asynchronous events:
- * - Core pool size: 5 threads (handles typical concurrent events)
- * - Max pool size: 20 threads (handles traffic spikes)
- * - Queue capacity: 500 tasks (buffer for peak load)
- * - Keep-alive time: 60 seconds (recycles unused threads)
- * - Thread name prefix: "async-event-" (for monitoring and debugging)
- * - Wait for tasks to complete on shutdown: enabled (graceful shutdown)
- * - Await termination: 60 seconds (max wait for shutdown)
+ * <p>Configures thread pools with reasonable settings for handling asynchronous events: - Core pool
+ * size: 5 threads (handles typical concurrent events) - Max pool size: 20 threads (handles traffic
+ * spikes) - Queue capacity: 500 tasks (buffer for peak load) - Keep-alive time: 60 seconds
+ * (recycles unused threads) - Thread name prefix: "async-event-" (for monitoring and debugging) -
+ * Wait for tasks to complete on shutdown: enabled (graceful shutdown) - Await termination: 60
+ * seconds (max wait for shutdown)
  */
 @Configuration
 @EnableAsync

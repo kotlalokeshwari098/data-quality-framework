@@ -1,7 +1,7 @@
 -- Create server table
 CREATE TABLE server (
     id VARCHAR(255) PRIMARY KEY,
-    url VARCHAR(500) NOT NULL,
+    url VARCHAR(500) NOT NULL UNIQUE ,
     name VARCHAR(255),
     client_id VARCHAR(255),
     client_secret VARCHAR(500),
