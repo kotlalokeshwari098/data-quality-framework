@@ -22,7 +22,7 @@ public class ServerServiceImpl implements ServerService {
   private final SettingsService settingsService;
   private final CentralServerClient centralServerClient;
 
-  public ServerServiceImpl(
+  ServerServiceImpl(
       ServerRepository serverRepository,
       ModelMapper modelMapper,
       SettingsService settingsService,
