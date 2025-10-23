@@ -12,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional
@@ -20,18 +19,18 @@ public class ServerServiceImpl implements ServerService {
 
   private final ServerRepository serverRepository;
   private final ModelMapper modelMapper;
-  private final RestTemplate restTemplate;
   private final SettingsService settingsService;
+  private final CentralServerClient centralServerClient;
 
   public ServerServiceImpl(
       ServerRepository serverRepository,
       ModelMapper modelMapper,
-      RestTemplate restTemplate,
-      SettingsService settingsService) {
+      SettingsService settingsService,
+      CentralServerClient centralServerClient) {
     this.serverRepository = serverRepository;
     this.modelMapper = modelMapper;
-    this.restTemplate = restTemplate;
     this.settingsService = settingsService;
+    this.centralServerClient = centralServerClient;
   }
 
   @Override
@@ -56,7 +55,8 @@ public class ServerServiceImpl implements ServerService {
   public ServerDto create(ServerCreateDto createDto) {
     Server server = new Server(createDto.getUrl(), createDto.getName());
     Server savedServer = serverRepository.save(server);
-    savedServer.register(settingsService.getSettings().getAgentId(), restTemplate);
+    String agentId = settingsService.getSettings().getAgentId();
+    centralServerClient.register(agentId, savedServer.getUrl());
     return modelMapper.map(savedServer, ServerDto.class);
   }
 
@@ -99,8 +99,12 @@ public class ServerServiceImpl implements ServerService {
         .findAll()
         .forEach(
             server -> {
-              server.checkStatus(agentId, restTemplate);
-              serverRepository.save(server);
+              ServerConnectionStatus newStatus =
+                  centralServerClient.checkRegistrationStatus(agentId, server.getUrl());
+              if (newStatus != server.getStatus()) {
+                server.setStatus(newStatus);
+                serverRepository.save(server);
+              }
             });
   }
 }

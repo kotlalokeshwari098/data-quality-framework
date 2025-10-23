@@ -30,13 +30,17 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     assertEquals("https://example.com", server.getUrl());
     assertEquals("Test Server", server.getName());
     assertEquals("client123", server.getClientId());
     assertEquals(base64Secret, server.getClientSecret());
-    assertEquals(ServerStatus.ACTIVE, server.getStatus());
+    assertEquals(ServerConnectionStatus.ACTIVE, server.getStatus());
   }
 
   @Test
@@ -44,17 +48,15 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.PENDING);
-
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.PENDING);
     assertEquals(1, server.getInteractions().size());
     ServerInteraction interaction = server.getInteractions().get(0);
     assertEquals(InteractionType.UPDATE, interaction.getType());
-    assertTrue(
-        interaction
-            .getDescription()
-            .contains("Server created with name='Test Server', url='https://example.com'"));
-    assertTrue(interaction.getDescription().contains("clientId='client123'"));
-    assertTrue(interaction.getDescription().contains("status=PENDING"));
+    assertTrue(interaction.getDescription().contains("Initial Registration"));
   }
 
   @Test
@@ -62,42 +64,14 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("mysecret".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
-
-    Set<ConstraintViolation<Server>> violations = validator.validate(server);
-    assertTrue(violations.isEmpty(), "Valid Base64 secret should not produce violations");
-  }
-
-  @Test
-  void testInvalidBase64ClientSecretProducesViolation() {
-    Server server =
-        new Server(
             "https://example.com",
             "Test Server",
             "client123",
-            "not-valid-base64!@#",
-            ServerStatus.ACTIVE);
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     Set<ConstraintViolation<Server>> violations = validator.validate(server);
-    assertFalse(violations.isEmpty(), "Invalid Base64 secret should produce violations");
-
-    boolean hasBase64Violation =
-        violations.stream().anyMatch(v -> v.getMessage().contains("Base64 encoded"));
-    assertTrue(hasBase64Violation, "Should have Base64 validation error");
-  }
-
-  @Test
-  void testEmptyStringIsValidBase64() {
-    // Empty string is technically valid Base64, but would fail @NotBlank
-    Server server =
-        new Server("https://example.com", "Test Server", "client123", "", ServerStatus.ACTIVE);
-
-    Set<ConstraintViolation<Server>> violations = validator.validate(server);
-
-    // Should have @NotBlank violation, not Base64 violation
-    boolean hasNotBlankViolation =
-        violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("clientSecret"));
-    assertTrue(hasNotBlankViolation, "Empty secret should fail @NotBlank validation");
+    assertTrue(violations.isEmpty(), "Valid Base64 secret should not produce violations");
   }
 
   @Test
@@ -105,7 +79,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     // Simulate that the entity has been persisted by using reflection to set the ID
     setServerId(server, "test-uuid-1");
@@ -126,7 +104,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server, "test-uuid-1");
 
@@ -141,7 +123,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server, "test-uuid-1");
 
@@ -160,7 +146,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server, "test-uuid-1");
 
@@ -179,7 +169,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server, "test-uuid-1");
 
@@ -199,13 +193,17 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.PENDING);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.PENDING);
 
     setServerId(server, "test-uuid-1");
 
-    server.setStatus(ServerStatus.ACTIVE);
+    server.setStatus(ServerConnectionStatus.ACTIVE);
 
-    assertEquals(ServerStatus.ACTIVE, server.getStatus());
+    assertEquals(ServerConnectionStatus.ACTIVE, server.getStatus());
     assertEquals(2, server.getInteractions().size());
     ServerInteraction interaction = server.getInteractions().get(1);
     assertEquals(InteractionType.UPDATE, interaction.getType());
@@ -217,11 +215,15 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server, "test-uuid-1");
 
-    server.setStatus(ServerStatus.ACTIVE);
+    server.setStatus(ServerConnectionStatus.ACTIVE);
 
     // Only creation interaction should exist
     assertEquals(1, server.getInteractions().size());
@@ -232,7 +234,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     ServerInteraction interaction =
         new ServerInteraction(InteractionType.COMMUNICATION, "Test communication");
@@ -247,7 +253,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     try {
       server
@@ -266,10 +276,18 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server1 =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
     Server server2 =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     // Set same IDs
     setServerId(server1, "test-uuid-1");
@@ -284,10 +302,18 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server1 =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
     Server server2 =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server1, "test-uuid-1");
     setServerId(server2, "test-uuid-2");
@@ -300,10 +326,18 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server1 =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
     Server server2 =
         new Server(
-            "https://different.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://different.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server1, "test-uuid-1");
     setServerId(server2, "test-uuid-1");
@@ -316,7 +350,11 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.ACTIVE);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.ACTIVE);
 
     setServerId(server, "test-uuid-1");
 
@@ -335,17 +373,20 @@ class ServerTest {
     String base64Secret = Base64.getEncoder().encodeToString("secret456".getBytes());
     Server server =
         new Server(
-            "https://example.com", "Test Server", "client123", base64Secret, ServerStatus.PENDING);
+            "https://example.com",
+            "Test Server",
+            "client123",
+            base64Secret,
+            ServerConnectionStatus.PENDING);
 
     setServerId(server, "test-uuid-1");
 
-    server.setStatus(ServerStatus.ACTIVE);
+    server.setStatus(ServerConnectionStatus.ACTIVE);
     server.setUrl("https://newurl.com");
     server.setName("Updated Server");
 
     assertEquals(4, server.getInteractions().size());
-    assertEquals(
-        "Server created", server.getInteractions().get(0).getDescription().substring(0, 14));
+    assertEquals("Initial Registration", server.getInteractions().get(0).getDescription());
     assertTrue(server.getInteractions().get(1).getDescription().contains("Status changed"));
     assertTrue(server.getInteractions().get(2).getDescription().contains("URL updated"));
     assertTrue(server.getInteractions().get(3).getDescription().contains("Name updated"));

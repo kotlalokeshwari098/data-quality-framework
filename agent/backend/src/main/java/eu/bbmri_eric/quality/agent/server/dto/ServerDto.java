@@ -1,6 +1,6 @@
 package eu.bbmri_eric.quality.agent.server.dto;
 
-import eu.bbmri_eric.quality.agent.server.ServerStatus;
+import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -28,7 +28,7 @@ public class ServerDto {
 
   /** Current status of the server connection. */
   @Schema(description = "Current status of the server connection", example = "ACTIVE")
-  private ServerStatus status;
+  private ServerConnectionStatus status;
 
   /** Default constructor. */
   public ServerDto() {}
@@ -41,7 +41,7 @@ public class ServerDto {
    * @param name the server name
    * @param status the server status
    */
-  public ServerDto(String id, String url, String name, ServerStatus status) {
+  public ServerDto(String id, String url, String name, ServerConnectionStatus status) {
     this.id = id;
     this.url = url;
     this.name = name;
@@ -107,7 +107,7 @@ public class ServerDto {
    *
    * @return the status
    */
-  public ServerStatus getStatus() {
+  public ServerConnectionStatus getStatus() {
     return status;
   }
 
@@ -116,7 +116,7 @@ public class ServerDto {
    *
    * @param status the status
    */
-  public void setStatus(ServerStatus status) {
+  public void setStatus(ServerConnectionStatus status) {
     this.status = status;
   }
 }

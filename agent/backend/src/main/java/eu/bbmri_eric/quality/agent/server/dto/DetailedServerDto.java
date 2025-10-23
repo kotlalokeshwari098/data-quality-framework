@@ -1,6 +1,6 @@
 package eu.bbmri_eric.quality.agent.server.dto;
 
-import eu.bbmri_eric.quality.agent.server.ServerStatus;
+import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import org.springframework.hateoas.server.core.Relation;
@@ -41,7 +41,7 @@ public class DetailedServerDto extends ServerDto {
       String id,
       String url,
       String name,
-      ServerStatus status,
+      ServerConnectionStatus status,
       String clientId,
       List<ServerInteractionDto> interactions) {
     super(id, url, name, status);
