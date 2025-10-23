@@ -153,3 +153,66 @@ INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
     ('report-current-3', 'missing-birthdate-check', 2.0),
     ('report-current-3', 'invalid-date-check', 2.0),
     ('report-current-3', 'broken-reference-check', 1.0);
+
+-- Insert agent interactions
+-- Registration interactions (when agents first joined)
+INSERT INTO agent_interaction (id, timestamp, type, agent_id) VALUES
+    ('interaction-reg-001', '2024-01-15 08:00:00', 'REGISTRATION', 'agent-001'),
+    ('interaction-reg-002', '2024-01-20 09:30:00', 'REGISTRATION', 'agent-002'),
+    ('interaction-reg-003', '2024-02-01 10:15:00', 'REGISTRATION', 'agent-003'),
+    ('interaction-reg-004', '2024-02-10 11:00:00', 'REGISTRATION', 'agent-004'),
+    ('interaction-reg-005', '2024-02-25 14:45:00', 'REGISTRATION', 'agent-005');
+
+-- Ping interactions (regular health checks)
+INSERT INTO agent_interaction (id, timestamp, type, agent_id) VALUES
+    -- Agent 001 pings (regular, recent)
+    ('interaction-ping-001', '2025-10-23 08:00:00', 'PING', 'agent-001'),
+    ('interaction-ping-002', '2025-10-22 08:00:00', 'PING', 'agent-001'),
+    ('interaction-ping-003', '2025-10-21 08:00:00', 'PING', 'agent-001'),
+    ('interaction-ping-004', '2025-10-20 08:00:00', 'PING', 'agent-001'),
+    ('interaction-ping-005', '2025-10-19 08:00:00', 'PING', 'agent-001'),
+
+    -- Agent 002 pings (regular, recent)
+    ('interaction-ping-006', '2025-10-23 10:30:00', 'PING', 'agent-002'),
+    ('interaction-ping-007', '2025-10-22 10:30:00', 'PING', 'agent-002'),
+    ('interaction-ping-008', '2025-10-21 10:30:00', 'PING', 'agent-002'),
+    ('interaction-ping-009', '2025-10-20 10:30:00', 'PING', 'agent-002'),
+
+    -- Agent 003 pings (old, inactive - over 3 days old)
+    ('interaction-ping-010', '2025-10-15 14:00:00', 'PING', 'agent-003'),
+    ('interaction-ping-011', '2025-10-12 14:00:00', 'PING', 'agent-003'),
+
+    -- Agent 004 pings (very recent)
+    ('interaction-ping-012', '2025-10-23 16:45:00', 'PING', 'agent-004'),
+    ('interaction-ping-013', '2025-10-23 12:45:00', 'PING', 'agent-004'),
+    ('interaction-ping-014', '2025-10-22 16:45:00', 'PING', 'agent-004'),
+
+    -- Agent 005 pings (old - over 3 days old)
+    ('interaction-ping-015', '2025-10-18 09:00:00', 'PING', 'agent-005'),
+    ('interaction-ping-016', '2025-10-15 09:00:00', 'PING', 'agent-005');
+
+-- Report interactions (corresponding to submitted reports)
+INSERT INTO agent_interaction (id, timestamp, type, agent_id) VALUES
+    ('interaction-report-001', '2024-10-01 09:00:00', 'REPORT', 'agent-001'),
+    ('interaction-report-002', '2024-10-01 14:30:00', 'REPORT', 'agent-002'),
+    ('interaction-report-003', '2024-10-02 08:15:00', 'REPORT', 'agent-001'),
+    ('interaction-report-004', '2024-10-02 16:45:00', 'REPORT', 'agent-004'),
+    ('interaction-report-005', '2024-10-03 10:20:00', 'REPORT', 'agent-002'),
+    ('interaction-report-006', '2024-10-03 13:10:00', 'REPORT', 'agent-005'),
+    ('interaction-report-007', '2024-10-04 11:30:00', 'REPORT', 'agent-001'),
+    ('interaction-report-008', '2024-10-04 15:20:00', 'REPORT', 'agent-004'),
+    ('interaction-report-009', '2024-10-05 09:45:00', 'REPORT', 'agent-002'),
+    ('interaction-report-010', '2024-10-05 14:15:00', 'REPORT', 'agent-005'),
+    ('interaction-report-011', '2024-10-06 10:00:00', 'REPORT', 'agent-001'),
+    ('interaction-report-012', '2024-10-06 16:30:00', 'REPORT', 'agent-004'),
+    ('interaction-report-013', '2024-10-07 08:45:00', 'REPORT', 'agent-002'),
+    ('interaction-report-014', '2024-10-07 12:20:00', 'REPORT', 'agent-005'),
+    ('interaction-report-015', '2024-10-08 11:15:00', 'REPORT', 'agent-001'),
+    ('interaction-report-016', '2024-10-08 15:40:00', 'REPORT', 'agent-004'),
+    ('interaction-report-017', '2024-10-09 09:30:00', 'REPORT', 'agent-002'),
+    ('interaction-report-018', '2024-10-09 14:50:00', 'REPORT', 'agent-005'),
+    ('interaction-report-019', '2024-10-10 10:45:00', 'REPORT', 'agent-001'),
+    ('interaction-report-020', '2024-10-10 16:10:00', 'REPORT', 'agent-004'),
+    ('interaction-report-current-1', CURRENT_TIMESTAMP - INTERVAL '2' HOUR, 'REPORT', 'agent-001'),
+    ('interaction-report-current-2', CURRENT_TIMESTAMP - INTERVAL '1' HOUR, 'REPORT', 'agent-002'),
+    ('interaction-report-current-3', CURRENT_TIMESTAMP - INTERVAL '30' MINUTE, 'REPORT', 'agent-004');

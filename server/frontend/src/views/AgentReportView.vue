@@ -14,13 +14,22 @@
     <!-- Agent Actions -->
     <div class="row mb-4">
       <div class="col-12">
-        <button
-          class="btn btn-outline-primary btn-sm d-flex align-items-center"
-          @click="goToInteractions"
-        >
-          <i class="bi bi-clock-history me-2"></i>
-          View Logs
-        </button>
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-outline-secondary btn-sm d-flex align-items-center"
+            @click="goBack"
+          >
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Agents
+          </button>
+          <button
+            class="btn btn-outline-primary btn-sm d-flex align-items-center"
+            @click="goToInteractions"
+          >
+            <i class="bi bi-clock-history me-2"></i>
+            View Logs
+          </button>
+        </div>
       </div>
     </div>
 
@@ -296,6 +305,10 @@ const declineAgent = async (agent) => {
 
 const goToInteractions = () => {
   router.push({ name: 'AgentInteractions', params: { uuid: agentId.value } })
+}
+
+const goBack = () => {
+  router.go(-1)
 }
 
 onMounted(() => {

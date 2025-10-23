@@ -3,16 +3,20 @@
     <!-- Header with Back Button -->
     <div class="row mb-4">
       <div class="col-12">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <button class="btn btn-outline-secondary btn-sm" @click="goBack">
-            <i class="bi bi-arrow-left me-2"></i>Back to Reports
-          </button>
-        </div>
         <PageHeader
           :title="`Agent Interactions - ${agentName}`"
           :subtitle="`Agent ID: ${agentId}`"
           icon="bi bi-clock-history"
         />
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <button class="btn btn-outline-secondary btn-sm" @click="goBack">
+          <i class="bi bi-arrow-left me-2"></i>Back to Reports
+        </button>
       </div>
     </div>
 
