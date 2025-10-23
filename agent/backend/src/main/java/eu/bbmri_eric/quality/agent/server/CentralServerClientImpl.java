@@ -47,20 +47,13 @@ public class CentralServerClientImpl implements CentralServerClient {
   @Override
   public RegistrationCredentials register(String agentId, String serverUrl) {
     validateInputs(agentId, serverUrl);
-    try {
-      AgentRegistrationRequest request = new AgentRegistrationRequest(agentId);
-      HttpEntity<AgentRegistrationRequest> requestEntity = createJsonHttpEntity(request);
-
-      String registrationUrl = buildApiUrl(serverUrl, AGENTS_ENDPOINT);
-      ResponseEntity<AgentRegistrationResponse> response =
-          restTemplate.exchange(
-              registrationUrl, HttpMethod.POST, requestEntity, AgentRegistrationResponse.class);
-
-      return handleRegistrationResponse(response, agentId, serverUrl);
-    } catch (RestClientException e) {
-      logRegistrationError(agentId, serverUrl, e);
-      return null;
-    }
+    AgentRegistrationRequest request = new AgentRegistrationRequest(agentId);
+    HttpEntity<AgentRegistrationRequest> requestEntity = createJsonHttpEntity(request);
+    String registrationUrl = buildApiUrl(serverUrl, AGENTS_ENDPOINT);
+    ResponseEntity<AgentRegistrationResponse> response =
+        restTemplate.exchange(
+            registrationUrl, HttpMethod.POST, requestEntity, AgentRegistrationResponse.class);
+    return parseRegistrationResponse(response, agentId, serverUrl);
   }
 
   /**
@@ -76,20 +69,8 @@ public class CentralServerClientImpl implements CentralServerClient {
   public ServerConnectionStatus checkRegistrationStatus(
       String agentId, String serverUrl, String clientId, String clientSecret) {
     validateInputs(agentId, serverUrl);
-    try {
-      String token = authenticateWithServer(serverUrl, clientId, clientSecret);
-      if (token == null) {
-        return ServerConnectionStatus.ERROR;
-      }
-      return queryAgentStatus(agentId, serverUrl, token);
-    } catch (RestClientException e) {
-      log.error(
-          "Error checking status for agent {} with server {} - {}",
-          agentId,
-          serverUrl,
-          e.getMessage());
-      return ServerConnectionStatus.ERROR;
-    }
+    String token = authenticateWithServer(serverUrl, clientId, clientSecret);
+    return queryAgentStatus(agentId, serverUrl, token);
   }
 
   /**
@@ -140,10 +121,8 @@ public class CentralServerClientImpl implements CentralServerClient {
     HttpHeaders headers = createDefaultHeaders();
     headers.setBearerAuth(token);
     HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
     ResponseEntity<AgentStatusResponse> response =
         restTemplate.exchange(checkUrl, HttpMethod.GET, requestEntity, AgentStatusResponse.class);
-
     return mapAgentStatusToConnectionStatus(response.getBody());
   }
 
@@ -157,7 +136,6 @@ public class CentralServerClientImpl implements CentralServerClient {
     if (agentStatus == null || agentStatus.getStatus() == null) {
       return ServerConnectionStatus.PENDING;
     }
-
     return switch (agentStatus.getStatus()) {
       case ACTIVE -> ServerConnectionStatus.ACTIVE;
       case INACTIVE -> ServerConnectionStatus.INACTIVE;
@@ -173,24 +151,19 @@ public class CentralServerClientImpl implements CentralServerClient {
    * @param serverUrl the server URL
    * @return registration credentials, or null if response is incomplete
    */
-  private RegistrationCredentials handleRegistrationResponse(
+  private RegistrationCredentials parseRegistrationResponse(
       ResponseEntity<AgentRegistrationResponse> response, String agentId, String serverUrl) {
     AgentRegistrationResponse registrationResponse = response.getBody();
-    if (registrationResponse != null
-        && registrationResponse.getUser() != null
-        && registrationResponse.getUser().getUsername() != null
-        && registrationResponse.getUser().getTemporaryPassword() != null) {
-      String clientId = registrationResponse.getUser().getUsername();
-      String clientSecret = registrationResponse.getUser().getTemporaryPassword();
-      log.info("Successfully registered agent {} with server {}", agentId, serverUrl);
-      return new RegistrationCredentials(clientId, clientSecret);
-    } else {
-      log.warn(
-          "Agent registration response was incomplete for agent {} at server {}",
-          agentId,
-          serverUrl);
-      return null;
+    if (registrationResponse == null
+        || registrationResponse.getUser() == null
+        || registrationResponse.getUser().getUsername() == null
+        || registrationResponse.getUser().getTemporaryPassword() == null) {
+      throw new IllegalStateException(
+          "Incomplete registration response for agent " + agentId + " at server " + serverUrl);
     }
+    String clientId = registrationResponse.getUser().getUsername();
+    String clientSecret = registrationResponse.getUser().getTemporaryPassword();
+    return new RegistrationCredentials(clientId, clientSecret);
   }
 
   /**
@@ -242,17 +215,5 @@ public class CentralServerClientImpl implements CentralServerClient {
     if (serverUrl == null || serverUrl.isBlank()) {
       throw new IllegalArgumentException("Server URL cannot be null or empty");
     }
-  }
-
-  /**
-   * Logs registration errors with appropriate context.
-   *
-   * @param agentId the agent identifier
-   * @param serverUrl the server URL
-   * @param e the exception that occurred
-   */
-  private void logRegistrationError(String agentId, String serverUrl, Exception e) {
-    log.error(
-        "Error registering agent {} with server {} - {}", agentId, serverUrl, e.getMessage(), e);
   }
 }

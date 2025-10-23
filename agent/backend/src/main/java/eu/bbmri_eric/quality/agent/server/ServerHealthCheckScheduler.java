@@ -34,40 +34,35 @@ class ServerHealthCheckScheduler {
    * Periodically checks the registration status of all servers. Updates server status based on the
    * health check results. Runs every 60 seconds.
    */
-  @Scheduled(fixedRate = 60000) // Run every 60 seconds (1 minute)
+  @Scheduled(fixedRate = 60000)
   @Transactional
   public void checkAllServerStatuses() {
-    log.debug("Starting periodic server status check");
     String agentId = settingsService.getSettings().getAgentId();
+    serverRepository.findAll().forEach(server -> checkServerStatus(server, agentId));
+  }
 
-    serverRepository
-        .findAll()
-        .forEach(
-            server -> {
-              try {
-                ServerConnectionStatus newStatus =
-                    centralServerClient.checkRegistrationStatus(
-                        agentId, server.getUrl(), server.getClientId(), server.getClientSecret());
+  private void checkServerStatus(Server server, String agentId) {
+    try {
+      ServerConnectionStatus newStatus =
+          centralServerClient.checkRegistrationStatus(
+              agentId, server.getUrl(), server.getClientId(), server.getClientSecret());
+      updateServerStatus(server, newStatus);
+    } catch (Exception e) {
+      handleStatusCheckError(server, e);
+    }
+    serverRepository.save(server);
+  }
 
-                if (newStatus != server.getStatus()) {
-                  log.debug(
-                      "Server {} status changed from {} to {}",
-                      server.getUrl(),
-                      server.getStatus(),
-                      newStatus);
-                  server.setStatus(newStatus);
-                } else {
-                  log.debug("Server {} status remains {}", server.getUrl(), newStatus);
-                }
-              } catch (Exception e) {
-                log.error("Error checking status for server {}", server.getUrl(), e);
-                server.setStatus(ServerConnectionStatus.ERROR);
-                String errorMessage =
-                    e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
-                server.addInteraction(
-                    new ServerInteraction(InteractionType.STATUS_CHECK, errorMessage));
-              }
-              serverRepository.save(server);
-            });
+  private void updateServerStatus(Server server, ServerConnectionStatus newStatus) {
+    if (newStatus != server.getStatus()) {
+      server.setStatus(newStatus);
+    }
+  }
+
+  private void handleStatusCheckError(Server server, Exception e) {
+    server.setStatus(ServerConnectionStatus.ERROR);
+    String errorMessage = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+    server.addInteraction(new ServerInteraction(InteractionType.STATUS_CHECK, errorMessage));
+    log.error("Error checking status for server {}", server.getUrl(), e);
   }
 }
