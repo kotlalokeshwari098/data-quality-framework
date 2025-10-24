@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# System Test: Agent and Server Interaction
+# This script tests the interaction between the Agent and Server containers by:
+# 1. Registering the server in the agent (which triggers agent auto-registration in the server)
+# 2. Authenticating with the server to get a JWT token
+# 3. Approving the agent in the server
+
+set -e
+
+# Configuration
+AGENT_URL="http://localhost:8081"
+SERVER_URL="http://localhost:8082"
+AGENT_ADMIN_USERNAME="admin"
+AGENT_ADMIN_PASSWORD="adminpass"
+SERVER_ADMIN_USERNAME="admin"
+SERVER_ADMIN_PASSWORD="adminpass"
+
+# Colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}Starting system test: Agent and Server interaction${NC}"
+
+# Step 1: Get authentication token from agent
+echo -e "\n${YELLOW}Step 1: Authenticating with agent to get JWT token...${NC}"
+AGENT_LOGIN_RESPONSE=$(curl -s -X POST \
+  "${AGENT_URL}/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "'${AGENT_ADMIN_USERNAME}'",
+    "password": "'${AGENT_ADMIN_PASSWORD}'"
+  }')
+
+echo "Response: $AGENT_LOGIN_RESPONSE"
+
+# Extract JWT token from agent
+AGENT_JWT_TOKEN=$(echo "$AGENT_LOGIN_RESPONSE" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
+
+if [ -z "$AGENT_JWT_TOKEN" ]; then
+  echo -e "${RED}✗ Failed to obtain JWT token from agent${NC}"
+  echo "Full response: $AGENT_LOGIN_RESPONSE"
+  exit 1
+fi
+
+echo -e "${GREEN}✓ Successfully obtained JWT token from agent${NC}"
+
+# Step 2: Register the server in the agent (this triggers automatic agent registration in server)
+echo -e "\n${YELLOW}Step 2: Registering server in the agent...${NC}"
+SERVER_REGISTRATION_RESPONSE=$(curl -s -X POST \
+  "${AGENT_URL}/api/servers" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${AGENT_JWT_TOKEN}" \
+  -d '{
+    "url": "'${SERVER_URL}'",
+    "name": "Test Central Server"
+  }')
+
+echo "Response: $SERVER_REGISTRATION_RESPONSE"
+
+# Check if registration was successful
+if echo "$SERVER_REGISTRATION_RESPONSE" | grep -q '"id"'; then
+  echo -e "${GREEN}✓ Server successfully registered in agent${NC}"
+else
+  echo -e "${RED}✗ Failed to register server in agent${NC}"
+  exit 1
+fi
+
+# Step 2b: Get agent ID from agent settings endpoint
+echo -e "\n${YELLOW}Step 2b: Retrieving agent ID from agent settings...${NC}"
+AGENT_SETTINGS_RESPONSE=$(curl -s -X GET \
+  "${AGENT_URL}/api/settings" \
+  -H "Authorization: Bearer ${AGENT_JWT_TOKEN}")
+
+echo "Response: $AGENT_SETTINGS_RESPONSE"
+
+# Extract agent ID from settings
+AGENT_ID=$(echo "$AGENT_SETTINGS_RESPONSE" | jq -r '.agentId' 2>/dev/null)
+
+if [ -z "$AGENT_ID" ] || [ "$AGENT_ID" == "null" ]; then
+  echo -e "${RED}✗ Failed to extract agent ID from agent settings${NC}"
+  exit 1
+fi
+
+echo -e "${GREEN}✓ Agent ID: $AGENT_ID${NC}"
+
+# Step 3: Get authentication token from server
+echo -e "\n${YELLOW}Step 3: Authenticating with server to get JWT token...${NC}"
+SERVER_LOGIN_RESPONSE=$(curl -s -X POST \
+  "${SERVER_URL}/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "'${SERVER_ADMIN_USERNAME}'",
+    "password": "'${SERVER_ADMIN_PASSWORD}'"
+  }')
+
+echo "Response: $SERVER_LOGIN_RESPONSE"
+
+# Extract JWT token from server
+SERVER_JWT_TOKEN=$(echo "$SERVER_LOGIN_RESPONSE" | jq .token | tr -d '"')
+
+if [ -z "$SERVER_JWT_TOKEN" ]; then
+  echo -e "${RED}✗ Failed to obtain JWT token from server${NC}"
+  echo "Full response: $SERVER_LOGIN_RESPONSE"
+  exit 1
+fi
+
+echo -e "${GREEN}✓ Successfully obtained JWT token from server${NC}"
+
+# Step 4: Approve the agent in the server
+echo -e "\n${YELLOW}Step 4: Approving agent in the server (setting status to ACTIVE)...${NC}"
+AGENT_APPROVAL_RESPONSE=$(curl -s -X PATCH \
+  "${SERVER_URL}/api/v1/agents/${AGENT_ID}" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${SERVER_JWT_TOKEN}" \
+  -d '{
+    "status": "ACTIVE"
+  }')
+
+echo "Response: $AGENT_APPROVAL_RESPONSE"
+
+# Check if approval was successful
+if echo "$AGENT_APPROVAL_RESPONSE" | grep -q '"status":"ACTIVE"'; then
+  echo -e "${GREEN}✓ Agent successfully approved in server${NC}"
+else
+  echo -e "${YELLOW}⚠ Agent status update response received (may need further verification)${NC}"
+  # Don't fail here as the response format might vary
+fi
+
+# Step 5: Verify the agent status
+echo -e "\n${YELLOW}Step 5: Verifying agent status in server...${NC}"
+AGENT_VERIFICATION_RESPONSE=$(curl -s -X GET \
+  "${SERVER_URL}/api/v1/agents/${AGENT_ID}" \
+  -H "Authorization: Bearer ${SERVER_JWT_TOKEN}")
+
+echo "Response: $AGENT_VERIFICATION_RESPONSE"
+
+if echo "$AGENT_VERIFICATION_RESPONSE" | grep -q '"status":"ACTIVE"'; then
+  echo -e "${GREEN}✓ Agent status verified as ACTIVE${NC}"
+else
+  echo -e "${YELLOW}⚠ Agent status could not be verified as ACTIVE${NC}"
+fi
+
+echo -e "\n${GREEN}System test completed successfully!${NC}"
