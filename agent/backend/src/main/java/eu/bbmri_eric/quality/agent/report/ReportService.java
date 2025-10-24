@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReportService {
+public class ReportService implements IReportService {
 
   private final ReportRepository reportRepository;
   private final ReportRestEventHandler reportRestEventHandler;
@@ -22,7 +22,7 @@ public class ReportService {
   public void generateReportTransactional() {
     Report report = reportRepository.save(new Report());
 
-    reportRestEventHandler.triggerReportGeneration(report);
+    reportRestEventHandler.onAfterCreate(report);
     log.info("📊 Scheduled report created with ID: {}", report.getId());
   }
 }

@@ -30,10 +30,6 @@ class ReportRestEventHandler {
 
   @HandleAfterCreate
   public void onAfterCreate(Report report) {
-    triggerReportGeneration(report);
-  }
-
-  public void triggerReportGeneration(Report report) {
     publisher.publishEvent(new NewReportEvent(this, report.getId()));
     int count = fhirStore.countResources("Patient");
     report.setNumberOfEntities(count);

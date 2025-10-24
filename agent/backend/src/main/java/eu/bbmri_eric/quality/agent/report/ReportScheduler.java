@@ -10,9 +10,9 @@ public class ReportScheduler {
 
   private static final Logger log = LoggerFactory.getLogger(ReportScheduler.class);
 
-  private final ReportService reportService;
+  private final IReportService reportService;
 
-  public ReportScheduler(ReportService reportService) {
+  public ReportScheduler(IReportService reportService) {
     this.reportService = reportService;
   }
 
