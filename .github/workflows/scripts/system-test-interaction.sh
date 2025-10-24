@@ -109,38 +109,70 @@ fi
 
 echo -e "${GREEN}✓ Successfully obtained JWT token from server${NC}"
 
-# Step 4: Approve the agent in the server
+# Wait for agent to be auto-registered in the server
+echo -e "\n${YELLOW}Waiting for agent auto-registration to complete...${NC}"
+sleep 5
+
+# Step 4: Approve the agent in the server with retries
 echo -e "\n${YELLOW}Step 4: Approving agent in the server (setting status to ACTIVE)...${NC}"
-AGENT_APPROVAL_RESPONSE=$(curl -s -X PATCH \
-  "${SERVER_URL}/api/v1/agents/${AGENT_ID}" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer ${SERVER_JWT_TOKEN}" \
-  -d '{
-    "status": "ACTIVE"
-  }')
+MAX_RETRIES=5
+RETRY_COUNT=0
+APPROVAL_SUCCESS=false
 
-echo "Response: $AGENT_APPROVAL_RESPONSE"
+while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$APPROVAL_SUCCESS" = false ]; do
+  AGENT_APPROVAL_RESPONSE=$(curl -s -X PATCH \
+    "${SERVER_URL}/api/v1/agents/${AGENT_ID}" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${SERVER_JWT_TOKEN}" \
+    -d '{
+      "status": "ACTIVE"
+    }')
 
-# Check if approval was successful
-if echo "$AGENT_APPROVAL_RESPONSE" | grep -q '"status":"ACTIVE"'; then
-  echo -e "${GREEN}✓ Agent successfully approved in server${NC}"
-else
-  echo -e "${YELLOW}⚠ Agent status update response received (may need further verification)${NC}"
-  # Don't fail here as the response format might vary
+  echo "Response (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES): $AGENT_APPROVAL_RESPONSE"
+
+  # Check if approval was successful
+  if echo "$AGENT_APPROVAL_RESPONSE" | grep -q '"status":"ACTIVE"'; then
+    echo -e "${GREEN}✓ Agent successfully approved in server${NC}"
+    APPROVAL_SUCCESS=true
+  else
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+      echo -e "${YELLOW}Approval attempt $RETRY_COUNT failed, retrying in 2 seconds...${NC}"
+      sleep 2
+    fi
+  fi
+done
+
+if [ "$APPROVAL_SUCCESS" = false ]; then
+  echo -e "${YELLOW}⚠ Agent status update after $MAX_RETRIES attempts (may need further verification)${NC}"
 fi
 
-# Step 5: Verify the agent status
+# Step 5: Verify the agent status with retries
 echo -e "\n${YELLOW}Step 5: Verifying agent status in server...${NC}"
-AGENT_VERIFICATION_RESPONSE=$(curl -s -X GET \
-  "${SERVER_URL}/api/v1/agents/${AGENT_ID}" \
-  -H "Authorization: Bearer ${SERVER_JWT_TOKEN}")
+RETRY_COUNT=0
+VERIFICATION_SUCCESS=false
 
-echo "Response: $AGENT_VERIFICATION_RESPONSE"
+while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$VERIFICATION_SUCCESS" = false ]; do
+  AGENT_VERIFICATION_RESPONSE=$(curl -s -X GET \
+    "${SERVER_URL}/api/v1/agents/${AGENT_ID}" \
+    -H "Authorization: Bearer ${SERVER_JWT_TOKEN}")
 
-if echo "$AGENT_VERIFICATION_RESPONSE" | grep -q '"status":"ACTIVE"'; then
-  echo -e "${GREEN}✓ Agent status verified as ACTIVE${NC}"
-else
-  echo -e "${YELLOW}⚠ Agent status could not be verified as ACTIVE${NC}"
+  echo "Response (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES): $AGENT_VERIFICATION_RESPONSE"
+
+  if echo "$AGENT_VERIFICATION_RESPONSE" | grep -q '"status":"ACTIVE"'; then
+    echo -e "${GREEN}✓ Agent status verified as ACTIVE${NC}"
+    VERIFICATION_SUCCESS=true
+  else
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+      echo -e "${YELLOW}Verification attempt $RETRY_COUNT failed, retrying in 2 seconds...${NC}"
+      sleep 2
+    fi
+  fi
+done
+
+if [ "$VERIFICATION_SUCCESS" = false ]; then
+  echo -e "${YELLOW}⚠ Agent status could not be verified as ACTIVE after $MAX_RETRIES attempts${NC}"
 fi
 
 echo -e "\n${GREEN}System test completed successfully!${NC}"
