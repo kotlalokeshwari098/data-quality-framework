@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.server.client;
 
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,9 +14,11 @@ import org.springframework.web.client.RestTemplate;
 public class CentralServerClientFactory {
 
   private final RestTemplate restTemplate;
+  private final BuildProperties buildProperties;
 
-  public CentralServerClientFactory(RestTemplate restTemplate) {
+  public CentralServerClientFactory(RestTemplate restTemplate, BuildProperties buildProperties) {
     this.restTemplate = restTemplate;
+    this.buildProperties = buildProperties;
   }
 
   /**
@@ -29,6 +32,7 @@ public class CentralServerClientFactory {
    */
   public CentralServerClient createClient(
       String agentId, String serverUrl, String clientId, String clientSecret) {
-    return new CentralServerClientImpl(restTemplate, agentId, serverUrl, clientId, clientSecret);
+    return new CentralServerClientImpl(
+        restTemplate, buildProperties, agentId, serverUrl, clientId, clientSecret);
   }
 }

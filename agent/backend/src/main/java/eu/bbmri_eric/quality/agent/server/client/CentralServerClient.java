@@ -8,4 +8,6 @@ public interface CentralServerClient {
   ServerConnectionStatus checkRegistrationStatus();
 
   void healthCheck();
+
+  void updateAgentVersion(String version);
 }

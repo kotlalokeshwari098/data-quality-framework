@@ -5,6 +5,7 @@ import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,6 +27,7 @@ public class CentralServerClientImpl implements CentralServerClient {
   private static final String LOGIN_ENDPOINT = "/api/auth/login";
 
   private final RestTemplate restTemplate;
+  private final BuildProperties buildProperties;
   private final String agentId;
   private final String serverUrl;
   private final String clientId;
@@ -33,11 +35,13 @@ public class CentralServerClientImpl implements CentralServerClient {
 
   public CentralServerClientImpl(
       RestTemplate restTemplate,
+      BuildProperties buildProperties,
       String agentId,
       String serverUrl,
       String clientId,
       String clientSecret) {
     this.restTemplate = Objects.requireNonNull(restTemplate, "RestTemplate cannot be null");
+    this.buildProperties = buildProperties;
     this.agentId = Objects.requireNonNull(agentId, "Agent ID cannot be null or empty");
     this.serverUrl = Objects.requireNonNull(serverUrl, "Server URL cannot be null or empty");
     this.clientId = Objects.requireNonNull(clientId, "Client ID cannot be null or empty");
@@ -53,7 +57,8 @@ public class CentralServerClientImpl implements CentralServerClient {
    */
   @Override
   public RegistrationCredentials register() {
-    AgentRegistrationRequest request = new AgentRegistrationRequest(agentId);
+    AgentRegistrationRequest request =
+        new AgentRegistrationRequest(agentId, buildProperties.getVersion());
     HttpEntity<AgentRegistrationRequest> requestEntity = createJsonHttpEntity(request);
     String registrationUrl = buildApiUrl(AGENTS_ENDPOINT);
     ResponseEntity<AgentRegistrationResponse> response =
@@ -77,6 +82,25 @@ public class CentralServerClientImpl implements CentralServerClient {
   @Override
   public void healthCheck() {
     throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  /**
+   * Updates the agent version on the central server.
+   *
+   * @param version the version string to update
+   */
+  @Override
+  public void updateAgentVersion(String version) {
+    String token = authenticateWithServer();
+    String updateUrl = buildApiUrl(AGENTS_ENDPOINT + "/" + agentId);
+
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest(version);
+    HttpHeaders headers = createDefaultHeaders();
+    headers.setBearerAuth(token);
+    HttpEntity<AgentUpdateRequest> requestEntity = new HttpEntity<>(updateRequest, headers);
+
+    restTemplate.exchange(updateUrl, HttpMethod.PATCH, requestEntity, Void.class);
+    log.info("Successfully updated agent version to {} on server {}", version, serverUrl);
   }
 
   /**

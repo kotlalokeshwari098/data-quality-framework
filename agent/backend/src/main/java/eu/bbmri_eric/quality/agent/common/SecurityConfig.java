@@ -60,11 +60,13 @@ class SecurityConfig {
                     .permitAll()
                     .requestMatchers(
                         "/",
+                        "/api",
                         "/index.html",
                         "/assets/**",
                         "/favicon2.ico",
                         "/login",
                         "/api/health",
+                        "/api/info",
                         "/api/swagger-ui.html",
                         "/api/swagger-ui/**",
                         "/api/api-docs/**")

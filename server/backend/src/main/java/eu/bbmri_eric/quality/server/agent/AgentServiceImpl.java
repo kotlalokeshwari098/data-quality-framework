@@ -41,6 +41,7 @@ public class AgentServiceImpl implements AgentService {
           "Agent %s already exists".formatted(createAgentDto.id()));
     }
     Agent agent = new Agent(createAgentDto.id());
+    agent.setVersion(createAgentDto.version());
     Agent savedAgent = agentRepository.save(agent);
     UserDTO agentUser =
         userService.createUser(
@@ -61,7 +62,8 @@ public class AgentServiceImpl implements AgentService {
     if (!Objects.isNull(updateAgentDto.getStatus())) {
       agent.setStatus(updateAgentDto.getStatus());
     }
-    if (!Objects.isNull(updateAgentDto.getVersion())) {
+    if (!Objects.isNull(updateAgentDto.getVersion())
+        && !updateAgentDto.getVersion().equals(agent.getVersion())) {
       agent.setVersion(updateAgentDto.getVersion());
     }
     return modelMapper.map(agent, AgentDTO.class);
