@@ -137,9 +137,9 @@ INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
 
 -- Add some recent reports with current timestamps for immediate testing
 INSERT INTO report (id, timestamp, agent_id) VALUES
-    ('report-current-1', CURRENT_TIMESTAMP - INTERVAL '2' HOUR, 'agent-001'),
-    ('report-current-2', CURRENT_TIMESTAMP - INTERVAL '1' HOUR, 'agent-002'),
-    ('report-current-3', CURRENT_TIMESTAMP - INTERVAL '30' MINUTE, 'agent-004');
+    ('report-current-1', datetime('now', '-2 hours'), 'agent-001'),
+    ('report-current-2', datetime('now', '-1 hour'), 'agent-002'),
+    ('report-current-3', datetime('now', '-30 minutes'), 'agent-004');
 
 -- Add results for current reports
 INSERT INTO quality_check_result (report_id, quality_check_hash, result) VALUES
@@ -213,6 +213,6 @@ INSERT INTO agent_interaction (id, timestamp, type, agent_id) VALUES
     ('interaction-report-018', '2024-10-09 14:50:00', 'REPORT', 'agent-005'),
     ('interaction-report-019', '2024-10-10 10:45:00', 'REPORT', 'agent-001'),
     ('interaction-report-020', '2024-10-10 16:10:00', 'REPORT', 'agent-004'),
-    ('interaction-report-current-1', CURRENT_TIMESTAMP - INTERVAL '2' HOUR, 'REPORT', 'agent-001'),
-    ('interaction-report-current-2', CURRENT_TIMESTAMP - INTERVAL '1' HOUR, 'REPORT', 'agent-002'),
-    ('interaction-report-current-3', CURRENT_TIMESTAMP - INTERVAL '30' MINUTE, 'REPORT', 'agent-004');
+    ('interaction-report-current-1', datetime('now', '-2 hours'), 'REPORT', 'agent-001'),
+    ('interaction-report-current-2', datetime('now', '-1 hour'), 'REPORT', 'agent-002'),
+    ('interaction-report-current-3', datetime('now', '-30 minutes'), 'REPORT', 'agent-004');

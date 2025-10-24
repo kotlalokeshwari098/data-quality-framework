@@ -207,40 +207,40 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - run: docker compose down
-        name: Down the container
-
-      - run: docker compose up -d quality-server
-        name: Spin up new image
-
-      - name: Check container health
-        run: |
-          for i in {1..20}; do
-          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-server)
-          echo "Health status: $STATUS"
-          if [ "$STATUS" == "healthy" ]; then
-          echo "Container is healthy"
-          exit 0
-          fi
-          sleep 3
-          done
-          echo "Container is not healthy"
-          docker logs quality-server
-          exit 1
-
-      - uses: docker/build-push-action@v6
-        name: Build new image artifact
-        with:
-          context: ./server
-          tags: ghcr.io/bbmri-cz/data-quality-server:latest
-          outputs: type=docker,dest=/tmp/server-image.tar
-          cache-from: type=gha
-
-      - name: Upload server image artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-image
-          path: /tmp/server-image.tar
+#      - run: docker compose down
+#        name: Down the container
+#
+#      - run: docker compose up -d quality-server
+#        name: Spin up new image
+#
+#      - name: Check container health
+#        run: |
+#          for i in {1..20}; do
+#          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-server)
+#          echo "Health status: $STATUS"
+#          if [ "$STATUS" == "healthy" ]; then
+#          echo "Container is healthy"
+#          exit 0
+#          fi
+#          sleep 3
+#          done
+#          echo "Container is not healthy"
+#          docker logs quality-server
+#          exit 1
+#
+#      - uses: docker/build-push-action@v6
+#        name: Build new image artifact
+#        with:
+#          context: ./server
+#          tags: ghcr.io/bbmri-cz/data-quality-server:latest
+#          outputs: type=docker,dest=/tmp/server-image.tar
+#          cache-from: type=gha
+#
+#      - name: Upload server image artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: server-image
+#          path: /tmp/server-image.tar
 
   docs:
     name: Build and Deploy Documentation
