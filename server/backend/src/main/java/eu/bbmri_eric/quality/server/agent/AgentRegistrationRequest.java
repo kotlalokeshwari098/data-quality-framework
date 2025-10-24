@@ -30,7 +30,7 @@ public class AgentRegistrationRequest {
     this.version = version;
   }
 
-  public String id() {
+  public String getId() {
     return id;
   }
 
@@ -38,7 +38,7 @@ public class AgentRegistrationRequest {
     this.id = id;
   }
 
-  public String version() {
+  public String getVersion() {
     return version;
   }
 

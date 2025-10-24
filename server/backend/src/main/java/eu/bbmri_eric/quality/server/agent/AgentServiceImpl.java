@@ -36,12 +36,12 @@ public class AgentServiceImpl implements AgentService {
 
   @Override
   public AgentRegistration create(AgentRegistrationRequest createAgentDto) {
-    if (agentRepository.existsById(createAgentDto.id())) {
+    if (agentRepository.existsById(createAgentDto.getId())) {
       throw new EntityAlreadyExistsException(
-          "Agent %s already exists".formatted(createAgentDto.id()));
+          "Agent %s already exists".formatted(createAgentDto.getId()));
     }
-    Agent agent = new Agent(createAgentDto.id());
-    agent.setVersion(createAgentDto.version());
+    Agent agent = new Agent(createAgentDto.getId());
+    agent.setVersion(createAgentDto.getVersion());
     Agent savedAgent = agentRepository.save(agent);
     UserDTO agentUser =
         userService.createUser(
