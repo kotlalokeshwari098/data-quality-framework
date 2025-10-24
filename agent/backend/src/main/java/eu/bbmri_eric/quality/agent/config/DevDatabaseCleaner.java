@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 /**
  * Component that automatically deletes the development database file on application shutdown.
  *
- * <p>This ensures a clean state for the next development session by removing the database file
- * when the application terminates, preventing issues with schema changes and stale data.
+ * <p>This ensures a clean state for the next development session by removing the database file when
+ * the application terminates, preventing issues with schema changes and stale data.
  *
  * <p>This component only runs when the "dev" Spring profile is active.
  */

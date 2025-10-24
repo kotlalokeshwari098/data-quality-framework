@@ -7,16 +7,16 @@ import java.time.format.DateTimeFormatter;
 
 @Converter(autoApply = true)
 public class LocalDateTimeStringConverter implements AttributeConverter<LocalDateTime, String> {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+  private static final DateTimeFormatter FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @Override
-    public String convertToDatabaseColumn(LocalDateTime attribute) {
-        return (attribute == null) ? null : attribute.format(FORMATTER);
-    }
+  @Override
+  public String convertToDatabaseColumn(LocalDateTime attribute) {
+    return (attribute == null) ? null : attribute.format(FORMATTER);
+  }
 
-    @Override
-    public LocalDateTime convertToEntityAttribute(String dbData) {
-        return (dbData == null) ? null : LocalDateTime.parse(dbData, FORMATTER);
-    }
+  @Override
+  public LocalDateTime convertToEntityAttribute(String dbData) {
+    return (dbData == null) ? null : LocalDateTime.parse(dbData, FORMATTER);
+  }
 }
-
