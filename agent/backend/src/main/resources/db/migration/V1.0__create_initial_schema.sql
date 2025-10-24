@@ -90,7 +90,12 @@ INSERT INTO user_account (id, username, password) VALUES
 INSERT INTO settings (setting_name, setting_value) VALUES ('fhirUrl', 'http://localhost:8080/fhir');
 INSERT INTO settings (setting_name, setting_value) VALUES ('fhirUsername', 'fhiruser');
 INSERT INTO settings (setting_name, setting_value) VALUES ('fhirPassword', 'ZmhpcnBhc3M=');
-INSERT INTO settings (setting_name, setting_value) VALUES ('agentId', LOWER(HEX(RANDOMBLOB(16))));
+INSERT INTO settings (setting_name, setting_value) VALUES ('agentId',
+    LOWER(HEX(RANDOMBLOB(4))) || '-' ||
+    LOWER(HEX(RANDOMBLOB(2))) || '-' ||
+    LOWER(HEX(RANDOMBLOB(2))) || '-' ||
+    LOWER(HEX(RANDOMBLOB(2))) || '-' ||
+    LOWER(HEX(RANDOMBLOB(6))));
 
 -- Insert CQL checks
 INSERT INTO cql_check (name, description, query, warning_threshold, error_threshold)
