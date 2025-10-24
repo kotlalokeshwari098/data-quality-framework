@@ -121,3 +121,41 @@ export async function authenticate(username, password) {
         throw error;
     }
 }
+
+/**
+ * Validates a server URL by checking if it has a valid /api/info endpoint
+ * @param {string} serverUrl - The base URL of the server to validate
+ * @returns {Promise<{valid: boolean, version?: string, error?: string}>}
+ */
+export async function validateServerUrl(serverUrl) {
+    try {
+        // Remove trailing slash if present
+        const baseUrl = serverUrl.replace(/\/$/, '');
+
+        const response = await axios.get(`${baseUrl}/api/info`, {
+            timeout: 5000,
+            validateStatus: (status) => status === 200
+        });
+
+        if (response.status === 200 && response.data?.build?.version) {
+            return {
+                valid: true,
+                version: response.data.build.version
+            };
+        }
+
+        return {
+            valid: false,
+            error: 'Invalid response format'
+        };
+    } catch (error) {
+        return {
+            valid: false,
+            error: error.response?.status === 404
+                ? 'Server found but /api/info endpoint not available'
+                : error.code === 'ECONNABORTED'
+                ? 'Connection timeout - is the URL correct?'
+                : 'Unable to connect - is the URL correct?'
+        };
+    }
+}

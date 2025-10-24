@@ -40,11 +40,27 @@
           class="form-control"
           id="serverUrl"
           v-model="formData.url"
+          @blur="validateUrl"
           placeholder="https://central.example.com"
           required
           maxlength="500"
           pattern="^https?://[^\s/$.?#].[^\s]*$"
         >
+        <div v-if="urlValidation.validating" class="validation-indicator validating">
+          <i class="bi bi-arrow-clockwise spinning"></i>
+          <span>Checking server...</span>
+        </div>
+        <div v-else-if="urlValidation.checked && urlValidation.valid" class="validation-indicator valid">
+          <i class="bi bi-check-circle-fill"></i>
+          <div class="validation-text">
+            <span class="validation-title">Server Reachable</span>
+            <span class="validation-version">Version {{ urlValidation.version }}</span>
+          </div>
+        </div>
+        <div v-else-if="urlValidation.checked && !urlValidation.valid" class="validation-indicator invalid">
+          <i class="bi bi-x-circle-fill"></i>
+          <span>{{ urlValidation.error }}</span>
+        </div>
         <small class="form-help">
           The base URL of the central server (max 500 characters)
         </small>
@@ -68,6 +84,7 @@
 
 <script setup>
 import { reactive } from 'vue';
+import { validateServerUrl } from '../js/api.js';
 import SaveButton from './SaveButton.vue';
 import CancelButton from './CancelButton.vue';
 
@@ -85,16 +102,75 @@ const formData = reactive({
   url: ''
 });
 
+const urlValidation = reactive({
+  validating: false,
+  checked: false,
+  valid: false,
+  version: null,
+  error: null
+});
+
+async function validateUrl() {
+  const url = formData.url.trim();
+
+  // Reset validation if URL is empty or invalid
+  if (!url || !isValidUrlFormat(url)) {
+    resetValidation();
+    return;
+  }
+
+  // Remove trailing slash before validation
+  const normalizedUrl = url.replace(/\/+$/, '');
+
+  urlValidation.validating = true;
+  urlValidation.checked = false;
+
+  try {
+    const result = await validateServerUrl(normalizedUrl);
+    urlValidation.validating = false;
+    urlValidation.checked = true;
+    urlValidation.valid = result.valid;
+    urlValidation.version = result.version || null;
+    urlValidation.error = result.error || 'Invalid server';
+  } catch (error) {
+    urlValidation.validating = false;
+    urlValidation.checked = true;
+    urlValidation.valid = false;
+    urlValidation.error = 'Validation failed';
+  }
+}
+
+function isValidUrlFormat(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function resetValidation() {
+  urlValidation.validating = false;
+  urlValidation.checked = false;
+  urlValidation.valid = false;
+  urlValidation.version = null;
+  urlValidation.error = null;
+}
+
 function handleSubmit() {
+  // Remove trailing slash before submitting
+  const url = formData.url.trim().replace(/\/+$/, '');
+
   emit('submit', {
     name: formData.name.trim(),
-    url: formData.url.trim()
+    url: url
   });
 }
 
 function clearForm() {
   formData.name = '';
   formData.url = '';
+  resetValidation();
 }
 
 defineExpose({ clearForm });
@@ -184,6 +260,68 @@ defineExpose({ clearForm });
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
+.validation-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: var(--spacing-sm);
+  padding: 0.75rem var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.validation-indicator.validating {
+  color: var(--color-gray-600);
+  background: var(--color-gray-100);
+}
+
+.validation-indicator.validating i {
+  animation: spin 1s linear infinite;
+  font-size: 1.1rem;
+}
+
+.validation-indicator.valid {
+  color: #059669;
+  background: #d1fae5;
+}
+
+.validation-indicator.valid i {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.validation-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.validation-title {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.validation-version {
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+  font-weight: 400;
+}
+
+.validation-indicator.invalid {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.validation-indicator.invalid i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .form-help {
   display: block;
   margin-top: var(--spacing-sm);
@@ -202,30 +340,11 @@ defineExpose({ clearForm });
 }
 
 @media (max-width: 768px) {
-  .server-registration-form {
-    padding: var(--spacing-lg);
-  }
-
-  .server-form {
-    max-width: 100%;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .empty-icon {
-    width: 64px;
-    height: 64px;
-  }
-
-  .empty-icon i {
-    font-size: 2rem;
-  }
-
-  .empty-title {
-    font-size: 1.5rem;
+  .validation-indicator {
+    position: static;
+    transform: none;
+    margin-top: var(--spacing-sm);
+    justify-content: center;
   }
 }
 </style>
-

@@ -59,6 +59,7 @@ public class Agent {
 
   public void setVersion(String version) {
     this.version = version;
+    addInteraction(AgentInteractionType.VERSION_UPDATE);
   }
 
   public List<AgentInteraction> getInteractions() {

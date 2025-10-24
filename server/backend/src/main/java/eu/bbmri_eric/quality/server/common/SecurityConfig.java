@@ -77,6 +77,7 @@ class SecurityConfig {
                         "/favicon2.ico",
                         "/login",
                         "/api/health",
+                        "/api/info",
                         "/api/swagger-ui.html",
                         "/api/swagger-ui/**",
                         "/api/api-docs/**")

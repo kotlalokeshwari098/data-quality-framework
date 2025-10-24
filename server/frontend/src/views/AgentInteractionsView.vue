@@ -37,7 +37,18 @@
     <div v-else>
       <!-- Stats Cards -->
       <div class="row mb-4">
-        <div class="col-12 col-md-6 mb-3">
+        <div class="col-12 col-md-4 mb-3">
+          <StatsCard
+            label="Agent Version"
+            :value="agentVersion || 'unknown'"
+            icon="bi bi-code-square"
+            iconColor="#6f42c1"
+            iconBgColor="#e0cffc"
+            trendText="Current version"
+            trendType="neutral"
+          />
+        </div>
+        <div class="col-12 col-md-4 mb-3">
           <StatsCard
             label="Latest Ping"
             :value="latestPingTime || 'No pings recorded'"
@@ -48,7 +59,7 @@
             trendType="neutral"
           />
         </div>
-        <div class="col-12 col-md-6 mb-3">
+        <div class="col-12 col-md-4 mb-3">
           <StatsCard
             label="First Registration"
             :value="firstRegistrationTime || 'Not registered'"
@@ -80,7 +91,6 @@
                     <tr>
                       <th class="ps-4">Timestamp</th>
                       <th>Type</th>
-                      <th class="ps-4">Interaction ID</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -90,8 +100,8 @@
                     >
                       <td class="ps-4">
                         <div class="d-flex flex-column">
-                          <span class="fw-medium">{{ formatDateShort(interaction.timestamp) }}</span>
-                          <small class="text-muted">{{ formatTime(interaction.timestamp) }}</small>
+                          <span class="fw-medium">{{ formatDateLong(interaction.timestamp) }}</span>
+                          <small class="text-muted">{{ formatTimeFull(interaction.timestamp) }}</small>
                         </div>
                       </td>
                       <td>
@@ -100,12 +110,9 @@
                           {{ interaction.type }}
                         </span>
                       </td>
-                      <td class="ps-4">
-                        <span class="font-monospace small text-truncate">{{ interaction.id }}</span>
-                      </td>
                     </tr>
                     <tr v-if="paginatedInteractions.length === 0">
-                      <td colspan="3" class="text-center text-muted py-5">
+                      <td colspan="2" class="text-center text-muted py-5">
                         <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
                         <p class="mb-0">No interactions recorded for this agent</p>
                       </td>
@@ -159,6 +166,7 @@ const router = useRouter()
 
 const agentId = ref(route.params.uuid)
 const agentName = ref('Unknown Agent')
+const agentVersion = ref('Unknown version')
 const loading = ref(true)
 const error = ref(null)
 const interactions = ref([])
@@ -227,7 +235,14 @@ const latestPingBgColor = computed(() => {
 const firstRegistrationTime = computed(() => {
   const registration = [...interactions.value].reverse().find(i => i.type === 'REGISTRATION')
   if (!registration) return null
-  return formatTime(registration.timestamp)
+  const date = new Date(registration.timestamp)
+  const formattedDate = date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
+  const formattedTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  return `${formattedDate} ${formattedTime}`
 })
 
 const fetchAgentInteractions = async () => {
@@ -246,6 +261,7 @@ const fetchAgentInteractions = async () => {
     }
 
     agentName.value = agent.name || 'Unknown Agent'
+    agentVersion.value = agent.version || 'Unknown version'
 
     // Fetch agent with interactions expanded
     const agentResponse = await apiService.getAgent(agentId.value, true)
@@ -272,19 +288,22 @@ const formatDateShort = (dateString) => {
   })
 }
 
+const formatDateLong = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
+}
+
+const formatTimeFull = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+}
+
 const formatTime = (dateString) => {
   const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now - date
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffMins < 1) return 'Just now'
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 7) return `${diffDays}d ago`
-
   return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
 }
 

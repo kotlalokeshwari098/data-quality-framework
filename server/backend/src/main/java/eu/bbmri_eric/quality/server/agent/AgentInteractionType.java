@@ -4,4 +4,5 @@ public enum AgentInteractionType {
   REPORT,
   PING,
   REGISTRATION,
+  VERSION_UPDATE
 }

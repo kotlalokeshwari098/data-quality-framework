@@ -19,6 +19,8 @@ public class AgentRegistrationRequest {
       requiredMode = Schema.RequiredMode.REQUIRED)
   private String id;
 
+  private String version = "unknown";
+
   /** Default constructor. */
   public AgentRegistrationRequest() {}
 
@@ -29,6 +31,11 @@ public class AgentRegistrationRequest {
    */
   public AgentRegistrationRequest(String id) {
     this.id = id;
+  }
+
+  public AgentRegistrationRequest(String id, String version) {
+    this.id = id;
+    this.version = version;
   }
 
   /**
@@ -47,5 +54,13 @@ public class AgentRegistrationRequest {
    */
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }
