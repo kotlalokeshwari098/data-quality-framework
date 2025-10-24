@@ -483,3 +483,7 @@ jobs:
           echo "Container is not healthy"
           docker logs quality-server
           exit 1
+
+      - name: Test Agent and Server Interaction
+        run: .github/workflows/scripts/system-test-interaction.sh
+

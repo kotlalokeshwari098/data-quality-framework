@@ -3,6 +3,7 @@ package eu.bbmri_eric.quality.agent.common;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -33,6 +34,21 @@ public class GlobalRestExceptionHandler {
               schema = @Schema(implementation = ProblemDetail.class)))
   public ProblemDetail handleStaleState(org.hibernate.StaleStateException ex) {
     logger.debug("Stale state exception: {}", ex.getMessage());
+    ProblemDetail problemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Entity not found");
+    problemDetail.setTitle("Entity Not Found");
+    return problemDetail;
+  }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  @ApiResponse(
+      responseCode = "404",
+      description = "Entity Not Found",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = ProblemDetail.class)))
+  public ProblemDetail handleStaleState(EntityNotFoundException ex) {
     ProblemDetail problemDetail =
         ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Entity not found");
     problemDetail.setTitle("Entity Not Found");

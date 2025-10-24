@@ -5,14 +5,22 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class AgentLinkBuilder {
 
   public EntityModel<AgentDTO> toModel(AgentDTO agentDto) {
+    String selfHref =
+        linkTo(methodOn(AgentController.class).findById(agentDto.getId(), null))
+            .toUriComponentsBuilder()
+            .replaceQuery(null)
+            .build()
+            .toUriString();
+
     return EntityModel.of(agentDto)
-        .add(linkTo(methodOn(AgentController.class).findById(agentDto.getId())).withSelfRel())
+        .add(Link.of(selfHref).withSelfRel())
         .add(linkTo(AgentController.class).withRel("agents"));
   }
 

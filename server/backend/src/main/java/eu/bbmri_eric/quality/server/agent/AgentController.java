@@ -41,8 +41,10 @@ public class AgentController {
 
   @GetMapping("/{id}")
   @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<EntityModel<AgentDTO>> findById(@PathVariable String id) {
-    AgentDTO agent = agentService.findById(id);
+  public ResponseEntity<EntityModel<AgentDTO>> findById(
+      @PathVariable String id, @RequestParam(required = false) String expand) {
+    boolean expandInteractions = "interactions".equals(expand);
+    AgentDTO agent = agentService.findById(id, expandInteractions);
     EntityModel<AgentDTO> agentModel = linkBuilder.toModel(agent);
     return ResponseEntity.ok(agentModel);
   }

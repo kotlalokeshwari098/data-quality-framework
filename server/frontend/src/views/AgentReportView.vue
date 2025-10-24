@@ -11,6 +11,61 @@
       </div>
     </div>
 
+    <!-- Agent Actions -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-outline-secondary btn-sm d-flex align-items-center"
+            @click="goBack"
+          >
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Agents
+          </button>
+          <button
+            class="btn btn-outline-primary btn-sm d-flex align-items-center"
+            @click="goToInteractions"
+          >
+            <i class="bi bi-clock-history me-2"></i>
+            View Logs
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Agent Banner -->
+    <div v-if="agent && agent.status === 'PENDING'" class="row mb-4">
+      <div class="col-12">
+        <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle me-3" style="font-size: 1.25rem;"></i>
+            <div>
+              <strong>Requires Attention</strong>
+              <p class="mb-0 small mt-1">This agent is awaiting approval to join the network</p>
+            </div>
+          </div>
+          <div class="d-flex gap-2 ms-3">
+            <button
+              class="btn btn-success btn-sm d-flex align-items-center"
+              @click.stop="approveAgent(agent)"
+              :disabled="processing"
+            >
+              <i class="bi bi-check-lg me-1"></i>
+              Approve
+            </button>
+            <button
+              class="btn btn-danger btn-sm d-flex align-items-center"
+              @click.stop="declineAgent(agent)"
+              :disabled="processing"
+            >
+              <i class="bi bi-x-lg me-1"></i>
+              Decline
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Loading State -->
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
@@ -114,6 +169,7 @@ const agent = ref(null)
 const reports = ref([])
 const qualityChecks = ref([])
 const selectedReport = ref(null)
+const processing = ref(false)
 
 const agentName = computed(() => {
   return agent.value?.name || 'Unknown Agent'
@@ -217,6 +273,42 @@ const openReportModal = (report) => {
 
 const closeReportModal = () => {
   selectedReport.value = null
+}
+
+const approveAgent = async (agent) => {
+  try {
+    processing.value = true
+    await apiService.approveAgent(agent.id)
+    agent.status = 'ACTIVE'
+    // Optionally, refetch agent details or update the UI accordingly
+  } catch (err) {
+    error.value = 'Failed to approve agent'
+    console.error('Error approving agent:', err)
+  } finally {
+    processing.value = false
+  }
+}
+
+const declineAgent = async (agent) => {
+  try {
+    processing.value = true
+    await apiService.declineAgent(agent.id)
+    agent.status = 'DECLINED'
+    // Optionally, refetch agent details or update the UI accordingly
+  } catch (err) {
+    error.value = 'Failed to decline agent'
+    console.error('Error declining agent:', err)
+  } finally {
+    processing.value = false
+  }
+}
+
+const goToInteractions = () => {
+  router.push({ name: 'AgentInteractions', params: { uuid: agentId.value } })
+}
+
+const goBack = () => {
+  router.go(-1)
 }
 
 onMounted(() => {

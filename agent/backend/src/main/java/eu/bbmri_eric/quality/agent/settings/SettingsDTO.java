@@ -33,6 +33,12 @@ public class SettingsDTO {
       requiredMode = Schema.RequiredMode.REQUIRED)
   private String fhirPassword;
 
+  @Schema(
+      description = "Agent identifier",
+      example = "agent-12345",
+      accessMode = Schema.AccessMode.READ_ONLY)
+  private String agentId;
+
   public SettingsDTO() {}
 
   public SettingsDTO(String fhirUrl, String fhirUsername, String fhirPassword) {
@@ -63,5 +69,13 @@ public class SettingsDTO {
 
   public void setFhirPassword(String fhirPassword) {
     this.fhirPassword = fhirPassword;
+  }
+
+  public String getAgentId() {
+    return agentId;
+  }
+
+  public void setAgentId(String agentId) {
+    this.agentId = agentId;
   }
 }

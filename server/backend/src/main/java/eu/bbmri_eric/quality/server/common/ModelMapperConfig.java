@@ -1,6 +1,9 @@
 package eu.bbmri_eric.quality.server.common;
 
+import eu.bbmri_eric.quality.server.agent.Agent;
+import eu.bbmri_eric.quality.server.agent.AgentDTO;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,6 +21,18 @@ class ModelMapperConfig {
    */
   @Bean
   ModelMapper modelMapper() {
-    return new ModelMapper();
+    ModelMapper modelMapper = new ModelMapper();
+
+    // Configure mapping from Agent to AgentDTO to skip the interactions field
+    // This prevents lazy loading of interactions by default
+    modelMapper.addMappings(
+        new PropertyMap<Agent, AgentDTO>() {
+          @Override
+          protected void configure() {
+            skip(destination.getInteractions());
+          }
+        });
+
+    return modelMapper;
   }
 }

@@ -38,6 +38,9 @@ public class SettingsService {
   }
 
   private void updateSetting(String name, String value) {
+    if (value == null) {
+      return;
+    }
     Settings setting =
         settingsRepository
             .findById(name)
