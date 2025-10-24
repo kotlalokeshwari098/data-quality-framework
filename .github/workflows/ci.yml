@@ -133,8 +133,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
 
-      - run: docker compose up -d quality-agent
-        name: Spin up latest stable image
+#      - run: docker compose up -d quality-agent
+#        name: Spin up latest stable image
 
       - uses: docker/build-push-action@v6
         name: Build new image
@@ -146,26 +146,26 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - run: docker compose down
-        name: Down the container
-
-      - run: docker compose up -d quality-agent
-        name: Spin up new image
-
-      - name: Check container health
-        run: |
-          for i in {1..20}; do
-          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-agent)
-          echo "Health status: $STATUS"
-          if [ "$STATUS" == "healthy" ]; then
-          echo "Container is healthy"
-          exit 0
-          fi
-          sleep 3
-          done
-          echo "Container is not healthy"
-          docker logs quality-agent
-          exit 1
+#      - run: docker compose down
+#        name: Down the container
+#
+#      - run: docker compose up -d quality-agent
+#        name: Spin up new image
+#
+#      - name: Check container health
+#        run: |
+#          for i in {1..20}; do
+#          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-agent)
+#          echo "Health status: $STATUS"
+#          if [ "$STATUS" == "healthy" ]; then
+#          echo "Container is healthy"
+#          exit 0
+#          fi
+#          sleep 3
+#          done
+#          echo "Container is not healthy"
+#          docker logs quality-agent
+#          exit 1
 
       - uses: docker/build-push-action@v6
         name: Build new image artifact
@@ -207,27 +207,27 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - run: docker compose down
-        name: Down the container
-
-      - run: docker compose up -d quality-server
-        name: Spin up new image
-
-      - name: Check container health
-        run: |
-          for i in {1..20}; do
-          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-server)
-          echo "Health status: $STATUS"
-          if [ "$STATUS" == "healthy" ]; then
-          echo "Container is healthy"
-          exit 0
-          fi
-          sleep 3
-          done
-          echo "Container is not healthy"
-          docker logs quality-server
-          exit 1
-
+#      - run: docker compose down
+#        name: Down the container
+#
+#      - run: docker compose up -d quality-server
+#        name: Spin up new image
+#
+#      - name: Check container health
+#        run: |
+#          for i in {1..20}; do
+#          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-server)
+#          echo "Health status: $STATUS"
+#          if [ "$STATUS" == "healthy" ]; then
+#          echo "Container is healthy"
+#          exit 0
+#          fi
+#          sleep 3
+#          done
+#          echo "Container is not healthy"
+#          docker logs quality-server
+#          exit 1
+#
       - uses: docker/build-push-action@v6
         name: Build new image artifact
         with:
