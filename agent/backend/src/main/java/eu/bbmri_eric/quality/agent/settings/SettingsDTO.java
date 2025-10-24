@@ -34,8 +34,8 @@ public class SettingsDTO {
   private String fhirPassword;
 
   @Schema(
-      description = "FHIR server password (Base64-encoded)",
-      example = "cGFzc3dvcmQ=",
+      description = "Agent identifier",
+      example = "agent-12345",
       accessMode = Schema.AccessMode.READ_ONLY)
   private String agentId;
 
