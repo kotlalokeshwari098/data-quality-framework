@@ -52,8 +52,7 @@ public class AgentServiceImpl implements AgentService {
   public AgentDTO update(AgentUpdateRequest updateAgentDto, String agentId) {
     UserDTO currentUser = authenticationContextService.getCurrentUser();
     if (!isAuthorizedToUpdate(currentUser, agentId)) {
-      throw new AccessDeniedException(
-          "User is not authorized to update agent: " + agentId);
+      throw new AccessDeniedException("User is not authorized to update agent: " + agentId);
     }
     Agent agent = agentRepository.findById(agentId).orElseThrow(EntityNotFoundException::new);
     if (!Objects.isNull(updateAgentDto.getName())) {
