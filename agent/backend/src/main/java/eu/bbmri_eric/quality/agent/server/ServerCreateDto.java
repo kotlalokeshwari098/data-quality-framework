@@ -64,7 +64,7 @@ public class ServerCreateDto {
    * @param url the URL
    */
   public void setUrl(String url) {
-    this.url = url != null ? HtmlUtils.htmlEscape(url.trim()) : null;
+    this.url = url != null ? url.trim() : null;
   }
 
   /**
