@@ -40,6 +40,24 @@ class ApiService {
         return await response.json()
     }
 
+    async getAgent(agentId, expandInteractions = false) {
+        const token = localStorage.getItem('authToken')
+        const url = expandInteractions
+            ? `${API_BASE}/v1/agents/${agentId}?expand=interactions`
+            : `${API_BASE}/v1/agents/${agentId}`
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to fetch agent: ${response.status}`)
+        }
+        return await response.json()
+    }
+
     async updateAgent(agentId, data) {
         const token = localStorage.getItem('authToken')
         const response = await fetch(`${API_BASE}/v1/agents/${agentId}`, {

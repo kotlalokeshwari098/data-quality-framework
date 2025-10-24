@@ -9,5 +9,7 @@ public interface AgentService {
 
   AgentDTO findById(String id);
 
+  AgentDTO findById(String id, boolean expandInteractions);
+
   List<AgentDTO> listAll();
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class AgentUpdateRequest {
   private String name;
   private AgentStatus status;
+  private String version;
 
   public AgentUpdateRequest() {
     // For model mapper
@@ -30,5 +31,13 @@ public class AgentUpdateRequest {
 
   public void setStatus(AgentStatus status) {
     this.status = status;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }

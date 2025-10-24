@@ -3,7 +3,6 @@ package eu.bbmri_eric.quality.server.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -30,7 +29,6 @@ public class JwtUtil {
   JwtUtil(@Value("${app.jwt.expiration:3600000}") long jwtExpiration) {
     this.key = Jwts.SIG.HS256.key().build();
     this.jwtExpiration = jwtExpiration;
-    logger.debug("JWT service initialized with key: {}", Encoders.BASE64.encode(key.getEncoded()));
   }
 
   /**

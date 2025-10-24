@@ -21,7 +21,7 @@
         </div>
 
         <!-- Agents list -->
-        <div v-else-if="agents.length > 0" class="agents-list" style="max-height: 600px; overflow-y: auto;">
+        <div v-else-if="agents.length > 0" class="agents-list">
           <div
             v-for="agent in agents"
             :key="agent.id"
@@ -37,74 +37,21 @@
                   style="min-width: 12px; width: 12px; height: 12px;"
                 ></div>
                 <div class="flex-grow-1">
-                  <div class="agent-name fw-medium text-dark" v-if="editingAgent !== agent.id">
-                    <span @click.stop="startEditing(agent)" class="editable-name" :title="'Click to edit name'">
-                      {{ agent.name || 'Unknown' }}
-                    </span>
+                  <div class="agent-name fw-medium text-dark">
+                    {{ agent.name || 'Unknown' }}
                   </div>
-                  <div class="agent-name-edit d-flex align-items-center" v-else>
-                    <input
-                      ref="nameInput"
-                      v-model="editingName"
-                      @blur="saveAgentName(agent)"
-                      @keyup.enter="saveAgentName(agent)"
-                      @keyup.esc="cancelEditing"
-                      :placeholder="agent.name || 'Unknown'"
-                      class="form-control form-control-sm name-input"
-                      :disabled="processingAgent === agent.id"
-                    />
-                    <div class="edit-saving ms-2" v-if="processingAgent === agent.id">
-                      <div class="spinner-border spinner-border-sm text-primary" style="width: 16px; height: 16px;" role="status">
-                        <span class="visually-hidden">Saving...</span>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="agent-id text-muted small mb-0">ID: {{ agent.id }}</p>
+                  <p class="agent-id text-muted small mb-0">ID: {{ truncateId(agent.id) }}</p>
                 </div>
               </div>
               <div class="agent-actions d-flex align-items-center gap-2 ms-2">
-                <!-- Pending status with action buttons -->
-                <div v-if="agent.status === 'PENDING'" class="d-flex flex-column align-items-end gap-1">
-                  <span class="badge bg-warning text-dark">
-                    {{ agent.status }}
-                  </span>
-                  <div class="d-flex gap-1">
-                    <button
-                      class="btn btn-success btn-sm px-2 py-1 d-flex align-items-center justify-content-center"
-                      @click.stop="approveAgent(agent)"
-                      :disabled="processingAgent === agent.id"
-                      style="font-size: 0.7rem;"
-                    >
-                      <i class="bi bi-check-lg me-1"></i>
-                      Approve
-                    </button>
-                    <button
-                      class="btn btn-danger btn-sm px-2 py-1 d-flex align-items-center justify-content-center"
-                      @click.stop="declineAgent(agent)"
-                      :disabled="processingAgent === agent.id"
-                      style="font-size: 0.7rem;"
-                    >
-                      <i class="bi bi-x-lg me-1"></i>
-                      Decline
-                    </button>
-                  </div>
-                </div>
-                <!-- Other statuses -->
+                <!-- Display status badge only -->
                 <span
-                  v-else
                   :class="getStatusClass(agent.status)"
                   class="badge"
                 >
-                  {{ agent.status }}
+                  {{ getStatusDisplayText(agent.status) }}
                 </span>
               </div>
-            </div>
-            <!-- Pending message -->
-            <div v-if="agent.status === 'PENDING'" class="pending-message mt-2 pt-2 border-top">
-              <small class="text-muted">
-                <i class="bi bi-exclamation-triangle me-1 text-warning"></i>
-                This agent is awaiting approval to join the network
-              </small>
             </div>
           </div>
         </div>
@@ -131,8 +78,6 @@ const loading = ref(true)
 const error = ref(null)
 const agents = ref([])
 const processingAgent = ref(null)
-const editingAgent = ref(null)
-const editingName = ref('')
 
 const activeAgentsCount = computed(() => {
   return agents.value.filter(agent => agent.status === 'ACTIVE').length
@@ -148,7 +93,13 @@ const fetchAgents = async () => {
     loading.value = true
     error.value = null
     const response = await apiService.getAgents()
-    agents.value = response._embedded?.agents || []
+    const allAgents = response._embedded?.agents || []
+    // Sort agents so PENDING status appears first
+    agents.value = allAgents.sort((a, b) => {
+      if (a.status === 'PENDING' && b.status !== 'PENDING') return -1
+      if (a.status !== 'PENDING' && b.status === 'PENDING') return 1
+      return 0
+    })
   } catch (err) {
     error.value = err.message || 'Failed to load agents'
     console.error('Error fetching agents:', err)
@@ -165,6 +116,8 @@ const getStatusClass = (status) => {
       return 'bg-secondary'
     case 'ERROR':
       return 'bg-danger'
+    case 'PENDING':
+      return 'bg-warning'
     default:
       return 'bg-secondary'
   }
@@ -183,6 +136,13 @@ const getStatusIndicatorClass = (status) => {
     default:
       return 'bg-secondary'
   }
+}
+
+const getStatusDisplayText = (status) => {
+  if (status === 'PENDING') {
+    return 'Requires Attention'
+  }
+  return status
 }
 
 const approveAgent = async (agent) => {
@@ -219,45 +179,13 @@ const declineAgent = async (agent) => {
   }
 }
 
-const startEditing = (agent) => {
-  editingAgent.value = agent.id
-  editingName.value = agent.name
-}
-
-const saveAgentName = async (agent) => {
-  if (!editingName.value.trim()) {
-    cancelEditing()
-    return
-  }
-
-  try {
-    processingAgent.value = agent.id
-    await apiService.updateAgentName(agent.id, editingName.value.trim())
-    // Update the agent name locally
-    const agentIndex = agents.value.findIndex(a => a.id === agent.id)
-    if (agentIndex !== -1) {
-      agents.value[agentIndex].name = editingName.value.trim()
-    }
-    editingAgent.value = null
-  } catch (err) {
-    console.error('Error updating agent name:', err)
-    error.value = `Failed to update agent name: ${err.message}`
-  } finally {
-    processingAgent.value = null
-  }
-}
-
-const cancelEditing = () => {
-  editingAgent.value = null
-  editingName.value = ''
-}
-
 const navigateToAgentReport = (agent) => {
-  // Don't navigate if we're currently editing
-  if (editingAgent.value === agent.id) {
-    return
-  }
   router.push(`/agents/${agent.id}/reports`)
+}
+
+const truncateId = (id) => {
+  // Truncate the ID to a maximum of 8 characters for display
+  return id.length > 8 ? id.slice(0, 8) + '...' : id
 }
 
 onMounted(() => {
@@ -275,6 +203,7 @@ onMounted(() => {
   border-left: none !important;
   border-right: none !important;
   border-top: none !important;
+  position: relative;
 }
 
 .agent-item:last-child {
@@ -308,54 +237,8 @@ onMounted(() => {
   background-color: #fff3cd;
 }
 
-.pending-message {
-  border-top-color: #ffc107 !important;
-}
-
-.editable-name {
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-}
-
-.editable-name:hover {
-  text-decoration-style: solid;
-}
-
-.agent-name-edit {
-  max-width: 200px;
-}
-
-.name-input {
-  font-size: 0.9rem;
-  min-width: 150px;
-}
-
-.edit-saving {
-  display: flex;
-  align-items: center;
-}
-
 .status-indicator {
   flex-shrink: 0;
-}
-
-/* Custom scrollbar for agents list */
-.agents-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.agents-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.agents-list::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-.agents-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
 
 /* Header gradient to match sidebar */

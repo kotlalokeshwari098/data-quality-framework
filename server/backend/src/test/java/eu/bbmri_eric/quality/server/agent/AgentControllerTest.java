@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,7 +81,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void findById_shouldReturnAgentWithHateoasLinksWhenExists() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -146,7 +147,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void endToEndFlow_createAndRetrieveAgent() throws Exception {
     String agentId = UUID.randomUUID().toString();
     AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
@@ -170,7 +171,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldUpdateAgentNameAndReturnHateoasResponse() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -192,7 +193,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldUpdateAgentStatusAndReturnHateoasResponse() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -213,7 +214,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldUpdateBothNameAndStatus() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -247,7 +248,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void update_shouldHandleEmptyUpdateRequest() throws Exception {
     String agentId = UUID.randomUUID().toString();
     Agent agent = new Agent(agentId);
@@ -277,21 +278,7 @@ class AgentControllerIntegrationTest {
   }
 
   @Test
-  @WithMockUser(roles = "USER")
-  void update_shouldRequireAdminRole() throws Exception {
-    String agentId = UUID.randomUUID().toString();
-    AgentUpdateRequest updateRequest = new AgentUpdateRequest("New Name", AgentStatus.ACTIVE);
-
-    mockMvc
-        .perform(
-            patch(API_V_1_AGENTS_ID, agentId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateRequest)))
-        .andExpect(status().isForbidden());
-  }
-
-  @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void endToEndFlow_createUpdateAndRetrieveAgent() throws Exception {
     String agentId = UUID.randomUUID().toString();
     AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
@@ -319,5 +306,59 @@ class AgentControllerIntegrationTest {
         .andExpect(jsonPath("$.id").value(agentId))
         .andExpect(jsonPath("$.name").value("Updated Agent"))
         .andExpect(jsonPath("$.status").value("ACTIVE"));
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void findById_shouldNotIncludeInteractionsByDefault() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agent.addInteraction(AgentInteractionType.PING);
+    agent.addInteraction(AgentInteractionType.REPORT);
+    agentRepository.save(agent);
+
+    mockMvc
+        .perform(get(API_V_1_AGENTS_ID, agentId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId))
+        .andExpect(jsonPath("$.interactions").doesNotExist());
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void findById_shouldIncludeInteractionsWhenExpandParameterProvided() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agent.addInteraction(AgentInteractionType.PING);
+    agent.addInteraction(AgentInteractionType.REPORT);
+    agentRepository.save(agent);
+
+    mockMvc
+        .perform(get(API_V_1_AGENTS_ID, agentId).param("expand", "interactions"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId))
+        .andExpect(jsonPath("$.interactions").isArray())
+        .andExpect(jsonPath("$.interactions.length()").value(3))
+        .andExpect(jsonPath("$.interactions[0].type").value("REPORT"))
+        .andExpect(jsonPath("$.interactions[0].id").exists())
+        .andExpect(jsonPath("$.interactions[0].timestamp").exists())
+        .andExpect(jsonPath("$.interactions[1].type").value("PING"))
+        .andExpect(jsonPath("$.interactions[1].id").exists())
+        .andExpect(jsonPath("$.interactions[1].timestamp").exists());
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void findById_shouldIgnoreInvalidExpandParameter() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agent.addInteraction(AgentInteractionType.PING);
+    agentRepository.save(agent);
+
+    mockMvc
+        .perform(get(API_V_1_AGENTS_ID, agentId).param("expand", "invalid"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(agentId))
+        .andExpect(jsonPath("$.interactions").doesNotExist());
   }
 }

@@ -23,6 +23,7 @@ class SettingsServiceTest {
     settingsRepository.save(new Settings("fhirUrl", "http://localhost:8080/fhir"));
     settingsRepository.save(new Settings("fhirUsername", "testuser"));
     settingsRepository.save(new Settings("fhirPassword", "dGVzdHBhc3M="));
+    settingsRepository.save(new Settings("agentId", "sdfsdf-sdgsfgdfg-dfgdfg"));
   }
 
   @Test
