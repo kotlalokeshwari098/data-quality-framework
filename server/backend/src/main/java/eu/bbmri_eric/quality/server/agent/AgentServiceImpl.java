@@ -53,7 +53,7 @@ public class AgentServiceImpl implements AgentService {
     UserDTO currentUser = authenticationContextService.getCurrentUser();
     if (!isAuthorizedToUpdate(currentUser, agentId)) {
       throw new AccessDeniedException(
-          "User is not authorized to create reports for agent: " + agentId);
+          "User is not authorized to update agent: " + agentId);
     }
     Agent agent = agentRepository.findById(agentId).orElseThrow(EntityNotFoundException::new);
     if (!Objects.isNull(updateAgentDto.getName())) {
