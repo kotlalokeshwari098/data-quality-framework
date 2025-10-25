@@ -151,6 +151,26 @@ class ApiService {
         }
         return await response.json()
     }
+
+    async changePassword(userId, currentPassword, newPassword, confirmPassword) {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE}/users/${userId}/password`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            },
+            body: JSON.stringify({
+                currentPassword,
+                newPassword,
+                confirmPassword
+            })
+        })
+        if (!response.ok) {
+            const errorText = await response.text()
+            throw new Error(errorText || `Failed to change password: ${response.status}`)
+        }
+    }
 }
 
 export const apiService = new ApiService()

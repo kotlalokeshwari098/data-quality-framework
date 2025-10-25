@@ -70,6 +70,8 @@ class SecurityConfig {
                     .authenticated()
                     .requestMatchers(HttpMethod.POST, "/api/v1/agents/*/reports")
                     .hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/users/*/password")
+                    .authenticated()
                     .requestMatchers(
                         "/",
                         "/index.html",

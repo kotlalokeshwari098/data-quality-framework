@@ -136,4 +136,8 @@ class User {
   public String toString() {
     return "User{username='" + username + "'}";
   }
+
+  public void setPassword(String encodedPassword) {
+    this.password = encodedPassword;
+  }
 }

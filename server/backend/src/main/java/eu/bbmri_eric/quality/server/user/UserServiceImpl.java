@@ -1,7 +1,11 @@
 package eu.bbmri_eric.quality.server.user;
 
+import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
+import java.util.Objects;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +20,17 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
+  private final AuthenticationContextService authenticationContextService;
 
   UserServiceImpl(
-      UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      ModelMapper modelMapper,
+      AuthenticationContextService authenticationContextService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.modelMapper = modelMapper;
+    this.authenticationContextService = authenticationContextService;
   }
 
   @Override
@@ -32,6 +41,29 @@ public class UserServiceImpl implements UserService {
     UserDTO savedUser = modelMapper.map(userRepository.save(user), UserDTO.class);
     savedUser.setTemporaryPassword(rawPassword);
     return savedUser;
+  }
+
+  @Override
+  @Transactional
+  public void changePassword(Long userId, PasswordChangeRequest passwordChangeRequest) {
+    Objects.requireNonNull(userId, "User ID cannot be null");
+    Objects.requireNonNull(passwordChangeRequest, "Password change request cannot be null");
+    passwordChangeRequest.validate();
+    UserDTO currentUserDTO = authenticationContextService.getCurrentUser();
+    String username = currentUserDTO.getUsername();
+    Long currentUserId = currentUserDTO.getId();
+    if (!currentUserId.equals(userId)) {
+      throw new AccessDeniedException("You can only change your own password");
+    }
+    User user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    if (!passwordEncoder.matches(passwordChangeRequest.getCurrentPassword(), user.getPassword())) {
+      throw new IllegalArgumentException("Current password is incorrect");
+    }
+    String encodedPassword = passwordEncoder.encode(passwordChangeRequest.getNewPassword());
+    user.setPassword(encodedPassword);
   }
 
   private String generateRandomPassword() {

@@ -18,7 +18,7 @@ public class UserDTO {
   private String username;
 
   @Schema(description = "Unique identifier for the user", example = "user123")
-  private String id;
+  private Long id;
 
   @Schema(description = "Temporary password", example = "123")
   private String temporaryPassword;
@@ -28,9 +28,7 @@ public class UserDTO {
 
   private Set<UserRole> roles;
 
-  public UserDTO(
-      @NotEmpty(message = "Username cannot be empty") String username,
-      @NotEmpty(message = "ID cannot be empty") String id) {
+  public UserDTO(@NotEmpty(message = "Username cannot be empty") String username, Long id) {
     this.username = username;
     this.id = id;
   }
@@ -47,11 +45,11 @@ public class UserDTO {
     this.username = username;
   }
 
-  public String getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
