@@ -105,14 +105,14 @@ export async function authenticate(username, password) {
             sessionStorage.setItem('defaultPasswordFlag', user.defaultPassword.toString());
         }
 
-        if (user && user.id) {
-            sessionStorage.setItem('userId', user.id.toString());
+        if (user && user.userId) {
+            sessionStorage.setItem('userId', user.userId.toString());
         }
 
         return {
             username: serverUsername,
             defaultPassword: user?.defaultPassword || false,
-            userId: user?.id || null
+            userId: user?.userId || null
         };
     } catch (error) {
         if (error.response?.status === 401) {
