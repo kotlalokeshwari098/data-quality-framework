@@ -30,10 +30,16 @@
           <i class="bi bi-clipboard-check-fill"></i>
           <span>Quality Checks</span>
         </router-link>
-        <router-link to="/settings" class="nav-link" :class="{ active: $route.name === 'Settings' }" @click="closeMobileMenu">
-          <i class="bi bi-gear-fill"></i>
-          <span>Settings</span>
-        </router-link>
+        <div class="nav-section">
+          <div class="nav-section-header">
+            <i class="bi bi-gear-fill"></i>
+            <span>Settings</span>
+          </div>
+          <router-link to="/profile" class="nav-link nav-subitem" :class="{ active: $route.name === 'Profile' }" @click="closeMobileMenu">
+            <i class="bi bi-person-fill"></i>
+            <span>Profile</span>
+          </router-link>
+        </div>
       </nav>
     </div>
   </aside>
@@ -185,6 +191,39 @@ const closeMobileMenu = () => {
   height: 60%;
   background: white;
   border-radius: 0 4px 4px 0;
+}
+
+/* Navigation Section */
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.nav-section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: default;
+}
+
+.nav-section-header i {
+  font-size: 1.25rem;
+  min-width: 1.25rem;
+}
+
+.nav-subitem {
+  margin-left: 1rem;
+  padding-left: 2.25rem !important;
+  font-size: 0.9rem;
+}
+
+.nav-subitem i {
+  font-size: 1.125rem !important;
 }
 
 /* Mobile Menu Toggle */

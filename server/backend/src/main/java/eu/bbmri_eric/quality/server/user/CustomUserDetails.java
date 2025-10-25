@@ -11,7 +11,7 @@ public class CustomUserDetails implements UserDetails {
   private final String password;
 
   CustomUserDetails(User user) {
-    this.user = new UserDTO(user.getUsername(), user.getId().toString());
+    this.user = new UserDTO(user.getUsername(), user.getId());
     this.password = user.getPassword();
     this.user.setRoles(user.getRoles());
   }

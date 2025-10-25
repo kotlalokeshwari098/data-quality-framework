@@ -4,6 +4,7 @@ import { authStore } from '../stores/authStore.js'
 import Dashboard from '../views/Dashboard.vue'
 import Reports from '../views/Reports.vue'
 import Settings from '../views/Settings.vue'
+import Profile from '../views/Profile.vue'
 import AgentsView from '../views/AgentsView.vue'
 import AgentReportView from '../views/AgentReportView.vue'
 import AgentInteractionsView from '../views/AgentInteractionsView.vue'
@@ -51,6 +52,12 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: Settings,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
     meta: { requiresAuth: true }
   },
   {
