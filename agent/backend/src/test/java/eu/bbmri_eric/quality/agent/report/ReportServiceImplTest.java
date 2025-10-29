@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ReportServiceTest {
+class ReportServiceImplTest {
 
   @Autowired private ReportRepository reportRepository;
 
@@ -22,10 +22,10 @@ class ReportServiceTest {
   }
 
   @Test
-  void generateReportTransactional() {
+  void generateReport() {
     assertThat(reportRepository.findAll()).isEmpty();
 
-    reportService.generateReportTransactional();
+    reportService.generateReport();
 
     assertThat(reportRepository.findAll()).hasSize(1);
     Report report = reportRepository.findAll().getFirst();

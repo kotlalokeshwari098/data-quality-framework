@@ -6,20 +6,20 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReportScheduler {
+class ReportScheduler {
 
   private static final Logger log = LoggerFactory.getLogger(ReportScheduler.class);
 
-  private final IReportService reportService;
+  private final ReportService reportService;
 
-  public ReportScheduler(IReportService reportService) {
+  ReportScheduler(ReportService reportService) {
     this.reportService = reportService;
   }
 
   /** Scheduled task to generate reports daily at midnight. */
   @Scheduled(cron = "0 0 0 * * *")
-  public void generateReport() {
-    log.info("🕐 Scheduled report generation triggered");
-    reportService.generateReportTransactional();
+  void generateReport() {
+    log.info("Scheduled report generation triggered");
+    reportService.generateReport();
   }
 }
