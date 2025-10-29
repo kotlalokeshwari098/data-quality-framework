@@ -20,6 +20,7 @@ class ResultEventHandlerTest {
   void onNewReport_setsPatientListCorrectly() {
     ReportRepository mockRepo = mock(ReportRepository.class);
     Report mockReport = new Report();
+    mockReport.setId(123L);
     mockReport.setStatus(Status.GENERATING);
     when(mockRepo.findAllByStatusIs(Status.GENERATING)).thenReturn(List.of(mockReport));
     ResultEventHandler handler = new ResultEventHandler(mockRepo);
