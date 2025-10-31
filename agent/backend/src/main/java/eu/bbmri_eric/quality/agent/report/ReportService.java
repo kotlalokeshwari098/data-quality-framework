@@ -7,4 +7,12 @@ public interface ReportService {
    * generation process.
    */
   void generateReport();
+
+  /**
+   * Get a report by ID and convert it to a DTO.
+   *
+   * @param id the report ID
+   * @return the report as a DTO
+   */
+  ReportDTO getById(Long id);
 }

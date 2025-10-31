@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.report;
 
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,5 +24,25 @@ public class ReportServiceImpl implements ReportService {
     Report report = reportRepository.save(new Report());
     reportRestEventHandler.onAfterCreate(report);
     log.info("📊 Scheduled report created with ID: {}", report.getId());
+  }
+
+  @Transactional(readOnly = true)
+  public ReportDTO getById(Long id) {
+    Report report =
+        reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException(id));
+
+    var results =
+        report.getResults().stream()
+            .map(
+                result ->
+                    new QualityCheckResultDTO(
+                        result.getCheckId()
+                            + (result.getStratum() != null
+                                ? " (%s)".formatted(result.getStratum())
+                                : ""),
+                        (double) result.getObfuscatedValue()))
+            .collect(Collectors.toList());
+
+    return new ReportDTO(results);
   }
 }

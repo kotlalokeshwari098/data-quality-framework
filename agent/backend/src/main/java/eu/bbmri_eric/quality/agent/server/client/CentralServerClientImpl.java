@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.agent.server.client;
 
 import eu.bbmri_eric.quality.agent.auth.LoginRequest;
+import eu.bbmri_eric.quality.agent.report.ReportDTO;
 import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
 import java.util.Objects;
 import org.slf4j.Logger;
@@ -101,6 +102,20 @@ public class CentralServerClientImpl implements CentralServerClient {
 
     restTemplate.exchange(updateUrl, HttpMethod.PATCH, requestEntity, Void.class);
     log.info("Successfully updated agent version to {} on server {}", version, serverUrl);
+  }
+
+  @Override
+  public void sendReport(ReportDTO reportDTO) {
+    log.info("Got here");
+    String token = authenticateWithServer();
+    String reportUrl = buildApiUrl(AGENTS_ENDPOINT + "/" + agentId + "/reports");
+
+    HttpHeaders headers = createDefaultHeaders();
+    headers.setBearerAuth(token);
+    HttpEntity<ReportDTO> requestEntity = new HttpEntity<>(reportDTO, headers);
+
+    restTemplate.exchange(reportUrl, HttpMethod.POST, requestEntity, Void.class);
+    log.info("Successfully sent report to server {}", serverUrl);
   }
 
   /**

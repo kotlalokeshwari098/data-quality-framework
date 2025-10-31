@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.server;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ServerRepository extends CrudRepository<Server, String> {
   Optional<Server> findByUrl(String url);
+
+  List<Server> findAllByStatusIs(ServerConnectionStatus status);
 }

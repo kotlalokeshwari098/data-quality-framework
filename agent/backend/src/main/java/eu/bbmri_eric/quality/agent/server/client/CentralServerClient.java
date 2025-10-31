@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.server.client;
 
+import eu.bbmri_eric.quality.agent.report.ReportDTO;
 import eu.bbmri_eric.quality.agent.server.ServerConnectionStatus;
 
 public interface CentralServerClient {
@@ -10,4 +11,6 @@ public interface CentralServerClient {
   void healthCheck();
 
   void updateAgentVersion(String version);
+
+  void sendReport(ReportDTO reportDTO);
 }
