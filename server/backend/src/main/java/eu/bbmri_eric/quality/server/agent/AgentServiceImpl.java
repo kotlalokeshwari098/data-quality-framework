@@ -65,6 +65,7 @@ public class AgentServiceImpl implements AgentService {
     if (!Objects.isNull(updateAgentDto.getVersion())
         && !updateAgentDto.getVersion().equals(agent.getVersion())) {
       agent.setVersion(updateAgentDto.getVersion());
+      agent.addInteraction(AgentInteractionType.VERSION_UPDATE);
     }
     return modelMapper.map(agent, AgentDTO.class);
   }

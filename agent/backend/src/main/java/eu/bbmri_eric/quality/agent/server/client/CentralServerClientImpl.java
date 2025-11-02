@@ -94,12 +94,10 @@ public class CentralServerClientImpl implements CentralServerClient {
   public void updateAgentVersion(String version) {
     String token = authenticateWithServer();
     String updateUrl = buildApiUrl(AGENTS_ENDPOINT + "/" + agentId);
-
     AgentUpdateRequest updateRequest = new AgentUpdateRequest(version);
     HttpHeaders headers = createDefaultHeaders();
     headers.setBearerAuth(token);
     HttpEntity<AgentUpdateRequest> requestEntity = new HttpEntity<>(updateRequest, headers);
-
     restTemplate.exchange(updateUrl, HttpMethod.PATCH, requestEntity, Void.class);
     log.info("Successfully updated agent version to {} on server {}", version, serverUrl);
   }

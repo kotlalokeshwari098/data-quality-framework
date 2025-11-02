@@ -4,10 +4,21 @@
     <div class="row mb-4">
       <div class="col-12">
         <PageHeader
-          :title="`Agent Interactions - ${agentName}`"
+          :title="`Interactions Log - ${agentName}`"
           :subtitle="`Agent ID: ${agentId}`"
           icon="bi bi-clock-history"
-        />
+        >
+          <template #actions>
+            <button
+              @click="refreshInteractions"
+              class="btn btn-outline-primary btn-sm"
+              :disabled="loading"
+            >
+              <i class="bi bi-arrow-clockwise"></i>
+              <span class="d-none d-md-inline ms-1">Refresh</span>
+            </button>
+          </template>
+        </PageHeader>
       </div>
     </div>
 
@@ -203,7 +214,14 @@ const visiblePages = computed(() => {
 const latestPingTime = computed(() => {
   const latestPing = interactions.value.find(i => i.type === 'PING')
   if (!latestPing) return null
-  return formatTime(latestPing.timestamp)
+  const date = new Date(latestPing.timestamp)
+  const formattedDate = date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  })
+  const formattedTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  return `${formattedDate} ${formattedTime}`
 })
 
 const latestPingColor = computed(() => {
@@ -279,15 +297,6 @@ const fetchAgentInteractions = async () => {
   }
 }
 
-const formatDateShort = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })
-}
-
 const formatDateLong = (dateString) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-GB', {
@@ -302,9 +311,8 @@ const formatTimeFull = (dateString) => {
   return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
 
-const formatTime = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+const refreshInteractions = () => {
+  fetchAgentInteractions()
 }
 
 const getInteractionTypeBadgeClass = (type) => {
@@ -359,14 +367,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.table-row-hover:hover {
-  background-color: #f8f9fa;
-  cursor: pointer;
-}
-
-.report-id {
-  max-width: 200px;
-}
 
 .pagination-sm .page-link {
   padding: 0.25rem 0.5rem;

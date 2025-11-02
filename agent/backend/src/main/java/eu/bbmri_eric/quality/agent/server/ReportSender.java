@@ -45,6 +45,10 @@ public class ReportSender {
                       agentId, server.getUrl(), server.getClientId(), server.getClientSecret());
               try {
                 client.sendReport(reportDTO);
+                server.addInteraction(
+                    new ServerInteraction(
+                        InteractionType.COMMUNICATION,
+                        "Report %s shared".formatted(event.getReportId())));
               } catch (Exception e) {
                 log.error("Failed to send report to server {}", server.getUrl(), e);
               }

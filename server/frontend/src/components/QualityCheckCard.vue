@@ -3,7 +3,7 @@
     <div class="card-body p-3 position-relative">
       <!-- Icon in top right corner -->
       <div class="position-absolute top-0 end-0 p-3">
-        <i class="bi bi-clipboard-data-fill text-primary opacity-75" style="font-size: 1.5rem;"></i>
+        <i class="bi bi-clipboard-check-fill text-primary opacity-75" style="font-size: 1.5rem;"></i>
       </div>
 
       <div class="mb-3">

@@ -102,23 +102,7 @@
                   </div>
                 </div>
                 <div class="agent-info">
-                  <div class="agent-name" v-if="editingAgent !== agent.id">
-                    <span @click.stop="startEditing(agent)" class="editable-name" :title="agent.name || 'Unknown'">
-                      {{ agent.name || 'Unknown' }}
-                    </span>
-                  </div>
-                  <div class="agent-name-edit" v-else @click.stop>
-                    <input
-                      ref="nameInput"
-                      v-model="editingName"
-                      @blur="saveAgentName(agent)"
-                      @keyup.enter="saveAgentName(agent)"
-                      @keyup.esc="cancelEditing"
-                      :placeholder="agent.name || 'Unknown'"
-                      class="form-control form-control-sm"
-                      :disabled="processingAgent === agent.id"
-                    />
-                  </div>
+                  <div class="agent-name">{{ agent.name || 'Unknown' }}</div>
                   <div class="agent-id">
                     <code>{{ agent.id }}</code>
                   </div>
@@ -197,23 +181,7 @@
                       </div>
                     </div>
                     <div class="agent-details">
-                      <div class="agent-name" v-if="editingAgent !== agent.id">
-                        <span @click.stop="startEditing(agent)" class="editable-name" :title="agent.name || 'Unknown'">
-                          {{ agent.name || 'Unknown' }}
-                        </span>
-                      </div>
-                      <div class="agent-name-edit" v-else @click.stop>
-                        <input
-                          ref="nameInput"
-                          v-model="editingName"
-                          @blur="saveAgentName(agent)"
-                          @keyup.enter="saveAgentName(agent)"
-                          @keyup.esc="cancelEditing"
-                          :placeholder="agent.name || 'Unknown'"
-                          class="form-control form-control-sm"
-                          :disabled="processingAgent === agent.id"
-                        />
-                      </div>
+                      <div class="agent-name">{{ agent.name || 'Unknown' }}</div>
                       <div class="agent-id">
                         <code>{{ agent.id }}</code>
                       </div>
@@ -300,7 +268,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { apiService } from '../services/apiService.js'
 import PageHeader from '../components/PageHeader.vue'
@@ -310,8 +278,6 @@ const loading = ref(true)
 const error = ref(null)
 const agents = ref([])
 const processingAgent = ref(null)
-const editingAgent = ref(null)
-const editingName = ref('')
 
 // Filters
 const searchQuery = ref('')
@@ -480,42 +446,6 @@ const toggleAgentStatus = async (agent) => {
   }
 }
 
-const startEditing = (agent) => {
-  editingAgent.value = agent.id
-  editingName.value = agent.name || ''
-  nextTick(() => {
-    const input = document.querySelector('input[ref="nameInput"]')
-    if (input) input.focus()
-  })
-}
-
-const saveAgentName = async (agent) => {
-  if (!editingName.value.trim()) {
-    cancelEditing()
-    return
-  }
-
-  try {
-    processingAgent.value = agent.id
-    await apiService.updateAgentName(agent.id, editingName.value.trim())
-    // Update the agent name locally
-    const agentIndex = agents.value.findIndex(a => a.id === agent.id)
-    if (agentIndex !== -1) {
-      agents.value[agentIndex].name = editingName.value.trim()
-    }
-    editingAgent.value = null
-  } catch (err) {
-    console.error('Error updating agent name:', err)
-    error.value = `Failed to update agent name: ${err.message}`
-  } finally {
-    processingAgent.value = null
-  }
-}
-
-const cancelEditing = () => {
-  editingAgent.value = null
-  editingName.value = ''
-}
 
 const navigateToAgentReports = (agent) => {
   router.push(`/agents/${agent.id}/reports`)
@@ -696,26 +626,6 @@ onMounted(() => {
   word-break: break-word;
 }
 
-.agent-name-edit {
-  margin-bottom: 0.25rem;
-}
-
-.agent-name-edit input {
-  width: 100%;
-  max-width: 250px;
-}
-
-.editable-name {
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  transition: text-decoration-color 0.2s ease;
-}
-
-.editable-name:hover {
-  color: #0d6efd;
-  text-decoration-color: currentColor;
-}
 
 .agent-id {
   font-size: 0.75rem;

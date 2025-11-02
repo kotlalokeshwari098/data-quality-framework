@@ -22,7 +22,6 @@ class ResultEventHandler {
   @Transactional
   void onNewReport(DataQualityCheckResult event) {
     List<Report> reports = reportRepository.findAllByStatusIs(Status.GENERATING);
-
     reports.forEach(
         report -> {
           Result result =
@@ -37,9 +36,7 @@ class ResultEventHandler {
                   event.getEpsilon(),
                   event.getError(),
                   event.getStratum());
-
           result.setPatients(event.getPatientSet());
-
           report.addResult(result);
           reportRepository.save(report);
         });

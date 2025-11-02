@@ -30,7 +30,7 @@
           />
           <StatCard
             :number="successfulChecks"
-            label="Successful Checks"
+            label="Passed"
             numberClass="text-success"
           />
           <StatCard
@@ -221,16 +221,16 @@ const generateReportWithReset = async () => {
 }
 
 .quality-checks-grid > * {
-  min-height: 150px;
+  min-height: 100px;
 }
 
 @media (min-width: 992px) {
   .quality-checks-grid {
-    grid-template-columns: repeat(auto-fill, 480px);
+    grid-template-columns: repeat(auto-fill, 320px);
   }
 
   .quality-checks-grid > * {
-    height: 480px;
+    height: 320px;
   }
 }
 

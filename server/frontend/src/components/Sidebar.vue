@@ -41,6 +41,11 @@
           </router-link>
         </div>
       </nav>
+
+      <!-- Copyright -->
+      <div class="sidebar-footer">
+        <Copyright />
+      </div>
     </div>
   </aside>
 
@@ -55,6 +60,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import Copyright from './Copyright.vue'
 
 const showMobileMenu = ref(false)
 
@@ -224,6 +230,28 @@ const closeMobileMenu = () => {
 
 .nav-subitem i {
   font-size: 1.125rem !important;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 1rem 1.5rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-footer :deep(.copyright) {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  padding: 0;
+}
+
+.sidebar-footer :deep(.license-link) {
+  color: white;
+  font-weight: 500;
+}
+
+.sidebar-footer :deep(.license-link:hover) {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Mobile Menu Toggle */
