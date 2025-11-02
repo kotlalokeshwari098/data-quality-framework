@@ -27,7 +27,7 @@ CREATE TABLE result
     check_name       VARCHAR(255),
     check_id         INTEGER,
     raw_value        INTEGER,
-    obfuscated_value INTEGER,
+    obfuscated_value REAL,
     report_id        INTEGER,
     warning_threshold INTEGER,
     error_threshold INTEGER,

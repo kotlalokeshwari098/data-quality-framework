@@ -2,14 +2,14 @@ package eu.bbmri_eric.quality.agent.events;
 
 import org.springframework.context.ApplicationEvent;
 
-public class FinishedReportEvent extends ApplicationEvent {
+public class DQCheckResultsGathered extends ApplicationEvent {
   private Long reportId;
 
-  public FinishedReportEvent(Object source) {
+  public DQCheckResultsGathered(Object source) {
     super(source);
   }
 
-  public FinishedReportEvent(Object source, Long reportId) {
+  public DQCheckResultsGathered(Object source, Long reportId) {
     super(source);
     this.reportId = reportId;
   }

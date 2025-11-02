@@ -1,7 +1,7 @@
 package eu.bbmri_eric.quality.agent.check;
 
+import eu.bbmri_eric.quality.agent.events.DQCheckResultsGathered;
 import eu.bbmri_eric.quality.agent.events.DataQualityCheckResult;
-import eu.bbmri_eric.quality.agent.events.FinishedReportEvent;
 import eu.bbmri_eric.quality.agent.events.NewReportEvent;
 import eu.bbmri_eric.quality.agent.fhir.FHIRStore;
 import java.time.LocalDateTime;
@@ -77,6 +77,6 @@ class DataQualityChecksRunner {
                 null));
       }
     }
-    eventPublisher.publishEvent(new FinishedReportEvent(this, event.getReportId()));
+    eventPublisher.publishEvent(new DQCheckResultsGathered(this, event.getReportId()));
   }
 }

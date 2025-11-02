@@ -3,12 +3,14 @@ import { authStore } from '../stores/authStore.js'
 
 import Dashboard from '../views/Dashboard.vue'
 import Reports from '../views/Reports.vue'
+import ReportDetailPage from '../views/ReportDetailPage.vue'
 import Settings from '../views/Settings.vue'
 import Profile from '../views/Profile.vue'
 import AgentsView from '../views/AgentsView.vue'
 import AgentReportView from '../views/AgentReportView.vue'
 import AgentInteractionsView from '../views/AgentInteractionsView.vue'
 import QualityChecksView from '../views/QualityChecksView.vue'
+import QualityCheckDetailView from '../views/QualityCheckDetailView.vue'
 import LoginView from '../views/LoginView.vue'
 import NotFound from '../views/NotFound.vue'
 
@@ -43,9 +45,21 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/reports/:id',
+    name: 'ReportDetail',
+    component: ReportDetailPage,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/quality-checks',
     name: 'QualityChecks',
     component: QualityChecksView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/quality-checks/:hash',
+    name: 'QualityCheckDetail',
+    component: QualityCheckDetailView,
     meta: { requiresAuth: true }
   },
   {

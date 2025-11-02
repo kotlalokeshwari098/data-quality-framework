@@ -1,7 +1,8 @@
 package eu.bbmri_eric.quality.agent.server;
 
-import eu.bbmri_eric.quality.agent.events.FinishedReportEvent;
+import eu.bbmri_eric.quality.agent.check.CQLQueryService;
 import eu.bbmri_eric.quality.agent.report.ReportDTO;
+import eu.bbmri_eric.quality.agent.report.ReportGeneratedEvent;
 import eu.bbmri_eric.quality.agent.report.ReportService;
 import eu.bbmri_eric.quality.agent.server.client.CentralServerClientFactory;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
@@ -19,21 +20,24 @@ public class ReportSender {
   private final CentralServerClientFactory clientFactory;
   private final ServerRepository serverRepository;
   private final SettingsService settingsService;
+  private final CQLQueryService cqlQueryService;
 
   public ReportSender(
       ReportService reportService,
       CentralServerClientFactory clientFactory,
       ServerRepository serverRepository,
-      SettingsService settingsService) {
+      SettingsService settingsService,
+      CQLQueryService cqlQueryService) {
     this.reportService = reportService;
     this.clientFactory = clientFactory;
     this.serverRepository = serverRepository;
     this.settingsService = settingsService;
+    this.cqlQueryService = cqlQueryService;
   }
 
   @EventListener
   @Transactional
-  protected void onFinished(FinishedReportEvent event) {
+  protected void onFinished(ReportGeneratedEvent event) {
     ReportDTO reportDTO = reportService.getById(event.getReportId());
     String agentId = settingsService.getSettings().getAgentId();
     serverRepository

@@ -92,101 +92,31 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="check in filteredChecks" :key="check.hash || check.name" class="table-row-hover">
+                  <tr
+                    v-for="check in filteredChecks"
+                    :key="check.hash || check.name"
+                    class="table-row-hover cursor-pointer"
+                    @click="viewCheckDetail(check)"
+                  >
                     <td class="ps-4 d-none d-lg-table-cell">
                       <code class="font-monospace small text-muted hash-code">{{ check.hash }}</code>
                     </td>
                     <td>
-                      <div
-                        v-if="editingCheck !== check.hash"
-                        class="editable-field"
-                        @click="startEdit(check)"
-                        title="Click to edit"
-                      >
-                        {{ check.name }}
-                        <i class="bi bi-pencil-fill edit-icon"></i>
-                      </div>
-                      <div v-else>
-                        <input
-                          v-model="editForm.name"
-                          type="text"
-                          class="form-control form-control-sm"
-                          @keyup.enter="saveCheck(check)"
-                          ref="nameInput"
-                        >
-                        <small class="text-muted d-block mt-1">Press Enter to save</small>
-                      </div>
+                      <div class="fw-medium">{{ check.name }}</div>
                       <div class="d-md-none small text-muted mt-1">{{ check.description }}</div>
                     </td>
                     <td class="d-none d-md-table-cell">
-                      <div
-                        v-if="editingCheck !== check.hash"
-                        class="editable-field text-muted small"
-                        @click="startEdit(check)"
-                        title="Click to edit"
-                      >
-                        {{ check.description || 'No description' }}
-                        <i class="bi bi-pencil-fill edit-icon"></i>
-                      </div>
-                      <div v-else>
-                        <textarea
-                          v-model="editForm.description"
-                          class="form-control form-control-sm"
-                          rows="2"
-                          @keyup.enter="saveCheck(check)"
-                        ></textarea>
-                        <small class="text-muted d-block mt-1">Press Enter to save</small>
-                      </div>
+                      <div class="text-muted small">{{ check.description || 'No description' }}</div>
                     </td>
                     <td class="text-center d-none d-lg-table-cell">
-                      <div
-                        v-if="editingCheck !== check.hash"
-                        class="editable-field"
-                        @click="startEdit(check)"
-                        title="Click to edit"
-                      >
-                        <span class="badge bg-warning-subtle text-warning-emphasis">
-                          {{ formatThreshold(check.warningThreshold) }}
-                        </span>
-                        <i class="bi bi-pencil-fill edit-icon"></i>
-                      </div>
-                      <div v-else>
-                        <input
-                          v-model.number="editForm.warningThreshold"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="1"
-                          class="form-control form-control-sm"
-                          @keyup.enter="saveCheck(check)"
-                        >
-                        <small class="text-muted d-block mt-1">Press Enter to save</small>
-                      </div>
+                      <span class="badge bg-warning-subtle text-warning-emphasis">
+                        {{ formatThreshold(check.warningThreshold) }}
+                      </span>
                     </td>
                     <td class="text-center d-none d-lg-table-cell">
-                      <div
-                        v-if="editingCheck !== check.hash"
-                        class="editable-field"
-                        @click="startEdit(check)"
-                        title="Click to edit"
-                      >
-                        <span class="badge bg-danger-subtle text-danger-emphasis">
-                          {{ formatThreshold(check.errorThreshold) }}
-                        </span>
-                        <i class="bi bi-pencil-fill edit-icon"></i>
-                      </div>
-                      <div v-else>
-                        <input
-                          v-model.number="editForm.errorThreshold"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="1"
-                          class="form-control form-control-sm"
-                          @keyup.enter="saveCheck(check)"
-                        >
-                        <small class="text-muted d-block mt-1">Press Enter to save</small>
-                      </div>
+                      <span class="badge bg-danger-subtle text-danger-emphasis">
+                        {{ formatThreshold(check.errorThreshold) }}
+                      </span>
                     </td>
                     <td class="d-none d-xl-table-cell">
                       <span class="text-muted small">{{ formatDate(check.registeredAt) }}</span>
@@ -206,27 +136,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { apiService } from '../services/apiService.js'
 import PageHeader from '../components/PageHeader.vue'
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 const qualityChecks = ref([])
 const loading = ref(false)
-const saving = ref(false)
 const error = ref(null)
 const searchQuery = ref('')
-const editingCheck = ref(null)
-const editForm = ref({
-  name: '',
-  description: '',
-  warningThreshold: 0,
-  errorThreshold: 0
-})
-
-const checksWithWarning = computed(() => {
-  return qualityChecks.value.filter(check => check.warningThreshold > 0).length
-})
-
-const checksWithError = computed(() => {
-  return qualityChecks.value.filter(check => check.errorThreshold > 0).length
-})
 
 const filteredChecks = computed(() => {
   if (!searchQuery.value) {
@@ -277,48 +194,8 @@ const refreshChecks = () => {
   loadQualityChecks()
 }
 
-const startEdit = (check) => {
-  editingCheck.value = check.hash
-  editForm.value = {
-    name: check.name,
-    description: check.description,
-    warningThreshold: check.warningThreshold,
-    errorThreshold: check.errorThreshold
-  }
-}
-
-const cancelEdit = () => {
-  editingCheck.value = null
-  editForm.value = {
-    name: '',
-    description: '',
-    warningThreshold: 0,
-    errorThreshold: 0
-  }
-}
-
-const saveCheck = async (check) => {
-  saving.value = true
-
-  try {
-    await apiService.updateQualityCheck(check.hash, editForm.value)
-
-    // Update the local data
-    const index = qualityChecks.value.findIndex(c => c.hash === check.hash)
-    if (index !== -1) {
-      qualityChecks.value[index] = {
-        ...qualityChecks.value[index],
-        ...editForm.value
-      }
-    }
-
-    cancelEdit()
-  } catch (err) {
-    error.value = err.message || 'Failed to update quality check'
-    console.error('Error updating quality check:', err)
-  } finally {
-    saving.value = false
-  }
+const viewCheckDetail = (check) => {
+  router.push(`/quality-checks/${check.hash}`)
 }
 
 onMounted(() => {
@@ -482,6 +359,10 @@ onMounted(() => {
   box-shadow: inset 3px 0 0 #0d6efd;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .font-monospace {
   font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
   font-size: 0.875rem;
@@ -494,33 +375,6 @@ onMounted(() => {
   white-space: nowrap;
 }
 
-/* Editable Fields */
-.editable-field {
-  position: relative;
-  cursor: pointer;
-  padding-right: 1.5rem;
-  transition: background-color 0.2s ease;
-  border-radius: 4px;
-  display: inline-block;
-  min-width: 100px;
-}
-
-.editable-field:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
-.editable-field:hover .edit-icon {
-  opacity: 0.6;
-}
-
-.edit-icon {
-  font-size: 0.7rem;
-  color: #6c757d;
-  opacity: 0.3;
-  margin-left: 0.5rem;
-  transition: opacity 0.2s ease;
-  vertical-align: middle;
-}
 
 /* Responsive */
 @media (max-width: 992px) {

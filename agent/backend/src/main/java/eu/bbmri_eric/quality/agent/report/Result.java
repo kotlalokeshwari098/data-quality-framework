@@ -22,7 +22,7 @@ class Result {
   private String checkName;
   private Long checkId;
   private int rawValue;
-  private int obfuscatedValue;
+  private Double obfuscatedValue;
   private int warningThreshold;
   private int errorThreshold;
   private float epsilon;
@@ -40,7 +40,7 @@ class Result {
       String checkName,
       Long checkId,
       int rawValue,
-      int obfuscatedValue,
+      double obfuscatedValue,
       int warningThreshold,
       int errorThreshold,
       float epsilon,
@@ -77,7 +77,7 @@ class Result {
     return rawValue;
   }
 
-  public int getObfuscatedValue() {
+  public Double getObfuscatedValue() {
     return obfuscatedValue;
   }
 
@@ -103,6 +103,10 @@ class Result {
 
   public void setEpsilon(float epsilon) {
     this.epsilon = epsilon;
+  }
+
+  public void setObfuscatedValue(Double obfuscatedValue) {
+    this.obfuscatedValue = obfuscatedValue;
   }
 
   public String getError() {

@@ -136,6 +136,21 @@ class ApiService {
         return await response.json()
     }
 
+    async getReport(reportId) {
+        const token = localStorage.getItem('authToken')
+        const response = await fetch(`${API_BASE}/v1/reports/${reportId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to fetch report: ${response.status}`)
+        }
+        return await response.json()
+    }
+
     async updateQualityCheck(hash, data) {
         const token = localStorage.getItem('authToken')
         const response = await fetch(`${API_BASE}/v1/quality-checks/${hash}`, {
