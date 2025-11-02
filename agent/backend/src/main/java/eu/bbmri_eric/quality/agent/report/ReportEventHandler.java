@@ -14,14 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RepositoryEventHandler
-class ReportRestEventHandler {
+class ReportEventHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(ReportRestEventHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(ReportEventHandler.class);
   private final ApplicationEventPublisher publisher;
   private final ReportRepository reportRepository;
   private final FHIRStore fhirStore;
 
-  public ReportRestEventHandler(
+  public ReportEventHandler(
       ApplicationEventPublisher publisher, ReportRepository reportRepository, FHIRStore fhirStore) {
     this.publisher = publisher;
     this.reportRepository = reportRepository;

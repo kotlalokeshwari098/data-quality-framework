@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReportServiceImpl implements ReportService {
 
   private final ReportRepository reportRepository;
-  private final ReportRestEventHandler reportRestEventHandler;
+  private final ReportEventHandler reportRestEventHandler;
   private static final Logger log = LoggerFactory.getLogger(ReportServiceImpl.class);
 
   ReportServiceImpl(
-      ReportRepository reportRepository, ReportRestEventHandler reportRestEventHandler) {
+      ReportRepository reportRepository, ReportEventHandler reportRestEventHandler) {
     this.reportRepository = reportRepository;
     this.reportRestEventHandler = reportRestEventHandler;
   }
