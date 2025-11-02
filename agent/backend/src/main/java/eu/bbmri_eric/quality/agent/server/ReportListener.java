@@ -6,11 +6,15 @@ import eu.bbmri_eric.quality.agent.report.ReportService;
 import eu.bbmri_eric.quality.agent.server.client.CentralServerClientFactory;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReportListener {
+
+  private static final Logger log = LoggerFactory.getLogger(ReportListener.class);
   private final ReportService reportService;
   private final CentralServerClientFactory clientFactory;
   private final ServerRepository serverRepository;
@@ -39,7 +43,11 @@ public class ReportListener {
               var client =
                   clientFactory.createClient(
                       agentId, server.getUrl(), server.getClientId(), server.getClientSecret());
-              client.sendReport(reportDTO);
+              try {
+                client.sendReport(reportDTO);
+              } catch (Exception e) {
+                log.error("Failed to send report to server {}", server.getUrl(), e);
+              }
             });
   }
 }

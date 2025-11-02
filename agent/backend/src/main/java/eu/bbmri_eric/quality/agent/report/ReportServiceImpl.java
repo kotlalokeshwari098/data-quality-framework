@@ -13,8 +13,7 @@ public class ReportServiceImpl implements ReportService {
   private final ReportEventHandler reportRestEventHandler;
   private static final Logger log = LoggerFactory.getLogger(ReportServiceImpl.class);
 
-  ReportServiceImpl(
-      ReportRepository reportRepository, ReportEventHandler reportRestEventHandler) {
+  ReportServiceImpl(ReportRepository reportRepository, ReportEventHandler reportRestEventHandler) {
     this.reportRepository = reportRepository;
     this.reportRestEventHandler = reportRestEventHandler;
   }
