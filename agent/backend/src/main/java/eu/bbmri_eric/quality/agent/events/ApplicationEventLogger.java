@@ -26,7 +26,7 @@ public class ApplicationEventLogger {
    * @param event the ApplicationEvent
    */
   @EventListener
-  @Async("asyncEventExecutor")
+  @Async
   public void logApplicationEvent(ApplicationEvent event) {
     log.info("EVENT: {}", event.getClass().getSimpleName());
   }
