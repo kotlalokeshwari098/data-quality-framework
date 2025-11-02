@@ -12,15 +12,15 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReportListener {
+public class ReportSender {
 
-  private static final Logger log = LoggerFactory.getLogger(ReportListener.class);
+  private static final Logger log = LoggerFactory.getLogger(ReportSender.class);
   private final ReportService reportService;
   private final CentralServerClientFactory clientFactory;
   private final ServerRepository serverRepository;
   private final SettingsService settingsService;
 
-  public ReportListener(
+  public ReportSender(
       ReportService reportService,
       CentralServerClientFactory clientFactory,
       ServerRepository serverRepository,

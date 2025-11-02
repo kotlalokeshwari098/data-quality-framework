@@ -40,7 +40,6 @@
           class="form-control"
           id="serverUrl"
           v-model="formData.url"
-          @blur="validateUrl"
           placeholder="https://central.example.com"
           required
           maxlength="500"
@@ -72,21 +71,24 @@
           :loading="loading"
           :text="loading ? 'Registering...' : 'Register Server'"
         />
-        <CancelButton
+        <button
           type="button"
-          @click="clearForm"
-          text="Clear Form"
-        />
+          @click="testConnection"
+          :disabled="isTestingConnection || !formData.url"
+          class="btn btn-test"
+        >
+          <i :class="{ 'bi bi-arrow-clockwise spinning': isTestingConnection, 'bi bi-plug': !isTestingConnection }"></i>
+          {{ isTestingConnection ? 'Testing...' : 'Test Connection' }}
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { validateServerUrl } from '../js/api.js';
 import SaveButton from './SaveButton.vue';
-import CancelButton from './CancelButton.vue';
 
 defineProps({
   loading: {
@@ -96,6 +98,8 @@ defineProps({
 });
 
 const emit = defineEmits(['submit']);
+
+const isTestingConnection = ref(false);
 
 const formData = reactive({
   name: '',
@@ -137,6 +141,41 @@ async function validateUrl() {
     urlValidation.checked = true;
     urlValidation.valid = false;
     urlValidation.error = 'Validation failed';
+  }
+}
+
+async function testConnection() {
+  const url = formData.url.trim();
+
+  // Validate URL format before testing
+  if (!url || !isValidUrlFormat(url)) {
+    urlValidation.checked = true;
+    urlValidation.valid = false;
+    urlValidation.error = 'Please enter a valid URL';
+    return;
+  }
+
+  // Remove trailing slash before validation
+  const normalizedUrl = url.replace(/\/+$/, '');
+
+  isTestingConnection.value = true;
+  urlValidation.validating = true;
+  urlValidation.checked = false;
+
+  try {
+    const result = await validateServerUrl(normalizedUrl);
+    urlValidation.validating = false;
+    urlValidation.checked = true;
+    urlValidation.valid = result.valid;
+    urlValidation.version = result.version || null;
+    urlValidation.error = result.error || 'Invalid server';
+  } catch (error) {
+    urlValidation.validating = false;
+    urlValidation.checked = true;
+    urlValidation.valid = false;
+    urlValidation.error = 'Validation failed';
+  } finally {
+    isTestingConnection.value = false;
   }
 }
 
@@ -337,6 +376,47 @@ defineExpose({ clearForm });
   display: flex;
   gap: var(--spacing-md);
   justify-content: center;
+}
+
+.btn {
+  padding: 0.875rem var(--spacing-lg);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-test {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+.btn-test:hover:not(:disabled) {
+  background: var(--color-gray-200);
+  transform: translateY(-1px);
+}
+
+.btn-test i {
+  font-size: 1rem;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
