@@ -37,6 +37,7 @@ public class ReportServiceImpl implements ReportService {
   }
 
   @Transactional(readOnly = true)
+  @Override
   public ReportDTO getById(Long id) {
     Report report =
         reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException(id));
