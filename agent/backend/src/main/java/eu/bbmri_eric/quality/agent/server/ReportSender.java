@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bbmri_eric.quality.agent.check.CQLQueryService;
 import eu.bbmri_eric.quality.agent.report.ReportDTO;
 import eu.bbmri_eric.quality.agent.report.ReportGeneratedEvent;
@@ -21,18 +22,21 @@ public class ReportSender {
   private final ServerRepository serverRepository;
   private final SettingsService settingsService;
   private final CQLQueryService cqlQueryService;
+  private final ObjectMapper objectMapper;
 
   public ReportSender(
       ReportService reportService,
       CentralServerClientFactory clientFactory,
       ServerRepository serverRepository,
       SettingsService settingsService,
-      CQLQueryService cqlQueryService) {
+      CQLQueryService cqlQueryService,
+      ObjectMapper objectMapper) {
     this.reportService = reportService;
     this.clientFactory = clientFactory;
     this.serverRepository = serverRepository;
     this.settingsService = settingsService;
     this.cqlQueryService = cqlQueryService;
+    this.objectMapper = objectMapper;
   }
 
   @EventListener
@@ -49,10 +53,9 @@ public class ReportSender {
                       agentId, server.getUrl(), server.getClientId(), server.getClientSecret());
               try {
                 client.sendReport(reportDTO);
+                String reportJson = objectMapper.writeValueAsString(reportDTO);
                 server.addInteraction(
-                    new ServerInteraction(
-                        InteractionType.COMMUNICATION,
-                        "Report %s shared".formatted(event.getReportId())));
+                    new ServerInteraction(InteractionType.COMMUNICATION, reportJson));
               } catch (Exception e) {
                 log.error("Failed to send report to server {}", server.getUrl(), e);
               }

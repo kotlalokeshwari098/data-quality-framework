@@ -44,7 +44,6 @@ class ReportEventHandler {
               int count = fhirStore.countResources("Patient");
               report.setNumberOfEntities(count);
               report.setStatus(Status.GENERATED);
-              log.info("✅ Report {} has been generated", report.getId());
               publisher.publishEvent(new ReportGeneratedEvent(this, report.getId()));
             });
   }

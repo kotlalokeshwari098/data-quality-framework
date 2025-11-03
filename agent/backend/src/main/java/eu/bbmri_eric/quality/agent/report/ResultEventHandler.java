@@ -24,14 +24,14 @@ class ResultEventHandler {
     List<Report> reports = reportRepository.findAllByStatusIs(Status.GENERATING);
     reports.forEach(
         report -> {
-          int noisyValue =
+          double noisyValue =
               DifferentialPrivacyUtil.addLaplaceNoise(event.getRawValue(), event.getEpsilon(), 1);
           Result result =
               new Result(
                   event.getCheckName(),
                   event.getCheckId(),
                   event.getRawValue(),
-                  (double) noisyValue,
+                  noisyValue,
                   event.getWarningThreshold(),
                   event.getErrorThreshold(),
                   event.getEpsilon(),
