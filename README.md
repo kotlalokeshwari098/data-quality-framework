@@ -1,4 +1,5 @@
 [![CI/CD Pipeline](https://github.com/BBMRI-cz/data-quality-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/BBMRI-cz/data-quality-framework/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/BBMRI-cz/data-quality-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/BBMRI-cz/data-quality-framework)
 ![Static Badge](https://img.shields.io/badge/TRL-7-yellow)
 ![GitHub release](https://img.shields.io/github/v/release/BBMRI-cz/data-quality-framework)
 ![License](https://img.shields.io/github/license/BBMRI-ERIC/negotiator)
