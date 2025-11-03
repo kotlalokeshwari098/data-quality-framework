@@ -41,6 +41,7 @@ class SecurityConfig {
 
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    // Not relevant for JWT token based auth
     http.csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

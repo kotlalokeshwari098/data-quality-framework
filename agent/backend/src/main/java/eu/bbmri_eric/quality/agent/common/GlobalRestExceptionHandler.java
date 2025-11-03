@@ -203,8 +203,7 @@ public class GlobalRestExceptionHandler {
       HttpRequestMethodNotSupportedException ex) {
     logger.debug("Method not supported: {}", ex.getMessage());
     ProblemDetail problemDetail =
-        ProblemDetail.forStatusAndDetail(
-            HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage());
+        ProblemDetail.forStatusAndDetail(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage());
     problemDetail.setTitle("Method Not Allowed");
     return problemDetail;
   }
@@ -277,8 +276,7 @@ public class GlobalRestExceptionHandler {
   public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex) {
     logger.debug("Data integrity violation: {}", ex.getMessage());
     ProblemDetail problemDetail =
-        ProblemDetail.forStatusAndDetail(
-            HttpStatus.CONFLICT, "Data integrity constraint violated");
+        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Data integrity constraint violated");
     problemDetail.setTitle("Data Integrity Violation");
     return problemDetail;
   }
