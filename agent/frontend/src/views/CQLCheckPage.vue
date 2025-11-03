@@ -141,10 +141,10 @@
               Delete
             </button>
             <div class="form-actions-right">
-              <router-link to="/quality-checks" class="btn btn-secondary">
+              <button type="button" class="btn btn-secondary" @click="goBack">
                 <i class="bi bi-arrow-left me-2"></i>
                 Cancel
-              </router-link>
+              </button>
               <SaveButton
                 type="submit"
                 :loading="saving"
@@ -233,6 +233,10 @@ const handleSave = async () => {
   } finally {
     saving.value = false;
   }
+};
+
+const goBack = () => {
+  router.back();
 };
 
 const handleDelete = async () => {

@@ -85,7 +85,18 @@
                 <div class="card-body">
                   <div class="d-flex justify-content-between align-items-start">
                     <div class="flex-grow-1">
-                      <h6 class="card-title mb-2">{{ result.checkName }}</h6>
+                      <button
+                        v-if="checkExists(result.checkId)"
+                        class="btn btn-link check-link p-0 mb-2"
+                        @click="navigateToCheck(result.checkId)"
+                        :title="result.checkDescription || 'Click to edit check'"
+                      >
+                        {{ result.checkName }}
+                      </button>
+                      <h6 v-else class="card-title mb-2">{{ result.checkName }}</h6>
+                      <div v-if="result.checkDescription" class="check-description mb-2">
+                        <p class="text-muted small mb-0">{{ result.checkDescription }}</p>
+                      </div>
                       <div class="result-details">
                         <div class="detail-row">
                           <span class="detail-label">Occurrence Rate:</span>
@@ -159,6 +170,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { api } from '@/js/api.js'
 import PageHeader from '@/components/PageHeader.vue'
 import PatientModal from '@/components/PatientModal.vue'
 import Pagination from '@/components/Pagination.vue'
@@ -171,6 +183,7 @@ const router = useRouter()
 const loading = ref(true)
 const error = ref(null)
 const report = ref(null)
+const cqlQueries = ref([])
 const openIds = ref({})
 const pageSize = 60
 const idPage = ref({})
@@ -181,6 +194,15 @@ const goBack = () => {
   router.push('/reports')
 }
 
+const checkExists = (checkId) => {
+  return cqlQueries.value.some(check => check.id === checkId)
+}
+
+const navigateToCheck = (checkId) => {
+  if (checkExists(checkId)) {
+    router.push(`/quality-checks/${checkId}/edit`)
+  }
+}
 
 function toggleIds(checkId) {
   openIds.value[checkId] = !openIds.value[checkId]
@@ -299,6 +321,15 @@ onMounted(async () => {
     const reportId = route.params.id
     report.value = await reportStore.fetchReportById(reportId)
 
+    // Load all CQL queries
+    try {
+      const response = await api.get('/api/cql-queries')
+      cqlQueries.value = response.data._embedded?.cqlChecks || []
+    } catch (err) {
+      console.error('Failed to load CQL queries:', err)
+      cqlQueries.value = []
+    }
+
     // Scroll to the specific check if hash is present
     await scrollToCheck()
   } catch (err) {
@@ -373,6 +404,31 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+}
+
+.check-link {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.check-link:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+.check-link:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.check-description {
+  margin-top: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 3px solid var(--color-gray-300);
 }
 
 .detail-row {
