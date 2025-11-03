@@ -2,6 +2,7 @@
 ![Static Badge](https://img.shields.io/badge/TRL-7-yellow)
 ![GitHub release](https://img.shields.io/github/v/release/BBMRI-cz/data-quality-framework)
 ![License](https://img.shields.io/github/license/BBMRI-ERIC/negotiator)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/BBMRI-cz/data-quality-framework/badge)](https://scorecard.dev/viewer/?uri=github.com/BBMRI-cz/data-quality-framework)
 # Data Quality Agent
 
 The Data Quality Agent helps you assess, monitor, and securely share the quality of data held in distributed
