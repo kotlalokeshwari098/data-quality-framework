@@ -17,10 +17,10 @@
               <div>
                 <h2 class="section-title">
                   <i class="bi bi-database"></i>
-                  FHIR Server
+                  FHIR® Server
                 </h2>
-                <p class="section-description">
-                  Configure your FHIR server connection to access the data
+                <p class="text-muted mb-0">
+                  Configure your FHIR® server connection to access the data
                 </p>
               </div>
             </div>
@@ -39,7 +39,7 @@
                   required
                 >
                 <small class="form-help">
-                  The base URL of your FHIR server endpoint
+                  The base URL of your FHIR® server endpoint
                 </small>
               </div>
 
@@ -57,7 +57,7 @@
                   autocomplete="username"
                 >
                 <small class="form-help">
-                  Username for authenticating with the FHIR server
+                  Username for authenticating with the FHIR® server
                 </small>
               </div>
 
@@ -75,7 +75,7 @@
                   autocomplete="current-password"
                 >
                 <small class="form-help">
-                  Password for authenticating with the FHIR server
+                  Password for authenticating with the FHIR® server
                 </small>
               </div>
 
@@ -140,10 +140,10 @@ async function saveFhirSettings() {
     };
 
     await settingsStore.updateSettings(payload);
-    notify.success('Settings Saved', 'Your FHIR server settings have been updated successfully');
+    notify.success('Settings Saved', 'Your FHIR® server settings have been updated successfully');
     await healthStore.checkHealth();
   } catch (error) {
-    console.error('Error saving FHIR settings:', error);
+    console.error('Error saving FHIR® settings:', error);
     notify.error('Save Failed', 'Unable to save settings. Please try again.');
   } finally {
     isSaving.value = false;

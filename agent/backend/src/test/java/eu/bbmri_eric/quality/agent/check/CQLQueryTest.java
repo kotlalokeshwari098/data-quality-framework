@@ -95,7 +95,7 @@ class CQLQueryTest {
 
     // Assert
     assertEquals(Set.of("p1", "p2"), result.idSet());
-    assertEquals(2, result.numberOfEntities());
+    assertEquals(2, result.rawResult());
   }
 
   @Test
@@ -110,7 +110,7 @@ class CQLQueryTest {
     Result result = query.execute(store);
 
     assertEquals(Set.of(), result.idSet());
-    assertEquals(0, result.numberOfEntities());
+    assertEquals(0, result.rawResult());
     verify(store, never()).getPatientList(anyString());
   }
 
@@ -125,7 +125,7 @@ class CQLQueryTest {
     Result result = query.execute(store);
 
     assertEquals(Set.of(), result.idSet());
-    assertEquals(3, result.numberOfEntities());
+    assertEquals(3, result.rawResult());
     verify(store, never()).getPatientList(anyString());
   }
 }

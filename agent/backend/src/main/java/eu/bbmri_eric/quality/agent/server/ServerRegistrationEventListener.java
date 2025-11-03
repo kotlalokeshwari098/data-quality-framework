@@ -29,7 +29,7 @@ class ServerRegistrationEventListener {
   }
 
   @EventListener
-  @Async("asyncEventExecutor")
+  @Async
   @Transactional
   void handleServerRegistration(ServerRegistrationEvent event) {
     try {

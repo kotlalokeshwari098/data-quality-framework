@@ -20,16 +20,16 @@ class DifferentialPrivacyUtil {
    * @param count the original count to which noise should be added
    * @param epsilon the privacy budget (smaller epsilon means more noise)
    * @param sensitivity the sensitivity of the query (maximum change in output for one record)
-   * @return a noisy version of the count, rounded to the nearest integer and clamped at 0
+   * @return a noisy version of the count, clamped at 0
    */
-  static int addLaplaceNoise(int count, double epsilon, double sensitivity) {
-    if (count != 0) {
+  static double addLaplaceNoise(int count, double epsilon, double sensitivity) {
+    if (count > 10) {
       double scale = sensitivity / epsilon;
       double noise = generateLaplaceNoise(scale);
       double noisyCount = count + noise;
-      return Math.max(0, (int) Math.round(noisyCount));
+      return Math.max(0.0, noisyCount);
     } else {
-      return 0;
+      return 0.0;
     }
   }
 

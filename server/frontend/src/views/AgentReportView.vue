@@ -7,6 +7,8 @@
           :title="agentName"
           :subtitle="`Agent ID: ${agentId}`"
           icon="bi bi-file-earmark-text-fill"
+          :editable="true"
+          @update:title="handleUpdateAgentName"
         />
       </div>
     </div>
@@ -311,28 +313,22 @@ const goBack = () => {
   router.go(-1)
 }
 
+const handleUpdateAgentName = async (newName) => {
+  try {
+    await apiService.updateAgentName(agentId.value, newName)
+
+    // Update the local agent object
+    if (agent.value) {
+      agent.value.name = newName
+    }
+  } catch (err) {
+    error.value = 'Failed to update agent name'
+    console.error('Error updating agent name:', err)
+  }
+}
+
 onMounted(() => {
   fetchAgentDetails()
 })
 </script>
 
-<style scoped>
-/* Page Header */
-.page-header {
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f0f0f0;
-}
-
-.page-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0;
-}
-
-.page-subtitle {
-  color: #6c757d;
-  font-size: 0.95rem;
-  margin: 0;
-}
-</style>

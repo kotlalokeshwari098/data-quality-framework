@@ -27,7 +27,7 @@ CREATE TABLE result
     check_name       VARCHAR(255),
     check_id         INTEGER,
     raw_value        INTEGER,
-    obfuscated_value INTEGER,
+    obfuscated_value REAL,
     report_id        INTEGER,
     warning_threshold INTEGER,
     error_threshold INTEGER,
@@ -73,7 +73,7 @@ CREATE TABLE server_interaction (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     server_id VARCHAR(255) NOT NULL,
     type VARCHAR(50) NOT NULL,
-    description VARCHAR(1000) NOT NULL,
+    description TEXT NOT NULL,
     timestamp TIMESTAMP NOT NULL,
     FOREIGN KEY (server_id) REFERENCES server(id) ON DELETE CASCADE
 );

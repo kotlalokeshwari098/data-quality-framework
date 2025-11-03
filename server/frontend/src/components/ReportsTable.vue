@@ -24,7 +24,7 @@
               v-for="report in reports"
               :key="report.id"
               class="cursor-pointer table-row-hover"
-              @click="$emit('report-selected', report)"
+              @click="navigateToReport(report.id)"
             >
               <td class="ps-4">
                 <div class="d-flex align-items-center">
@@ -60,7 +60,7 @@
             <tr v-if="reports.length === 0">
               <td colspan="6" class="text-center text-muted py-5">
                 <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
-                <p class="mb-0">No reports available for this agent</p>
+                <p class="mb-0">No reports available</p>
               </td>
             </tr>
           </tbody>
@@ -71,7 +71,10 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
 import { countChecksByStatus, getReportStatus, CheckStatus } from '../utils/qualityCheckUtils.js'
+
+const router = useRouter()
 
 const props = defineProps({
   reports: {
@@ -85,7 +88,9 @@ const props = defineProps({
   }
 })
 
-defineEmits(['report-selected'])
+const navigateToReport = (reportId) => {
+  router.push(`/reports/${reportId}`)
+}
 
 const formatDateShort = (dateString) => {
   const date = new Date(dateString)
@@ -109,8 +114,7 @@ const getCheckCounts = (report) => {
 }
 
 const getReportStatusText = (report) => {
-  const status = getReportStatus(report, props.qualityCheckMap)
-  return status
+  return getReportStatus(report, props.qualityCheckMap)
 }
 
 const getReportStatusBadgeClass = (report) => {
@@ -203,51 +207,5 @@ const getReportStatusBadgeClass = (report) => {
     opacity: 0.85;
   }
 }
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-  .table th,
-  .table td {
-    padding: 0.75rem 0.5rem;
-  }
-
-  .report-id {
-    max-width: 120px;
-  }
-}
-
-@media (max-width: 768px) {
-  .table {
-    font-size: 0.75rem;
-  }
-
-  .table th,
-  .table td {
-    padding: 0.5rem 0.35rem;
-  }
-
-  .report-id {
-    max-width: 100px;
-  }
-
-  .badge {
-    font-size: 0.65rem;
-    padding: 0.25rem 0.45rem;
-  }
-
-  .badge i {
-    display: none;
-  }
-}
-
-@media (max-width: 576px) {
-  .table-responsive {
-    overflow-x: auto;
-  }
-
-  .table th:nth-child(4),
-  .table td:nth-child(4) {
-    display: none;
-  }
-}
 </style>
+

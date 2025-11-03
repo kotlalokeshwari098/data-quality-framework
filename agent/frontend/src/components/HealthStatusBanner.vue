@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center">
       <span class="d-flex align-items-center gap-2">
         <i :class="['bi', 'fs-5', healthStore.healthStatus.status === 'UP' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill']"></i>
-        <strong>FHIR Server:</strong> {{ healthStore.healthStatus.status }}
+        <strong>FHIR® Server:</strong> {{ healthStore.healthStatus.status }}
         <span v-if="healthStore.healthStatus.details?.error" class="ms-2"> - {{ healthStore.healthStatus.details.error }}</span>
       </span>
       <button class="btn btn-sm"

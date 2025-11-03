@@ -6,7 +6,7 @@
     <div class="card-body p-3 position-relative d-flex flex-column">
       <!-- Icon in top right corner -->
       <div class="position-absolute top-0 end-0 p-3">
-        <i class="bi bi-clipboard-data-fill text-primary opacity-75" style="font-size: 1.5rem;"></i>
+        <i class="bi bi-clipboard-check-fill text-primary opacity-75" style="font-size: 1.5rem;"></i>
       </div>
 
       <!-- Check Name -->
@@ -26,7 +26,7 @@
           :class="getResultColorClass(check)"
           style="line-height: 1;"
         >
-          {{ formatPercentage(check.obfuscatedValue) }}%
+          {{ formatPercentage(check.rawValue) }}%
         </div>
         <div class="text-muted" style="font-size: 0.9rem;">
           Occurrence Rate
@@ -35,16 +35,6 @@
 
       <!-- Additional Info -->
       <div class="mt-auto">
-        <div class="row g-2 text-center mb-2">
-          <div class="col-6">
-            <small class="text-muted d-block" style="font-size: 0.75rem;">Epsilon Used</small>
-            <strong style="font-size: 0.9rem;">{{ check.epsilon }}</strong>
-          </div>
-          <div class="col-6">
-            <small class="text-muted d-block" style="font-size: 0.75rem;">Patients</small>
-            <strong style="font-size: 0.9rem;">{{ check.patients?.length || 0 }}</strong>
-          </div>
-        </div>
 
         <!-- Threshold Info -->
         <div class="pt-2 border-top">

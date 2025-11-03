@@ -149,7 +149,17 @@
                       </span>
                     </td>
                     <td>
-                      <span class="text-muted">{{ interaction.description }}</span>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted">{{ truncateDescription(interaction.description) }}</span>
+                        <button
+                          v-if="isValidJson(interaction.description)"
+                          @click="openJsonModal(interaction.description)"
+                          class="btn btn-sm btn-outline-primary"
+                          title="View JSON details"
+                        >
+                          <i class="bi bi-braces me-1"></i>View JSON
+                        </button>
+                      </div>
                     </td>
                   </tr>
                   <tr v-if="filteredInteractions.length === 0">
@@ -192,6 +202,37 @@
       @close="closeDeleteModal"
       @confirm="confirmDelete"
     />
+
+    <!-- JSON Viewer Modal -->
+    <div v-if="showJsonModal" class="modal d-block" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Interaction Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              @click="closeJsonModal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="json-viewer">
+              <pre>{{ formattedJson }}</pre>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="closeJsonModal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -230,6 +271,10 @@ const pageSize = 50;
 // Filter state
 const filterType = ref('');
 const searchQuery = ref('');
+
+// JSON Modal state
+const showJsonModal = ref(false);
+const formattedJson = ref('');
 
 const sortedInteractions = computed(() => {
   if (!server.value?.interactions) return [];
@@ -334,6 +379,36 @@ function formatTime(dateString) {
   });
 }
 
+function isValidJson(str) {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function truncateDescription(description, maxLength = 100) {
+  if (!description) return '';
+  if (description.length <= maxLength) return description;
+  return description.substring(0, maxLength) + '...';
+}
+
+function openJsonModal(jsonString) {
+  try {
+    const jsonObject = JSON.parse(jsonString);
+    formattedJson.value = JSON.stringify(jsonObject, null, 2);
+    showJsonModal.value = true;
+  } catch (e) {
+    console.error('Failed to parse JSON:', e);
+  }
+}
+
+function closeJsonModal() {
+  showJsonModal.value = false;
+  formattedJson.value = '';
+}
+
 function handleDelete() {
   showDeleteModal.value = true;
 }
@@ -433,5 +508,25 @@ onMounted(() => {
   .page-content {
     padding: var(--spacing-sm);
   }
+}
+
+.json-viewer {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  overflow-x: auto;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.json-viewer pre {
+  margin: 0;
+  color: #333;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 </style>

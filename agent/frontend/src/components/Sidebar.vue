@@ -35,11 +35,11 @@
           </div>
           <div class="nav-section-items">
             <router-link to="/settings" class="nav-link nav-sublink" :class="{ active: $route.path === '/settings' }" @click="closeMobileMenu">
-              <i class="bi bi-sliders"></i>
-              <span>General</span>
+              <i class="bi bi-fire"></i>
+              <span>FHIR® Server</span>
             </router-link>
             <router-link to="/servers" class="nav-link nav-sublink" :class="{ active: $route.path === '/servers' }" @click="closeMobileMenu">
-              <i class="bi bi-file-earmark-text-fill"></i>
+              <i class="bi bi-database-fill-gear"></i>
               <span>Reporting</span>
             </router-link>
           </div>

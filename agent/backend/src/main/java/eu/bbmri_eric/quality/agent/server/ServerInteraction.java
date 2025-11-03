@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -35,8 +34,7 @@ public class ServerInteraction {
 
   /** Detailed description of the interaction. */
   @NotBlank
-  @Size(max = 1000)
-  @Column(name = "description", nullable = false, length = 1000)
+  @Column(name = "description", nullable = false)
   private String description;
 
   /** Timestamp when the interaction occurred. */

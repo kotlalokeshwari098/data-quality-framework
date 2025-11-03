@@ -6,7 +6,7 @@
       title="Dashboard"
       mobileTitle="Dashboard"
       subtitle="Monitor and validate your local repository data quality"
-      icon="bi bi-speedometer2"
+      icon="bi bi-grid-3x3-gap-fill"
     />
 
     <div class="page-content">
@@ -30,7 +30,7 @@
           />
           <StatCard
             :number="successfulChecks"
-            label="Successful Checks"
+            label="Passed"
             numberClass="text-success"
           />
           <StatCard
@@ -70,7 +70,7 @@
             <p class="text-muted mt-3">Generating your first report...</p>
           </template>
           <template v-else>
-            <i class="bi bi-clipboard-data display-1 text-muted opacity-50"></i>
+            <i class="bi bi-file-earmark-text-fill display-1 text-muted opacity-50"></i>
             <p class="text-muted mt-3">No reports available.</p>
             <GenerateReportButton
               @click="generateReportWithReset"
@@ -221,16 +221,16 @@ const generateReportWithReset = async () => {
 }
 
 .quality-checks-grid > * {
-  min-height: 150px;
+  min-height: 100px;
 }
 
 @media (min-width: 992px) {
   .quality-checks-grid {
-    grid-template-columns: repeat(auto-fill, 480px);
+    grid-template-columns: repeat(auto-fill, 320px);
   }
 
   .quality-checks-grid > * {
-    height: 480px;
+    height: 320px;
   }
 }
 

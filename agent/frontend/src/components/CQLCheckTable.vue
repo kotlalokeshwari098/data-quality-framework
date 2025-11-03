@@ -14,9 +14,9 @@
         <div class="results-count">
           <span class="text-muted small">{{ filteredChecks.length }} checks</span>
         </div>
-        <button class="btn btn-success" @click="openAddModal">
+        <router-link to="/quality-checks/new" class="btn btn-success">
           <i class="bi bi-plus me-1"></i>Add Check
-        </button>
+        </router-link>
       </div>
     </div>
 
@@ -70,7 +70,7 @@
                 v-for="check in filteredChecks"
                 :key="check.id"
                 class="table-row-hover"
-                @click="openEditModal(check)"
+                @click="navigateToEdit(check.id)"
               >
                 <td class="ps-4">
                   <div class="d-flex align-items-center">
@@ -104,33 +104,19 @@
         </div>
       </div>
     </div>
-
-    <!-- CQL Check Modal -->
-    <CQLCheckModal
-      ref="modalRef"
-      :show="showModal"
-      :check="selectedCheck"
-      :saving="saving"
-      @close="closeModal"
-      @save="saveCheck"
-      @delete="deleteCheck"
-    />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { api } from "../js/api.js";
-import CQLCheckModal from './CQLCheckModal.vue';
 
+const router = useRouter();
 const qualityChecks = ref([]);
 const loading = ref(false);
-const saving = ref(false);
 const error = ref(null);
 const searchQuery = ref('');
-const showModal = ref(false);
-const selectedCheck = ref(null);
-const modalRef = ref(null);
 
 const url = '/api/cql-queries';
 
@@ -163,61 +149,8 @@ const fetchChecks = async () => {
   }
 };
 
-const openAddModal = () => {
-  selectedCheck.value = null;
-  showModal.value = true;
-};
-
-const openEditModal = (check) => {
-  selectedCheck.value = check;
-  showModal.value = true;
-};
-
-const closeModal = () => {
-  showModal.value = false;
-  selectedCheck.value = null;
-};
-
-const saveCheck = async (checkData) => {
-  saving.value = true;
-  error.value = null;
-
-  try {
-    if (checkData.id) {
-      await api.put(`${url}/${checkData.id}`, checkData);
-    } else {
-      await api.post(url, checkData);
-    }
-    await fetchChecks();
-    closeModal();
-
-    // Show success notification
-    modalRef.value?.showSaveSuccess();
-  } catch (err) {
-    error.value = err.message || `Failed to ${checkData.id ? 'update' : 'create'} check`;
-    console.error(`Error ${checkData.id ? 'updating' : 'adding'} check:`, err);
-
-    // Show error notification
-    modalRef.value?.showSaveError(err.message);
-  } finally {
-    saving.value = false;
-  }
-};
-
-const deleteCheck = async (id) => {
-  saving.value = true;
-  error.value = null;
-
-  try {
-    await api.delete(`${url}/${id}`);
-    await fetchChecks();
-    closeModal();
-  } catch (err) {
-    error.value = err.message || 'Failed to delete check';
-    console.error('Error deleting check:', err);
-  } finally {
-    saving.value = false;
-  }
+const navigateToEdit = (id) => {
+  router.push(`/quality-checks/${id}/edit`);
 };
 
 const truncateQuery = (query, maxLength = 50) => {

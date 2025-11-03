@@ -20,26 +20,24 @@ class ResultEventHandler {
 
   @EventListener
   @Transactional
-  void onNewReport(DataQualityCheckResult event) {
+  void onNewResult(DataQualityCheckResult event) {
     List<Report> reports = reportRepository.findAllByStatusIs(Status.GENERATING);
-
     reports.forEach(
         report -> {
+          double noisyValue =
+              DifferentialPrivacyUtil.addLaplaceNoise(event.getRawValue(), event.getEpsilon(), 1);
           Result result =
               new Result(
                   event.getCheckName(),
                   event.getCheckId(),
                   event.getRawValue(),
-                  DifferentialPrivacyUtil.addLaplaceNoise(
-                      event.getRawValue(), event.getEpsilon(), 1),
+                  noisyValue,
                   event.getWarningThreshold(),
                   event.getErrorThreshold(),
                   event.getEpsilon(),
                   event.getError(),
                   event.getStratum());
-
           result.setPatients(event.getPatientSet());
-
           report.addResult(result);
           reportRepository.save(report);
         });

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 class ResultEventHandlerTest {
 
   @Test
-  void onNewReport_setsPatientListCorrectly() {
+  void onNewResult_setsPatientListCorrectly() {
     ReportRepository mockRepo = mock(ReportRepository.class);
     Report mockReport = new Report();
     mockReport.setId(123L);
@@ -48,7 +48,7 @@ class ResultEventHandlerTest {
             })
         .when(mockRepo)
         .save(any(Report.class));
-    handler.onNewReport(event);
+    handler.onNewResult(event);
     verify(mockRepo, times(1)).save(any(Report.class));
   }
 }

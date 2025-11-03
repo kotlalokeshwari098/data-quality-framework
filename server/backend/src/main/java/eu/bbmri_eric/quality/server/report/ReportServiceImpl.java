@@ -5,6 +5,7 @@ import eu.bbmri_eric.quality.server.user.AuthenticationContextService;
 import eu.bbmri_eric.quality.server.user.UserDTO;
 import eu.bbmri_eric.quality.server.user.UserRole;
 import java.util.List;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +18,17 @@ public class ReportServiceImpl implements ReportService {
   private final ReportRepository reportRepository;
   private final QualityCheckRepository qualityCheckRepository;
   private final AuthenticationContextService authenticationContextService;
+  private final ApplicationEventPublisher eventPublisher;
 
   public ReportServiceImpl(
       ReportRepository reportRepository,
       QualityCheckRepository qualityCheckRepository,
-      AuthenticationContextService authenticationContextService) {
+      AuthenticationContextService authenticationContextService,
+      ApplicationEventPublisher eventPublisher) {
     this.reportRepository = reportRepository;
     this.qualityCheckRepository = qualityCheckRepository;
     this.authenticationContextService = authenticationContextService;
+    this.eventPublisher = eventPublisher;
   }
 
   @Override
@@ -34,7 +38,6 @@ public class ReportServiceImpl implements ReportService {
       throw new AccessDeniedException(
           "User is not authorized to create reports for agent: " + agentId);
     }
-
     Report report = new Report(agentId);
     if (createRequest.results() != null && !createRequest.results().isEmpty()) {
       for (QualityCheckResultDTO resultDTO : createRequest.results()) {
@@ -51,8 +54,8 @@ public class ReportServiceImpl implements ReportService {
         report.addQualityCheckResult(qualityCheck, resultDTO.result());
       }
     }
-
     Report savedReport = reportRepository.save(report);
+    eventPublisher.publishEvent(new ReportSubmittedEvent(this, agentId, report.getId()));
     return convertToDTO(savedReport);
   }
 

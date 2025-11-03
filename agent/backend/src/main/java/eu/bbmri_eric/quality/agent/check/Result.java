@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-record Result(Integer numberOfEntities, String entityType, Set<String> idSet, String error) {
-  Result(Integer numberOfEntities, String entityType, Set<String> idSet) {
-    this(numberOfEntities, entityType, idSet, null);
+record Result(Integer rawResult, String entityType, Set<String> idSet, String error) {
+  Result(Integer rawResult, String entityType, Set<String> idSet) {
+    this(rawResult, entityType, idSet, null);
   }
 
   Result(String error) {

@@ -59,25 +59,15 @@
           v-else
           :reports="reports"
           :quality-check-map="qualityCheckMap"
-          @report-selected="handleReportSelected"
         />
       </div>
     </div>
-
-    <!-- Report Details Modal -->
-    <ReportDetailsModal
-      v-if="selectedReport"
-      :report="selectedReport"
-      :quality-check-map="qualityCheckMap"
-      @close="selectedReport = null"
-    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import ReportsTable from '../components/ReportsTable.vue'
-import ReportDetailsModal from '../components/ReportDetailsModal.vue'
 import PageHeader from '../components/PageHeader.vue'
 import { apiService } from '../services/apiService.js'
 import { getReportStatus, CheckStatus } from '../utils/qualityCheckUtils.js'
@@ -86,7 +76,6 @@ const reports = ref([])
 const qualityCheckMap = ref(new Map())
 const loading = ref(true)
 const error = ref(null)
-const selectedReport = ref(null)
 
 const reportStats = computed(() => {
   const stats = {
@@ -144,10 +133,6 @@ const fetchData = async () => {
   } finally {
     loading.value = false
   }
-}
-
-const handleReportSelected = (report) => {
-  selectedReport.value = report
 }
 
 onMounted(() => {
