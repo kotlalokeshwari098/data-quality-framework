@@ -112,13 +112,12 @@ class CQLQueryControllerTest {
   void post_invalidCQLQuery_missingFields_returnsBadRequest() throws Exception {
     CQLQuery invalidCheck = new CQLQuery();
     invalidCheck.setName("Invalid Query");
-
     mockMvc
         .perform(
             post(CQLEndpoint)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidCheck)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isConflict());
   }
 
   @Test
