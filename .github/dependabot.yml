@@ -1,0 +1,169 @@
+# Dependabot configuration for automated dependency updates
+# See https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    open-pull-requests-limit: 5
+
+  # Maven dependencies for Agent backend
+  - package-ecosystem: "maven"
+    directory: "/agent/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(agent)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "java"
+      - "agent"
+    open-pull-requests-limit: 10
+    # Group minor and patch updates together to reduce PR noise
+    groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+          - "io.spring*"
+      testing:
+        patterns:
+          - "*junit*"
+          - "*mockito*"
+          - "*assertj*"
+
+  # Maven dependencies for Server backend
+  - package-ecosystem: "maven"
+    directory: "/server/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(server)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "java"
+      - "server"
+    open-pull-requests-limit: 10
+    # Group minor and patch updates together to reduce PR noise
+    groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+          - "io.spring*"
+      testing:
+        patterns:
+          - "*junit*"
+          - "*mockito*"
+          - "*assertj*"
+
+  # NPM dependencies for Agent frontend
+  - package-ecosystem: "npm"
+    directory: "/agent/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(agent-ui)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "agent"
+    open-pull-requests-limit: 10
+    # Group development dependencies together
+    groups:
+      vue:
+        patterns:
+          - "vue*"
+          - "@vue*"
+      dev-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # NPM dependencies for Server frontend
+  - package-ecosystem: "npm"
+    directory: "/server/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(server-ui)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "server"
+    open-pull-requests-limit: 10
+    # Group development dependencies together
+    groups:
+      vue:
+        patterns:
+          - "vue*"
+          - "@vue*"
+      dev-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # NPM dependencies for Documentation
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "docs"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "documentation"
+    open-pull-requests-limit: 5
+    groups:
+      vitepress:
+        patterns:
+          - "vitepress*"
+          - "@vitepress*"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/agent"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(agent)"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "agent"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "docker"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "build(server)"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "server"
+    open-pull-requests-limit: 5
+
