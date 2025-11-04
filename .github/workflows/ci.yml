@@ -16,6 +16,9 @@ permissions:
 env:
   JAVA_VERSION: '21'
   JAVA_DISTRIBUTION: 'temurin'
+  BLAZECTL_VERSION: v1.2.0
+  BLAZECTL_CHECKSUM: c0b2bf0b35c60ff0aa1d66f638d5b8d3a77c506211643932e4132784069cc759
+
 
 jobs:
   lint:
@@ -458,6 +461,20 @@ jobs:
         with:
           name: server-image
           path: /tmp
+
+      - name: Run blaze
+        run: docker run -d --name blaze -p 8080:8080 samply/blaze:latest
+
+      - name: Wait for Blaze
+        run: .github/workflows/scripts/wait-for-url.sh http://localhost:8080/health
+
+      - name: Install Blazectl
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/workflows/scripts/install-blazectl.sh
+
+      - name: Load Data
+        run: blazectl --no-progress --server http://localhost:8080/fhir upload test_data
 
       - name: Load Docker images
         run: |

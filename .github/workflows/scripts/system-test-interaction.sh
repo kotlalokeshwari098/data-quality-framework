@@ -11,6 +11,7 @@ set -e
 # Configuration
 AGENT_URL="http://localhost:8081"
 SERVER_URL="http://localhost:8082"
+REGISTRATION_URL="http://host.docker.internal:8082"
 AGENT_ADMIN_USERNAME="admin"
 AGENT_ADMIN_PASSWORD="adminpass"
 SERVER_ADMIN_USERNAME="admin"
@@ -54,7 +55,7 @@ SERVER_REGISTRATION_RESPONSE=$(curl -s -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer ${AGENT_JWT_TOKEN}" \
   -d '{
-    "url": "'${SERVER_URL}'",
+    "url": "'${REGISTRATION_URL}'",
     "name": "Test Central Server"
   }')
 
@@ -173,6 +174,66 @@ done
 
 if [ "$VERIFICATION_SUCCESS" = false ]; then
   echo -e "${YELLOW}⚠ Agent status could not be verified as ACTIVE after $MAX_RETRIES attempts${NC}"
+fi
+
+# Wait for agent to fully stabilize
+echo -e "\n${YELLOW}Waiting 1 minute for agent to fully stabilize...${NC}"
+sleep 60
+
+# Step 6: Generate report on the agent
+echo -e "\n${YELLOW}Step 6: Generating report on the agent...${NC}"
+REPORT_GENERATION_RESPONSE=$(curl -s -X POST \
+  "${AGENT_URL}/api/reports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${AGENT_JWT_TOKEN}" \
+  -d '{}')
+
+echo "Response: $REPORT_GENERATION_RESPONSE"
+
+# Extract report ID from the Location header or response
+REPORT_ID=$(echo "$REPORT_GENERATION_RESPONSE" | jq -r '.id // ._links.self.href' 2>/dev/null | grep -o '[0-9]\+$')
+
+if [ -z "$REPORT_ID" ]; then
+  echo -e "${RED}✗ Failed to extract report ID from response${NC}"
+  exit 1
+fi
+
+echo -e "${GREEN}✓ Report generated successfully with ID: $REPORT_ID${NC}"
+
+# Wait for report generation and transmission to complete
+echo -e "\n${YELLOW}Waiting for report generation and transmission to complete...${NC}"
+sleep 10
+
+# Step 7: Verify the report was sent to the server
+echo -e "\n${YELLOW}Step 7: Verifying the report was sent to the server...${NC}"
+RETRY_COUNT=0
+REPORT_VERIFICATION_SUCCESS=false
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$REPORT_VERIFICATION_SUCCESS" = false ]; do
+  REPORT_VERIFICATION_RESPONSE=$(curl -s -X GET \
+    "${SERVER_URL}/api/v1/reports" \
+    -H "Authorization: Bearer ${SERVER_JWT_TOKEN}")
+
+  echo "Response (attempt $((RETRY_COUNT + 1))/$MAX_RETRIES): $REPORT_VERIFICATION_RESPONSE"
+
+  # Check if there's at least one report in the response
+  REPORT_COUNT=$(echo "$REPORT_VERIFICATION_RESPONSE" | jq '._embedded.reports | length' 2>/dev/null)
+
+  if [ ! -z "$REPORT_COUNT" ] && [ "$REPORT_COUNT" -gt 0 ]; then
+    echo -e "${GREEN}✓ Report successfully verified on the server (found $REPORT_COUNT report(s))${NC}"
+    REPORT_VERIFICATION_SUCCESS=true
+  else
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+      echo -e "${YELLOW}Verification attempt $RETRY_COUNT failed, retrying in 2 seconds...${NC}"
+      sleep 2
+    fi
+  fi
+done
+
+if [ "$REPORT_VERIFICATION_SUCCESS" = false ]; then
+  echo -e "${RED}✗ Report could not be verified on the server after $MAX_RETRIES attempts${NC}"
+  exit 1
 fi
 
 echo -e "\n${GREEN}System test completed successfully!${NC}"
