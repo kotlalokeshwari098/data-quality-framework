@@ -16,7 +16,7 @@
 
               <div class="mb-4">
                 <h5 class="fw-semibold mb-2">Automated Report Aggregation</h5>
-                <p class="text-light mb-0">Periodically receives and aggregates Data Quality Reports from all connected connected Data Repositories.</p>
+                <p class="text-light mb-0">Periodically receives and aggregates Data Quality Reports from all connected Data Repositories.</p>
               </div>
 
               <div class="mb-4">
