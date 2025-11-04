@@ -11,6 +11,7 @@ set -e
 # Configuration
 AGENT_URL="http://localhost:8081"
 SERVER_URL="http://localhost:8082"
+REGISTRATION_URL="http://host.docker.internal:8082"
 AGENT_ADMIN_USERNAME="admin"
 AGENT_ADMIN_PASSWORD="adminpass"
 SERVER_ADMIN_USERNAME="admin"
@@ -54,7 +55,7 @@ SERVER_REGISTRATION_RESPONSE=$(curl -s -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer ${AGENT_JWT_TOKEN}" \
   -d '{
-    "url": "'${SERVER_URL}'",
+    "url": "'${REGISTRATION_URL}'",
     "name": "Test Central Server"
   }')
 
