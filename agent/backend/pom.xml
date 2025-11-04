@@ -38,6 +38,7 @@
         <testcontainers.version>1.21.3</testcontainers.version>
         <bouncycastle.version>1.81</bouncycastle.version>
         <fmt.plugin.version>2.25</fmt.plugin.version>
+        <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -209,6 +210,34 @@
                         <goals>
                             <goal>build-info</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/config/**</exclude>
+                                <exclude>**/datastore/**</exclude>
+                                <exclude>**/server/**</exclude>
+                                <exclude>**/fhir/**</exclude>
+                                <exclude>**/AgentApplication.class</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

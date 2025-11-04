@@ -84,7 +84,7 @@ const formatPercentage = (value) => {
 }
 
 const getResultColorClass = (check) => {
-  const percentage = parseFloat(formatPercentage(check.obfuscatedValue))
+  const percentage = parseFloat(formatPercentage(check.rawValue))
 
   if (percentage >= check.errorThreshold || check.error) {
     return 'text-danger'

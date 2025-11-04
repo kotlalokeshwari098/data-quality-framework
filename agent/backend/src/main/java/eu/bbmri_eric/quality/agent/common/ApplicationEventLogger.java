@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.events;
+package eu.bbmri_eric.quality.agent.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

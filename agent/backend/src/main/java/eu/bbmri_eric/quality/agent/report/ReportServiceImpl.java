@@ -48,7 +48,13 @@ public class ReportServiceImpl implements ReportService {
         report.getResults().stream()
             .map(
                 result -> {
-                  double value = result.getObfuscatedValue() / report.getNumberOfEntities();
+                  double value;
+                  if (report.getNumberOfEntities() == 0) {
+                    // Handle edge case: 0/0 = NaN, return 0.0 instead
+                    value = 0.0;
+                  } else {
+                    value = result.getObfuscatedValue() / report.getNumberOfEntities();
+                  }
                   double roundedValue =
                       BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
                   String checkIdLabel = formatCheckIdWithStratum(result, cqlQueryDTOS);

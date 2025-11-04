@@ -97,6 +97,15 @@ jobs:
       - working-directory: agent/backend
         run: mvn --quiet test
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./agent/backend/target/site/jacoco/jacoco.xml
+          flags: agent
+          name: agent-coverage
+          fail_ci_if_error: false
+
   test-server:
     name: Run Tests (Server)
     runs-on: ubuntu-latest

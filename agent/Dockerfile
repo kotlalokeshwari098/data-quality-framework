@@ -1,11 +1,11 @@
-FROM node:20-alpine AS frontend-builder
+FROM node:20-alpine@sha256:6178e78b972f79c335df281f4b7674a2d85071aae2af020ffa39f0a770265435 AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install --silent
 COPY frontend/ .
 RUN npm run build --silent
 
-FROM maven:3.9.9-eclipse-temurin-21 AS backend-builder
+FROM maven:3.9.9-eclipse-temurin-21@sha256:3a4ab3276a087bf276f79cae96b1af04f53731bec53fb2e651aca79e4b10211e AS backend-builder
 ARG ARTIFACT_VERSION=unknown
 WORKDIR /app/backend
 COPY backend/pom.xml .

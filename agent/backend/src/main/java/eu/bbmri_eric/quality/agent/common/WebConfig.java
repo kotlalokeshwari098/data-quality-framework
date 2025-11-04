@@ -10,7 +10,7 @@ public class WebConfig {
 
   @Bean
   public RestTemplate restTemplate() {
-    // Use HttpComponentsClientHttpRequestFactory to support PATCH method
+    // To support PATCH method
     HttpComponentsClientHttpRequestFactory requestFactory =
         new HttpComponentsClientHttpRequestFactory();
     return new RestTemplate(requestFactory);

@@ -159,3 +159,24 @@ export async function validateServerUrl(serverUrl) {
         };
     }
 }
+
+/**
+ * Fetches application info including version
+ * @returns {Promise<{version: string}>}
+ */
+export async function getAppInfo() {
+    try {
+        const response = await api.get('/api/info', {
+            __skipAuth: true
+        });
+
+        return {
+            version: response.data?.build?.version || 'unknown'
+        };
+    } catch (error) {
+        return {
+            version: 'unknown'
+        };
+    }
+}
+

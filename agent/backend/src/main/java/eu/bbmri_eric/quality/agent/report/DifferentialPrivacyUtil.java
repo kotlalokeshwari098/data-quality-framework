@@ -1,48 +1,53 @@
 package eu.bbmri_eric.quality.agent.report;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
- * Utility class for applying differential privacy techniques to count data.
+ * Applies differential privacy using the Laplace mechanism with low count suppression.
  *
- * <p>This class provides a method to add Laplace noise to a given count in accordance with
- * differential privacy principles. The amount of noise is determined by the specified epsilon and
- * sensitivity parameters.
+ * <p>Noise is always added to counts (scale λ = sensitivity/ε), then noisy counts below the
+ * threshold are suppressed. This maintains ε-differential privacy while protecting low counts.
  */
 class DifferentialPrivacyUtil {
 
-  /** Random number generator used for noise generation. */
-  private static final Random random = new Random();
+  private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+  private static final double LOW_COUNT_THRESHOLD = 10.0;
 
   /**
-   * Adds Laplace noise to the given count using the specified privacy parameters.
+   * Adds Laplace noise to a count, then suppresses if below threshold.
    *
-   * @param count the original count to which noise should be added
-   * @param epsilon the privacy budget (smaller epsilon means more noise)
-   * @param sensitivity the sensitivity of the query (maximum change in output for one record)
-   * @return a noisy version of the count, clamped at 0
+   * @param count the original count
+   * @param epsilon the privacy budget (smaller means more noise, must be positive)
+   * @param sensitivity the query sensitivity (must be positive)
+   * @return noisy count clamped at 0, or 0 if below threshold
    */
   static double addLaplaceNoise(int count, double epsilon, double sensitivity) {
-    if (count > 10) {
-      double scale = sensitivity / epsilon;
-      double noise = generateLaplaceNoise(scale);
-      double noisyCount = count + noise;
-      return Math.max(0.0, noisyCount);
-    } else {
+    if (epsilon <= 0) {
+      throw new IllegalArgumentException("Epsilon must be positive, got: " + epsilon);
+    }
+    if (sensitivity <= 0) {
+      throw new IllegalArgumentException("Sensitivity must be positive, got: " + sensitivity);
+    }
+
+    double scale = sensitivity / epsilon;
+    double noise = generateLaplaceNoise(scale);
+    double noisyCount = Math.max(0.0, count + noise);
+
+    if (noisyCount < LOW_COUNT_THRESHOLD) {
       return 0.0;
     }
+
+    return noisyCount;
   }
 
   /**
-   * Generates Laplace-distributed noise with the specified scale parameter.
+   * Generates Laplace-distributed noise using inverse transform sampling.
    *
-   * <p>The Laplace distribution is centered at 0 and has variance 2 * scale².
-   *
-   * @param scale the scale (b) of the Laplace distribution
-   * @return a sample from the Laplace distribution with mean 0 and scale {@code scale}
+   * @param scale the scale parameter
+   * @return sample from Laplace(0, scale)
    */
   private static double generateLaplaceNoise(double scale) {
-    double u = random.nextDouble() - 0.5; // Uniform random variable in [-0.5, 0.5]
+    double u = SECURE_RANDOM.nextDouble() - 0.5;
     return -scale * Math.signum(u) * Math.log(1 - 2 * Math.abs(u));
   }
 }
