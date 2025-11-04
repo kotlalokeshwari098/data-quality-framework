@@ -4,7 +4,7 @@
       <!-- Brand -->
       <router-link to="/dashboard" class="sidebar-brand">
         <div class="brand-icon">
-          <i class="bi bi-bar-chart-fill"></i>
+          <img src="/logo.svg" alt="Logo" class="brand-logo" />
         </div>
         <div class="brand-text">
           <h4>Data Quality</h4>
@@ -117,18 +117,26 @@ const closeMobileMenu = () => {
   width: 48px;
   height: 48px;
   min-width: 48px;
-  background: rgba(255, 255, 255, 0.15);
+  background: white;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
   transition: all var(--transition-base);
+  padding: 6px;
+}
+
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .sidebar-brand:hover .brand-icon {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.95);
   transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .brand-text h4 {

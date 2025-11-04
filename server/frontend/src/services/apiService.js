@@ -186,6 +186,35 @@ class ApiService {
             throw new Error(errorText || `Failed to change password: ${response.status}`)
         }
     }
+
+    async getInfo() {
+        const response = await fetch(`${API_BASE}/info`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to fetch app info: ${response.status}`)
+        }
+        const data = await response.json()
+        return {
+            version: data?.build?.version || 'unknown'
+        }
+    }
+
+    async getCounts() {
+        const response = await fetch(`${API_BASE}/counts`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (!response.ok) {
+            throw new Error(`Failed to fetch counts: ${response.status}`)
+        }
+        return await response.json()
+    }
 }
 
 export const apiService = new ApiService()

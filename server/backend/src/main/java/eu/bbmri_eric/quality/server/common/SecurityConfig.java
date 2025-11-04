@@ -76,10 +76,12 @@ class SecurityConfig {
                         "/",
                         "/index.html",
                         "/assets/**",
-                        "/favicon2.ico",
+                        "/favicon.ico",
+                        "/logo.svg",
                         "/login",
                         "/api/health",
                         "/api/info",
+                        "/api/counts",
                         "/api/swagger-ui.html",
                         "/api/swagger-ui/**",
                         "/api/api-docs/**")

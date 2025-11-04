@@ -36,4 +36,11 @@ public interface ReportService {
    * @return list of all report DTOs
    */
   List<ReportDTO> findAll();
+
+  /**
+   * Counts all reports in the system.
+   *
+   * @return total count of reports
+   */
+  long countAll();
 }

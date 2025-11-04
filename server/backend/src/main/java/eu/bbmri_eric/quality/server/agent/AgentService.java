@@ -12,4 +12,6 @@ public interface AgentService {
   AgentDTO findById(String id, boolean expandInteractions);
 
   List<AgentDTO> listAll();
+
+  long countAll();
 }

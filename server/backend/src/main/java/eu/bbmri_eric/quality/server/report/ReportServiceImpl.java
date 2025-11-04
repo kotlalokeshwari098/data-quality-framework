@@ -88,6 +88,12 @@ public class ReportServiceImpl implements ReportService {
     return reportRepository.findAll().stream().map(this::convertToDTO).toList();
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public long countAll() {
+    return reportRepository.count();
+  }
+
   private ReportDTO convertToDTO(Report report) {
     ReportDTO dto = new ReportDTO();
     dto.setId(report.getId());

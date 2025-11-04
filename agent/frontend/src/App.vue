@@ -16,7 +16,6 @@ import { onMounted, ref, watch, provide } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
 import TopNavbar from './components/TopNavbar.vue'
-import AppFooter from './components/AppFooter.vue'
 import NotificationContainer from './components/NotificationContainer.vue'
 import { isAuthenticated } from './js/api.js'
 
