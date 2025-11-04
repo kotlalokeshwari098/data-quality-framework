@@ -3,7 +3,7 @@
     <!-- Dashboard Header -->
     <PageHeader
       title="Site Performance Overview"
-      subtitle="Monitor data quality across all locations"
+      subtitle="Review Data Quality metrics from all connected locations"
       icon="bi bi-grid-3x3-gap-fill"
       :hide-subtitle-on-mobile="false"
     />

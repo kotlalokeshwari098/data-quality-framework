@@ -57,6 +57,9 @@
                   </div>
 
                   <div class="text-center mb-4">
+                    <div class="logo-container mb-3">
+                      <img src="/logo.svg" alt="Logo" class="login-logo" />
+                    </div>
                     <h1 class="h4 h-lg-3 fw-bold text-dark mb-2">Welcome</h1>
                     <p class="text-muted mb-0 small">Please sign in to your account</p>
                   </div>
@@ -217,6 +220,18 @@ async function login() {
 .login-form-container {
   max-width: 400px;
   margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
 }
 
 .form-label {

@@ -62,7 +62,7 @@
               <div class="logo-container mb-3">
                 <img src="/logo.svg" alt="Logo" class="login-logo" />
               </div>
-              <h1 class="h5 fw-bold text-dark mb-2">Welcome Back</h1>
+              <h1 class="h5 fw-bold text-dark mb-2">Welcome</h1>
               <p class="text-muted mb-0 small">Please sign in to your account</p>
             </div>
 
@@ -248,11 +248,6 @@ const handleLogin = async () => {
   } catch (error) {
     console.error('Login failed:', error)
     authStore.setError('Login failed. Please check your credentials and try again.')
-
-    notificationService.error(
-      'Login Failed',
-      'Invalid username or password. Please try again.'
-    )
   } finally {
     authStore.setLoading(false)
   }

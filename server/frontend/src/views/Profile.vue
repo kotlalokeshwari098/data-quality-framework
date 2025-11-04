@@ -1,8 +1,13 @@
 <template>
   <div class="container-fluid py-3 py-md-4">
+    <PageHeader
+      title="Profile"
+      subtitle="Manage your account settings and password"
+      icon="bi bi-person-circle"
+    />
+
     <div class="row justify-content-center">
       <div class="col-12 col-lg-8">
-        <h2 class="h4 h-md-3 fw-bold text-dark mb-3 mb-md-4">Profile</h2>
 
         <!-- User Information Card -->
         <div class="card border-0 shadow-sm mb-4">
@@ -121,6 +126,7 @@ import { reactive, computed, ref } from 'vue'
 import { authStore } from '../stores/authStore.js'
 import { apiService } from '../services/apiService.js'
 import { notificationService } from '../services/notificationService.js'
+import PageHeader from '../components/PageHeader.vue'
 
 const user = computed(() => authStore.user)
 
