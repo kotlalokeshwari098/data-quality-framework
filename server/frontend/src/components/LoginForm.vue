@@ -21,7 +21,7 @@
 
               <div class="mb-4">
                 <h5 class="fw-semibold mb-2">Central Interface</h5>
-                <p class="text-light mb-0">Provides comprehensive oversight and governance the Federated Data Quality System.</p>
+                <p class="text-light mb-0">Provides comprehensive oversight and governance of the Federated Data Quality System.</p>
               </div>
             </div>
 
