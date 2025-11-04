@@ -466,12 +466,12 @@ jobs:
         run: docker run -d --name blaze -p 8080:8080 samply/blaze:latest
 
       - name: Wait for Blaze
-        run: .github/scripts/wait-for-url.sh http://localhost:8080/health
+        run: .github/workflows/scripts/wait-for-url.sh http://localhost:8080/health
 
       - name: Install Blazectl
         env:
           GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/install-blazectl.sh
+        run: .github/workflows/scripts/install-blazectl.sh
 
       - name: Load Data
         run: blazectl --no-progress --server http://localhost:8080/fhir upload test_data
