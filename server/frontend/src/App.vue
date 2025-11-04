@@ -26,8 +26,6 @@ onMounted(() => {
     <main class="main-content">
       <router-view />
     </main>
-
-    <AppFooter v-if="!authStore.isAuthenticated" />
     <NotificationContainer ref="notificationContainer" />
   </div>
 </template>

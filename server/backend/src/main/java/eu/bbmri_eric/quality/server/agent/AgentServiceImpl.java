@@ -106,6 +106,12 @@ public class AgentServiceImpl implements AgentService {
         .toList();
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public long countAll() {
+    return agentRepository.count();
+  }
+
   private boolean isAuthorizedToUpdate(UserDTO user, String agentId) {
     boolean isAdmin = user.getRoles() != null && user.getRoles().contains(UserRole.ADMIN);
     boolean isLinkedToAgent = agentId.equals(user.getAgentId());
