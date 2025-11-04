@@ -6,7 +6,7 @@
           <div class="row g-0 min-vh-50">
             <!-- Left side - Info panel (hidden on small screens) -->
             <div class="col-lg-6 d-none d-lg-flex">
-              <div class="info-panel p-4 p-xl-5 d-flex flex-column justify-content-center w-100">
+              <div class="info-panel p-4 p-xl-5 d-flex flex-column justify-content-between w-100">
                 <div>
                   <h1 class="display-5 fw-bold mb-3">Data Quality Agent</h1>
                   <p class="lead mb-4">Local Repository Data Quality Monitoring</p>
@@ -14,34 +14,29 @@
                   <div class="mb-4">
                     <div class="mb-4">
                       <h5 class="fw-semibold mb-2">Local Data Validation</h5>
-                      <p class="text-light mb-0">Performs comprehensive data quality checks directly on your local repository or biobank data.</p>
+                      <p class="text-light mb-0">Performs comprehensive data quality checks directly on your local repository.</p>
                     </div>
 
                     <div class="mb-4">
-                      <h5 class="fw-semibold mb-2">Automated Quality Reports</h5>
-                      <p class="text-light mb-0">Generates detailed quality reports and automatically submits them to the central monitoring server.</p>
-                    </div>
-
-                    <div class="mb-4">
-                      <h5 class="fw-semibold mb-2">CQL-Based Checks</h5>
-                      <p class="text-light mb-0">Executes configurable Clinical Quality Language (CQL) checks to ensure data integrity and compliance.</p>
+                      <h5 class="fw-semibold mb-2">Privacy Preserving Data Quality Reports</h5>
+                      <p class="text-light mb-0">Can periodically generate Data Quality Reports for a central Data Quality Server.</p>
                     </div>
                   </div>
+                </div>
 
-                  <div class="border-top border-secondary pt-4">
-                    <div class="row text-center">
-                      <div class="col-4">
-                        <div class="h4 fw-bold mb-1">CQL</div>
-                        <small class="text-uppercase text-light">Quality Checks</small>
-                      </div>
-                      <div class="col-4">
-                        <div class="h4 fw-bold mb-1">Auto</div>
-                        <small class="text-uppercase text-light">Reporting</small>
-                      </div>
-                      <div class="col-4">
-                        <div class="h4 fw-bold mb-1">24/7</div>
-                        <small class="text-uppercase text-light">Monitoring</small>
-                      </div>
+                <div class="border-top border-secondary pt-4">
+                  <div class="row text-center">
+                    <div class="col-4">
+                      <div class="h4 fw-bold mb-1">CQL</div>
+                      <small class="text-uppercase text-light">Quality Checks</small>
+                    </div>
+                    <div class="col-4">
+                      <div class="h4 fw-bold mb-1">Auto</div>
+                      <small class="text-uppercase text-light">Reporting</small>
+                    </div>
+                    <div class="col-4">
+                      <div class="h4 fw-bold mb-1">{{ appVersion }}</div>
+                      <small class="text-uppercase text-light">Version</small>
                     </div>
                   </div>
                 </div>
@@ -62,7 +57,7 @@
                   </div>
 
                   <div class="text-center mb-4">
-                    <h1 class="h4 h-lg-3 fw-bold text-dark mb-2">Welcome Back</h1>
+                    <h1 class="h4 h-lg-3 fw-bold text-dark mb-2">Welcome</h1>
                     <p class="text-muted mb-0 small">Please sign in to your account</p>
                   </div>
 
@@ -131,9 +126,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { authenticate } from '../js/api.js'
+import { authenticate, getAppInfo } from '../js/api.js'
 import { useUserStore } from '../stores/userStore.js'
 import Copyright from '../components/Copyright.vue'
 
@@ -142,10 +137,16 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 const showPassword = ref(false)
+const appVersion = ref('unknown')
 
 const route = useRoute()
 const router = useRouter()
 const { updateDefaultPasswordStatus } = useUserStore()
+
+onMounted(async () => {
+  const info = await getAppInfo()
+  appVersion.value = info.version
+})
 
 async function login() {
   error.value = ''
