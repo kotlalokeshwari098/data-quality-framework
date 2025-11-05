@@ -10,6 +10,9 @@ hero:
     alt: Data Quality Framework
   actions:
     - theme: brand
+      text: Get Started
+      link: /user/getting-started
+    - theme: alt
       text: User Guide
       link: /user/
     - theme: alt
@@ -17,39 +20,27 @@ hero:
       link: /developer/
 
 features:
-  - icon: 🔒
-    title: Privacy-Preserving
+  - icon: <i class="bi bi-code-slash"></i>
+    title: Open-Source
+    details: Fully open-source framework released under the MIT License, enabling transparency, collaboration, and community-driven development.
+    link: /developer/
+    linkText: Learn More
+
+  - icon: <i class="bi bi-shield-lock"></i>
+    title: Secure
     details: Implements advanced privacy-preserving techniques to ensure sensitive health data remains secure while maintaining data quality monitoring capabilities.
     link: /user/
     linkText: Learn More
 
-  - icon: 🌐
-    title: Federated Architecture
-    details: Designed for distributed healthcare environments, enabling quality checks across multiple institutions without centralizing sensitive data.
+  - icon: <i class="bi bi-rocket-takeoff"></i>
+    title: Easy to Deploy
+    details: Simple deployment with Docker containers and Docker Compose, making it easy to get started quickly in any environment.
     link: /user/
     linkText: Learn More
 
-  - icon: 📊
-    title: Comprehensive Monitoring
-    details: Real-time data quality monitoring with customizable metrics, automated reports, and detailed quality check dashboards.
-    link: /user/
-    linkText: Learn More
-
-  - icon: 🔍
-    title: CQL Integration
-    details: Leverages Clinical Quality Language (CQL) for standardized, reproducible quality checks across different healthcare data sources.
-    link: /developer/
-    linkText: Learn More
-
-  - icon: ⚡
-    title: Real-Time Analysis
-    details: Instant quality assessments with automated alert systems to identify and address data quality issues as they occur.
-    link: /user/
-    linkText: Learn More
-
-  - icon: 🛠️
-    title: Flexible & Extensible
-    details: Modular architecture with RESTful APIs, making it easy to integrate with existing systems and extend functionality.
+  - icon: <i class="bi bi-puzzle"></i>
+    title: Extensible
+    details: Modular architecture with RESTful APIs and plugin support, making it easy to integrate with existing systems and extend functionality.
     link: /developer/
     linkText: Learn More
 ---

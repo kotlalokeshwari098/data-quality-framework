@@ -2,6 +2,7 @@
 import { h } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 export default {
   extends: DefaultTheme,

@@ -20,6 +20,24 @@
   --vp-home-hero-image-max-height: 400px;
 }
 
+/* Style Bootstrap Icons in feature boxes */
+.VPFeature .icon i {
+  font-size: 2.5rem;
+  color: var(--vp-c-brand-1);
+  display: block;
+}
+
+.VPFeature:hover .icon i {
+  color: var(--vp-c-brand-2);
+  transition: color 0.3s ease;
+}
+
+/* Style Bootstrap Icons in documentation lists */
+.vp-doc li i.bi {
+  color: var(--vp-c-brand-1);
+  font-size: 1rem;
+}
+
 .VPHero .image-container img,
 .VPHomeHero .image img,
 .VPImage img {
@@ -29,4 +47,15 @@
   height: auto !important;
 }
 
-
+/* Light gray background for diagrams */
+.vp-doc img[src$=".svg"],
+.vp-doc svg {
+  background: #f8f9fa !important;
+  border-radius: 8px !important;
+  padding: 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 100% !important;
+}
