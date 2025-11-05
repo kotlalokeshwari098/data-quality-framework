@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +14,7 @@ public class SettingsService {
   private final ObjectMapper objectMapper;
   private final SettingsRepository settingsRepository;
 
-  public SettingsService(
-      SettingsRepository settingsRepository,
-      ObjectMapper objectMapper) {
+  public SettingsService(SettingsRepository settingsRepository, ObjectMapper objectMapper) {
     this.settingsRepository = settingsRepository;
     this.objectMapper = objectMapper;
   }
