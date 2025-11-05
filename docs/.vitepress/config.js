@@ -50,7 +50,7 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['link', { rel: 'alternate icon', href: '/favicon.svg' }],
-    ['meta', { name: 'theme-color', content: '#3b82f6' }],
+    ['meta', { name: 'theme-color', content: '#667eea' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:title', content: 'Data Quality Framework | Biomedical Data Quality Monitoring' }],
