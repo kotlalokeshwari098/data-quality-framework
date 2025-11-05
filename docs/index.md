@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Data Quality Framework"
-  text: "Biomedical Data Quality Monitoring"
-  tagline: "Comprehensive framework for monitoring and ensuring data quality in biomedical research environments"
+  text: "For Federated Environments"
+  tagline: "Comprehensive Health Data Quality Framework for Federated Environments with Privacy Preserving techniques for Sensitive Data"
   image:
     src: /logo.svg
     alt: Data Quality Framework
