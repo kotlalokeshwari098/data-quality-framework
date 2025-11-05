@@ -95,3 +95,6 @@ Roles that may use the system include:
 The FDQF ensures **trust, privacy, and transparency** in multi-institution data ecosystems by combining **local
 computation** with **centralized insight**.
 
+::: tip See for yourself
+If you would like to experiment with the tooling please go to the [Getting Started page](/user/getting-started).
+:::

@@ -10,19 +10,22 @@ hero:
     alt: Data Quality Framework
   actions:
     - theme: brand
+      text: Overview
+      link: /user/
+    - theme: alt
       text: Get Started
       link: /user/getting-started
     - theme: alt
-      text: User Guide
-      link: /user/
+      text: Installation
+      link: /user/deployment
     - theme: alt
-      text: Developer Guide
+      text: Developer Documentation
       link: /developer/
 
 features:
   - icon: <i class="bi bi-code-slash"></i>
     title: Open-Source
-    details: Fully open-source framework released under the MIT License, enabling transparency, collaboration, and community-driven development.
+    details: Fully open-source framework released under the GNU GPL v3.0 License, enabling transparency, collaboration, and community-driven development.
     link: /developer/contributing
     linkText: Learn More
 
