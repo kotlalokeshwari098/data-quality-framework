@@ -29,7 +29,8 @@ export default defineConfig({
                 {
                     text: 'Developer Guide',
                     items: [
-                        {text: 'Overview', link: '/developer/'}
+                        {text: 'Overview', link: '/developer/'},
+                        {text: 'Contributing', link: '/developer/contributing'},
                     ]
                 }
             ]
@@ -50,8 +51,8 @@ export default defineConfig({
     },
 
     head: [
-        ['link', {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'}],
-        ['link', {rel: 'alternate icon', href: '/favicon.svg'}],
+        ['link', {rel: 'icon', href: 'favicon.ico'}],
+        ['link', {rel: 'alternate icon', href: 'favicon.ico'}],
         ['meta', {name: 'theme-color', content: '#667eea'}],
         ['meta', {property: 'og:type', content: 'website'}],
         ['meta', {property: 'og:locale', content: 'en'}],

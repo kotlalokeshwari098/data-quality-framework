@@ -23,7 +23,7 @@ features:
   - icon: <i class="bi bi-code-slash"></i>
     title: Open-Source
     details: Fully open-source framework released under the MIT License, enabling transparency, collaboration, and community-driven development.
-    link: /developer/
+    link: /developer/contributing
     linkText: Learn More
 
   - icon: <i class="bi bi-shield-lock"></i>
