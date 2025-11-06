@@ -7,7 +7,9 @@
 
 # Data Quality Framework
 
-A federated, privacy-preserving framework for assessing and monitoring data quality in distributed biomedical repositories. The framework enables quality assessment at source while sharing only aggregated, differentially private metrics with a central coordination server.
+A federated, privacy-preserving framework for assessing and monitoring data quality in distributed biomedical
+repositories. The framework enables quality assessment at source while sharing only aggregated, differentially private
+metrics with a central coordination server.
 
 ## Key Features
 
@@ -19,9 +21,11 @@ A federated, privacy-preserving framework for assessing and monitoring data qual
 
 ## Project Status
 
-**Technology Readiness Level 7** - Stable enough for experimentation and pilot deployments against HL7 FHIR endpoints implementing the [BBMRI.de FHIR profiles](https://simplifier.net/BBMRI.de).
+**Technology Readiness Level 7** - Stable enough for experimentation and pilot deployments against HL7 FHIR endpoints
+implementing the [BBMRI.de FHIR profiles](https://simplifier.net/BBMRI.de).
 
-Current implementation focuses on clinical data exposed via HL7 FHIR. Additional connectors for OMOP, SQL databases, and other research formats are planned based on community needs.
+The Current implementation focuses on clinical data exposed via HL7 FHIR. Additional connectors for OMOP, SQL databases, and
+other research formats are planned based on community needs.
 
 ## Quick Start
 
@@ -39,16 +43,12 @@ docker compose up -d
 
 📖 **[Complete Documentation](https://bbmri-cz.github.io/data-quality-framework/)**
 
-- **[Getting Started](https://bbmri-cz.github.io/data-quality-framework/user/getting-started)** - Local setup and experimentation
-- **[Deployment Guide](https://bbmri-cz.github.io/data-quality-framework/user/deployment)** - Production deployment instructions
-- **[Privacy & Security](https://bbmri-cz.github.io/data-quality-framework/user/privacy)** - Technical security measures and privacy implementation
-- **[Developer Guide](https://bbmri-cz.github.io/data-quality-framework/developer/)** - Technical architecture and contribution guidelines
-
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/BBMRI-cz/data-quality-framework/issues) for bug reports and feature requests
-- **Discussions**: [GitHub Discussions](https://github.com/BBMRI-cz/data-quality-framework/discussions) for questions and community support
-- **Security**: Report security vulnerabilities via [GitHub Security Advisories](https://github.com/BBMRI-cz/data-quality-framework/security/advisories)
+- **Issues**: [GitHub Issues](https://github.com/BBMRI-cz/data-quality-framework/issues) for bug reports and feature
+  requests
+- **Security**: Report security vulnerabilities
+  via [GitHub Security Advisories](https://github.com/BBMRI-cz/data-quality-framework/security/advisories)
 
 ## License
 
