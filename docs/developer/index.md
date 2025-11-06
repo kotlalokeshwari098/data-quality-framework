@@ -1,15 +1,18 @@
 # Developer Guide
 
-Welcome to the Data Quality Framework developer documentation. This guide provides technical information for developers who want to understand, modify, or contribute to the framework.
+Welcome to the Data Quality Framework developer documentation. This guide provides technical information for developers
+who want to understand, modify, or contribute to the framework.
 
 ## Overview
 
-The Data Quality Framework is a federated system designed to assess data quality at source while preserving privacy. It consists of two main components:
+The Data Quality Framework is a federated system designed to assess data quality at source while preserving privacy. It
+consists of two main components:
 
 - **Data Quality Agent**: Deployed at data sites to perform local quality assessments
 - **Data Quality Server**: Central coordinator that aggregates quality reports from multiple agents
 
-The system implements a privacy-first architecture where raw data never leaves the source site. Only aggregated, differentially private quality metrics are shared with the central server.
+The system implements a privacy-first architecture where raw data never leaves the source site. Only aggregated,
+differentially private quality metrics are shared with the central server.
 
 ### Key Design Principles
 
@@ -123,11 +126,12 @@ Both agent and server expose OpenAPI/Swagger documentation:
 
 ## Documentation
 
-The project documentation is built using [VitePress](https://vitepress.dev/), a modern static site generator that provides:
+The project documentation is built using [VitePress](https://vitepress.dev/), a modern static site generator that
+provides:
 
 - **Hot Reload**: Instant preview of documentation changes during development
 - **Vue.js Integration**: Custom components and interactive elements
 - **Markdown-based**: Easy-to-write documentation using standard Markdown
 - **Built-in Features**: Tips, warnings, code highlighting, and cross-references
 
-For detailed information on contributing to documentation, see the [Contributing Guide](developer/contributing).
+For detailed information on contributing to documentation, see the [Contributing Guide](/developer/CONTRIBUTING).
