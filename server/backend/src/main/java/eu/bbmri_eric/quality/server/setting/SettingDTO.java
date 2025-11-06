@@ -1,8 +1,8 @@
-package eu.bbmri_eric.quality.server.settings;
+package eu.bbmri_eric.quality.server.setting;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Settings Data Transfer Object")
-public class SettingsDTO {
-  public SettingsDTO() {}
+public class SettingDTO {
+  public SettingDTO() {}
 }

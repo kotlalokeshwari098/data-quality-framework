@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.server.settings;
+package eu.bbmri_eric.quality.server.setting;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
-public class Settings {
+public class Setting {
 
   @Id
   @NotNull
@@ -18,9 +18,9 @@ public class Settings {
   @Column(name = "setting_value")
   private String value;
 
-  protected Settings() {}
+  protected Setting() {}
 
-  public Settings(String name, String value) {
+  public Setting(String name, String value) {
     this.name = name;
     this.value = value;
   }
@@ -32,7 +32,7 @@ public class Settings {
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    Settings settings = (Settings) o;
+    Setting settings = (Setting) o;
     return Objects.equals(name, settings.name) && Objects.equals(value, settings.value);
   }
 
