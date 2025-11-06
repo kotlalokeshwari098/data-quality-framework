@@ -19,11 +19,13 @@ public class SettingServiceImpl implements SettingService {
     this.modelMapper = modelMapper;
   }
 
+  @Override
   public SettingDTO getSettings() {
     Map<String, String> values = loadSettingsMap();
     return modelMapper.map(values, SettingDTO.class);
   }
 
+  @Override
   public SettingDTO updateSettings(SettingDTO dto) {
     Map<String, Object> dtoMap = modelMapper.map(dto, Map.class);
     dtoMap.forEach((name, value) -> updateSetting(name, value != null ? value.toString() : null));
