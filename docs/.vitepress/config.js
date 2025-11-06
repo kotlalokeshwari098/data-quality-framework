@@ -46,7 +46,7 @@ export default defineConfig({
         ],
 
         editLink: {
-            pattern: 'https://github.com/bbmri-eric/data-quality-framework/edit/main/docs/:path',
+            pattern: 'https://github.com/BBMRI-cz/data-quality-framework/edit/master/docs/:path',
             text: 'Edit this page on GitHub'
         },
 
