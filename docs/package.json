@@ -10,5 +10,8 @@
   "devDependencies": {
     "vitepress": "^1.6.4"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "bootstrap-icons": "^1.13.1"
+  }
 }
