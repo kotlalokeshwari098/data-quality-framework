@@ -52,7 +52,7 @@ export default defineConfig({
 
         footer: {
             message: 'Licensed under the GNU GPL v3.0',
-            copyright: 'Copyright © 2025 BBMRI-ERIC®'
+            copyright: 'Copyright © 2025 BBMRI-ERIC® & Masaryk Memorial Cancer Institute'
         },
 
         search: {
@@ -79,8 +79,11 @@ export default defineConfig({
     head: [
         ['link', {rel: 'icon', href: 'favicon.ico'}],
         ['link', {rel: 'alternate icon', href: 'favicon.ico'}],
+        ['link', {rel: 'license', href: 'https://www.gnu.org/licenses/gpl-3.0.html'}],
         ['meta', {name: 'theme-color', content: '#667eea'}],
         ['meta', {name: 'viewport', content: 'width=device-width, initial-scale=1.0'}],
+        ['meta', {name: 'dc.rights', content: 'https://www.gnu.org/licenses/gpl-3.0.html'}],
+        ['meta', {name: 'dc.rights.license', content: 'GPL-3.0'}],
         ['meta', {property: 'og:type', content: 'website'}],
         ['meta', {property: 'og:locale', content: 'en'}],
         ['meta', {property: 'og:title', content: 'Data Quality Framework | Biomedical Data Quality Monitoring'}],
