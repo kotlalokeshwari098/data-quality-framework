@@ -35,7 +35,7 @@ export default defineConfig({
                     text: 'Developer Guide',
                     items: [
                         {text: 'Overview', link: '/developer/'},
-                        {text: 'Contributing', link: '/developer/contributing'},
+                        {text: 'Contributing', link: '/developer/CONTRIBUTING'},
                     ]
                 }
             ]
