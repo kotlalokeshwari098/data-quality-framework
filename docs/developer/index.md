@@ -130,4 +130,4 @@ The project documentation is built using [VitePress](https://vitepress.dev/), a 
 - **Markdown-based**: Easy-to-write documentation using standard Markdown
 - **Built-in Features**: Tips, warnings, code highlighting, and cross-references
 
-For detailed information on contributing to documentation, see the [Contributing Guide](/developer/contributing#documentation).
+For detailed information on contributing to documentation, see the [Contributing Guide](developer/contributing).
