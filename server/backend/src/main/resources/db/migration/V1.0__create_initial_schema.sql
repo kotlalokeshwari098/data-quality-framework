@@ -86,6 +86,12 @@ CREATE INDEX idx_agent_interaction_agent_id ON agent_interaction(agent_id);
 CREATE INDEX idx_agent_interaction_timestamp ON agent_interaction(timestamp);
 CREATE INDEX idx_agent_interaction_type ON agent_interaction(type);
 
+-- Create settings table
+CREATE TABLE setting (
+                         setting_name TEXT PRIMARY KEY,
+                         setting_value TEXT NOT NULL
+);
+
 -- ============================================
 -- Initial Data
 -- ============================================
