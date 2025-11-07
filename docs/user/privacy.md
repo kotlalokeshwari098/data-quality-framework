@@ -82,7 +82,31 @@ Our differential privacy implementation uses the **Laplace mechanism** with addi
 
 The implementation includes comprehensive test coverage to ensure correctness of the differential privacy mechanisms.
 
-### Data Flow Architecture
+#### Example: Obfuscated Percentage Calculation
+
+To illustrate how differential privacy is applied in practice, consider the following scenario:
+
+1. A local site runs a quality check and finds **67 patients with a faulty record** (e.g., invalid gender value).
+2. Let the total number of patients locally be **10,000**.
+3. Before transmitting anything, the agent applies the Laplace mechanism to the raw count:
+   - `trueCount = 67`
+   - `epsilon = 1.0` (example privacy budget; actual value may differ per check)
+   - `noise ~ Laplace(scale = 1 / epsilon)`
+   - Suppose the sampled `noise = -1.73`
+   - `noisyCount = max(0, trueCount + noise) = max(0, 67 - 1.73) ≈ 65.27`
+4. The agent converts this to an obfuscated percentage:
+   - `percentage = (noisyCount / totalPatients) * 100 ≈ (65.27 / 10,000) * 100 ≈ 0.65%`
+5. Only this **privacy-preserved percentage (≈ 0.65%)** is sent to the Data Quality Server – never the raw count (67).
+6. The central server stores and displays the obfuscated metric. Individual patient presence or absence cannot be inferred due to the added calibrated noise.
+
+Key points:
+- Small datasets receive proportionally more effective protection because the noise impact is relatively larger.
+- Counts are clipped to zero to avoid negative artifacts after noise addition.
+- Each quality check consumes part of the privacy budget (ε); budgeting strategy can be tuned.
+
+> This approach ensures that even if an attacker knows most of the dataset, they cannot reliably determine whether any one patient contributed to the reported metric.
+
+## Data Flow Architecture
 
 1. **Local Processing**: Quality checks execute entirely within the local environment
 2. **Aggregation**: Results are aggregated locally before any privacy mechanisms are applied

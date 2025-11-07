@@ -32,13 +32,13 @@ features:
   - icon: <i class="bi bi-shield-lock"></i>
     title: Secure
     details: Implements advanced privacy-preserving techniques to ensure sensitive health data remains secure while maintaining data quality monitoring capabilities.
-    link: /user/
+    link: /user/privacy
     linkText: Learn More
 
   - icon: <i class="bi bi-rocket-takeoff"></i>
     title: Easy to Deploy
     details: Simple deployment with Docker containers and Docker Compose, making it easy to get started quickly in any environment.
-    link: /user/
+    link: /user/deployment
     linkText: Learn More
 
   - icon: <i class="bi bi-puzzle"></i>

@@ -129,7 +129,7 @@
                   </div>
                   <div class="check-score">
                     <div class="score-circle" :class="getScoreCircleClass(result)">
-                      <span class="score-value">{{ result.result }}%</span>
+                      <span class="score-value">{{ (result.result * 100).toFixed(1) }}%</span>
                     </div>
                   </div>
                 </div>

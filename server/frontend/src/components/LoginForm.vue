@@ -47,7 +47,7 @@
 
       <!-- Right side - Login form -->
       <div class="col-lg-6 col-12">
-        <div class="px-3 py-4 d-flex flex-column justify-content-center h-100">
+        <div class="px-3 py-4 d-flex flex-column justify-content-center login-form-wrapper">
           <div class="w-100 login-form-container">
             <!-- Mobile header (visible only on small screens) -->
             <div class="d-lg-none text-center mb-4 mobile-header">
@@ -326,6 +326,17 @@ const handleLogin = async () => {
 
 .count-animation:hover {
   transform: scale(1.1);
+}
+
+.login-form-wrapper {
+  min-height: auto;
+}
+
+/* On larger screens with left panel, match the height */
+@media (min-width: 992px) {
+  .login-form-wrapper {
+    height: 100%;
+  }
 }
 
 /* Mobile-specific styles */

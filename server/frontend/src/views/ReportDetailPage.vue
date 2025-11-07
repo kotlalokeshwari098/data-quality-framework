@@ -63,6 +63,19 @@
           />
         </div>
 
+        <!-- Privacy Note -->
+        <AppCallout type="info" icon="bi-shield-lock" class="mb-3">
+          <small>
+            Results in this report are obfuscated using differential privacy to protect sensitive information.
+            <a
+              href="https://bbmri-cz.github.io/data-quality-framework/user/privacy.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="fw-semibold"
+            >Learn more</a>.
+          </small>
+        </AppCallout>
+
         <!-- Results Section -->
         <div class="card border-0 shadow-sm">
           <div class="card-body">
@@ -112,6 +125,7 @@ import { ref, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageHeader from '../components/PageHeader.vue'
 import StatsCard from '../components/StatsCard.vue'
+import AppCallout from '../components/AppCallout.vue'
 import { apiService } from '../services/apiService.js'
 import { getCheckStatus, CheckStatus } from '../utils/qualityCheckUtils.js'
 
@@ -430,4 +444,3 @@ onMounted(async () => {
   }
 }
 </style>
-
