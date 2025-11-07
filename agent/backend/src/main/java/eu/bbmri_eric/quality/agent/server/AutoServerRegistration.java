@@ -25,7 +25,7 @@ public class AutoServerRegistration implements ApplicationRunner {
   private String reportingServerUrl;
 
   @Value("${reporting.server.name:Central Reporting Server}")
-  private String reportingServerName = "Central Reporting Server";
+  private String reportingServerName;
 
   public AutoServerRegistration(ServerService serverService) {
     this.serverService = serverService;
