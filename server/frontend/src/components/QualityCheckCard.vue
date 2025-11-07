@@ -143,7 +143,7 @@ const agentResults = computed(() => {
       const raw = result.result
       const fraction = typeof raw === 'number' ? (raw > 1 ? raw / 100 : raw) : 0
 
-      // Keep the latest (highest) result for each agent
+      // Keep the worst (highest) result for each agent
       if (!resultsMap.has(agentId) || resultsMap.get(agentId).result < fraction) {
         resultsMap.set(agentId, {
           agentId,
