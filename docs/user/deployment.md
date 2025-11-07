@@ -20,6 +20,23 @@ Before deploying, ensure your system meets the following requirements:
 - **Storage**: At least 10GB available disk space
 - **Network**: Internet access for image downloads and updates
 
+::: warning Docker Permissions Required
+To run Docker commands, you need either:
+- **Sudo privileges** to run Docker commands as root, or
+- **Docker group membership** to run Docker commands as a regular user
+
+To add your user to the docker group:
+```bash
+sudo usermod -aG docker $USER
+# Log out and log back in for changes to take effect
+```
+
+After logging back in, verify you can run Docker without sudo:
+```bash
+docker ps
+```
+:::
+
 ### Required Ports
 
 - **Data Quality Agent**: 8081
@@ -66,7 +83,7 @@ The Data Quality Agent runs at each data site to perform local quality assessmen
 ### Step 1: Create Deployment Directory
 
 ```bash
-mkdir -p /opt/data-quality-agent
+sudo mkdir -p /opt/data-quality-agent
 cd /opt/data-quality-agent
 ```
 
@@ -88,6 +105,10 @@ services:
       - agent-data:/app/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      # Remove these 2 environment variables if you do not wish to share Data Quality Reports
+      - REPORTING_SERVER_URL=https://quality-dashboard.bbmri-eric.eu
+      - REPORTING_SERVER_NAME=Central Data Quality Server of BBMRI
 
   # Remove this service if you do not want automatic updates
   watchtower:
@@ -106,7 +127,6 @@ volumes:
   agent-data:
     driver: local
 ```
-
 ### Step 3: Start the Services
 
 ```bash
@@ -165,6 +185,16 @@ To connect to data sources:
 2. Configure connection until you see a positive confirmation
 3. For services running on your host machine, use `host.docker.internal` as the hostname
 
+::: tip BBMRI-ERIC Federated Search Platform
+If you are deploying this agent as part of the **BBMRI-ERIC Federated Search Platform**, use the following configuration:
+
+- **FHIR Server URL**: `https://host.docker.internal/bbmri-localdatamanagement/fhir/`
+- **Username**: `bbmri`
+- **Password**: Can be found in `/etc/bridgehead/bbmri.local.conf` on your server
+
+This allows the agent to connect to the local FHIR store provided by the Bridgehead component.
+:::
+
 ## Data Quality Server Deployment
 
 The Data Quality Server runs centrally to collect and aggregate reports from multiple agents.
@@ -172,7 +202,7 @@ The Data Quality Server runs centrally to collect and aggregate reports from mul
 ### Step 1: Create Deployment Directory
 
 ```bash
-mkdir -p /opt/data-quality-server
+sudo mkdir -p /opt/data-quality-server
 cd /opt/data-quality-server
 ```
 

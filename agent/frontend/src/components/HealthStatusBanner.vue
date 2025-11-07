@@ -3,11 +3,17 @@
        :class="['alert', 'mb-4', 'health-status-banner', healthStore.healthStatus.status === 'UP' ? 'alert-success' : 'alert-danger']"
        role="alert">
     <div class="d-flex justify-content-between align-items-center">
-      <span class="d-flex align-items-center gap-2">
-        <i :class="['bi', 'fs-5', healthStore.healthStatus.status === 'UP' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill']"></i>
-        <strong>FHIR® Server:</strong> {{ healthStore.healthStatus.status }}
-        <span v-if="healthStore.healthStatus.details?.error" class="ms-2"> - {{ healthStore.healthStatus.details.error }}</span>
-      </span>
+      <div class="d-flex flex-column">
+        <span class="d-flex align-items-center gap-2">
+          <i :class="['bi', 'fs-5', healthStore.healthStatus.status === 'UP' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill']"></i>
+          <strong>FHIR® Server:</strong> {{ healthStore.healthStatus.status }}
+          <span v-if="healthStore.healthStatus.details?.error" class="ms-2"> - {{ healthStore.healthStatus.details.error }}</span>
+        </span>
+        <small v-if="healthStore.healthStatus.status !== 'UP'" class="mt-2 tip-text">
+          <i class="bi bi-info-circle me-1"></i>
+          Tip: Check your FHIR® server connection details in <router-link to="/settings" class="settings-link">Settings</router-link>
+        </small>
+      </div>
       <button class="btn btn-sm"
               :class="healthStore.healthStatus.status === 'UP' ? 'btn-outline-success' : 'btn-outline-danger'"
               @click="healthStore.checkHealth()"
@@ -47,6 +53,21 @@ import healthStore from '../stores/healthStore.js'
   color: #842029;
 }
 
+.tip-text {
+  margin-left: 2rem;
+  opacity: 0.9;
+}
+
+.settings-link {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.settings-link:hover {
+  opacity: 0.8;
+}
+
 @media (max-width: 768px) {
   .health-status-banner {
     padding: 0.875rem 1rem;
@@ -59,6 +80,11 @@ import healthStore from '../stores/healthStore.js'
 
   .d-flex > strong {
     display: none;
+  }
+
+  .tip-text {
+    margin-left: 1.5rem;
+    font-size: 0.813rem;
   }
 }
 </style>

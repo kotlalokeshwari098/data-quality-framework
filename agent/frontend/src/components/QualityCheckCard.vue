@@ -14,8 +14,8 @@
         <p class="text-muted mb-0 fw-bold text-truncate" style="font-size: 1rem; line-height: 1.3;" :title="check.checkName">
           {{ check.checkName }}
         </p>
-        <small class="text-muted d-block text-truncate" style="font-size: 0.7rem; opacity: 0.6;" :title="check.checkId + (check.stratum ? ` - ${check.stratum}` : '')">
-          {{ check.checkId }}{{ check.stratum ? ` - ${check.stratum}` : '' }}
+        <small v-if="check.stratum" class="text-muted d-block text-truncate" style="font-size: 0.7rem; opacity: 0.6;" :title="check.stratum">
+          {{ check.stratum }}
         </small>
       </div>
 

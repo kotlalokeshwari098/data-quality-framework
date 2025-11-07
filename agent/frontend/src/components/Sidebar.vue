@@ -15,8 +15,8 @@
       <!-- Navigation Menu -->
       <nav class="sidebar-nav">
         <router-link to="/dashboard" class="nav-link" :class="{ active: $route.path === '/dashboard' }" @click="closeMobileMenu">
-          <i class="bi bi-grid-3x3-gap-fill"></i>
-          <span>Dashboard</span>
+          <i class="bi bi-pie-chart-fill"></i>
+          <span>Overview</span>
         </router-link>
         <router-link to="/quality-checks" class="nav-link" :class="{ active: $route.path === '/quality-checks' }" @click="closeMobileMenu">
           <i class="bi bi-clipboard-check-fill"></i>

@@ -3,10 +3,10 @@
     <PasswordChangeModal :isVisible="showPasswordModal" @close="closePasswordModal" />
 
     <PageHeader
-      title="Dashboard"
-      mobileTitle="Dashboard"
-      subtitle="Monitor and validate your local repository data quality"
-      icon="bi bi-grid-3x3-gap-fill"
+      title="Overview"
+      mobileTitle="Overview"
+      subtitle="View and validate the current Data Quality of your repository"
+      icon="bi bi-pie-chart-fill"
     />
 
     <div class="page-content">
@@ -24,24 +24,29 @@
         <!-- Statistics Grid -->
         <div class="stats-grid mb-4">
           <StatCard
-            :number="totalReports"
-            label="Total Reports"
-            numberClass="text-primary"
-          />
-          <StatCard
             :number="successfulChecks"
             label="Passed"
             numberClass="text-success"
+            helpText="Quality checks that passed without warnings or errors"
           />
           <StatCard
             :number="errorChecks"
             label="Errors"
             numberClass="text-danger"
+            helpText="Quality checks that exceeded the error threshold or encountered errors"
           />
           <StatCard
             :number="warningChecks"
             label="Warnings"
             numberClass="text-warning"
+            helpText="Quality checks that exceeded the warning threshold but not the error threshold"
+          />
+          <StatCard
+            v-if="latestReport"
+            :number="formatTimestamp(latestReport.generatedAt)"
+            label="Generated At"
+            numberClass="text-primary"
+            helpText="Timestamp when this quality report was generated"
           />
         </div>
 
@@ -71,7 +76,7 @@
           </template>
           <template v-else>
             <i class="bi bi-file-earmark-text-fill display-1 text-muted opacity-50"></i>
-            <p class="text-muted mt-3">No reports available.</p>
+            <p class="text-muted mt-3">No Data Quality Reports available.</p>
             <GenerateReportButton
               @click="generateReportWithReset"
               :disabled="healthStore.healthStatus?.status !== 'UP'"
@@ -83,7 +88,7 @@
         <!-- Quality Checks Grid -->
         <div v-if="latestReport?.results" class="quality-checks-grid">
           <QualityCheckCard
-            v-for="result in latestReport.results"
+            v-for="result in sortedResults"
             :key="getCheckKey(result)"
             :check="result"
             :total-entities="latestReport.numberOfEntities"
@@ -176,6 +181,37 @@ const warningChecks = computed(() => {
   }).length;
 });
 
+const sortedResults = computed(() => {
+  if (!latestReport.value?.results) return [];
+
+  return [...latestReport.value.results].sort((a, b) => {
+    const aPercentage = calculatePercentage(a);
+    const bPercentage = calculatePercentage(b);
+
+    // Determine status for a
+    let aStatus;
+    if (aPercentage >= a.errorThreshold || a.error) {
+      aStatus = 0; // Error
+    } else if (aPercentage >= a.warningThreshold && aPercentage < a.errorThreshold && !a.error) {
+      aStatus = 1; // Warning
+    } else {
+      aStatus = 2; // Passed
+    }
+
+    // Determine status for b
+    let bStatus;
+    if (bPercentage >= b.errorThreshold || b.error) {
+      bStatus = 0; // Error
+    } else if (bPercentage >= b.warningThreshold && bPercentage < b.errorThreshold && !b.error) {
+      bStatus = 1; // Warning
+    } else {
+      bStatus = 2; // Passed
+    }
+
+    return aStatus - bStatus;
+  });
+});
+
 const getCheckKey = (result) => {
   return result.checkId + '_' + (result.stratum || 'all');
 };
@@ -184,6 +220,16 @@ const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleString('en-US', {
     year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+const formatTimestamp = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -215,7 +261,7 @@ const generateReportWithReset = async () => {
 
 .quality-checks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-md);
   align-items: start;
 }
@@ -225,9 +271,6 @@ const generateReportWithReset = async () => {
 }
 
 @media (min-width: 992px) {
-  .quality-checks-grid {
-    grid-template-columns: repeat(auto-fill, 320px);
-  }
 
   .quality-checks-grid > * {
     height: 320px;
