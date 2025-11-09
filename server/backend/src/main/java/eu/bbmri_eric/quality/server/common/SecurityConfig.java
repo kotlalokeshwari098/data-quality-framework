@@ -77,12 +77,6 @@ class SecurityConfig {
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/settings")
                     .authenticated()
                     .requestMatchers(
-                        "/",
-                        "/index.html",
-                        "/assets/**",
-                        "/favicon.ico",
-                        "/logo.svg",
-                        "/login",
                         "/api/health",
                         "/api/info",
                         "/api/counts",
@@ -90,8 +84,10 @@ class SecurityConfig {
                         "/api/swagger-ui/**",
                         "/api/api-docs/**")
                     .permitAll()
-                    .anyRequest()
-                    .denyAll())
+                    .requestMatchers("/api/**")
+                    .denyAll() // default deny for all API paths
+                    .requestMatchers("/**")
+                    .permitAll())
         .exceptionHandling(
             ex ->
                 ex.accessDeniedHandler(
