@@ -1,5 +1,5 @@
 <template>
-  <div :class="['alert', `alert-${type}`, 'app-callout', dense ? 'py-2 px-3' : 'py-3 px-4']" role="note">
+  <div :class="['alert', `alert-${type}`, 'app-callout', dense ? 'py-2 px-3' : 'py-3 px-4']">
     <div class="d-flex align-items-start gap-2">
       <i v-if="computedIcon" :class="['bi', computedIcon, 'me-1', 'flex-shrink-0']"></i>
       <div class="flex-grow-1">
