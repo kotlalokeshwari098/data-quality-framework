@@ -3,7 +3,7 @@
     <div class="row g-0">
       <!-- Left side - Info panel (hidden on small screens) -->
       <div class="col-lg-6 d-none d-lg-flex">
-        <div class="info-panel p-4 p-xl-5 d-flex flex-column justify-content-center w-100">
+        <div class="info-panel p-3 p-lg-4 d-flex flex-column justify-content-center w-100">
           <div>
             <h1 class="display-5 fw-bold mb-3">Data Quality Server</h1>
             <p class="lead mb-4">Central Server for Data Quality Monitoring and Reporting</p>
@@ -47,7 +47,7 @@
 
       <!-- Right side - Login form -->
       <div class="col-lg-6 col-12">
-        <div class="px-3 py-4 d-flex flex-column justify-content-center login-form-wrapper">
+        <div class="px-3 py-3 d-flex flex-column justify-content-center login-form-wrapper">
           <div class="w-100 login-form-container">
             <!-- Mobile header (visible only on small screens) -->
             <div class="d-lg-none text-center mb-4 mobile-header">
@@ -310,8 +310,8 @@ const handleLogin = async () => {
 }
 
 .login-logo {
-  width: 200px;
-  height: 200px;
+  width: 140px;
+  height: 140px;
   object-fit: contain;
 }
 
@@ -332,10 +332,11 @@ const handleLogin = async () => {
   min-height: auto;
 }
 
+/* Remove forced equal-height on large screens to prevent stretching */
 /* On larger screens with left panel, match the height */
 @media (min-width: 992px) {
   .login-form-wrapper {
-    height: 100%;
+    /* height: 100%; */
   }
 }
 
