@@ -28,6 +28,6 @@ public class ApplicationEventLogger {
   @EventListener
   @Async
   public void logApplicationEvent(ApplicationEvent event) {
-    log.info("EVENT: {}", event.getClass().getSimpleName());
+    log.debug("EVENT: {}", event.getClass().getSimpleName());
   }
 }
