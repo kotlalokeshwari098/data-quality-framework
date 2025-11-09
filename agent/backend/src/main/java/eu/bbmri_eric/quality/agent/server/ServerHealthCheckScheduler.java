@@ -32,10 +32,24 @@ class ServerHealthCheckScheduler {
   }
 
   /**
-   * Periodically checks the registration status of all servers. Updates server status based on the
-   * health check results. Runs every 60 seconds.
+   * Periodically checks the registration status of servers with PENDING status. Updates server
+   * status based on the health check results. Runs every minute to provide faster feedback during
+   * registration.
    */
   @Scheduled(fixedRate = 60000)
+  @Transactional
+  public void checkPendingServerStatuses() {
+    String agentId = settingsService.getSettings().getAgentId();
+    serverRepository
+        .findAllByStatusIs(ServerConnectionStatus.PENDING)
+        .forEach(server -> checkServerStatus(server, agentId));
+  }
+
+  /**
+   * Periodically checks the registration status of all servers. Updates server status based on the
+   * health check results. Runs every hour.
+   */
+  @Scheduled(fixedRate = 3600000)
   @Transactional
   public void checkAllServerStatuses() {
     String agentId = settingsService.getSettings().getAgentId();

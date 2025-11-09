@@ -15,26 +15,25 @@ export const CheckStatus = {
 
 /**
  * Get the status of a quality check result
- * @param {Object} result - The check result object
- * @param {Object} check - The quality check definition
- * @returns {string} The status (PASSED, WARNING, FAILED, UNKNOWN)
+ * Supports result values expressed either as fraction (0-1) or percentage (0-100).
+ * Higher values indicate worse quality.
  */
 export function getCheckStatus(result, check) {
   if (!check) return CheckStatus.UNKNOWN
+  if (result == null || typeof result.result !== 'number') return CheckStatus.UNKNOWN
 
   const errorThreshold = check.errorThreshold
   const warningThreshold = check.warningThreshold
 
-  // Failed: result > errorThreshold (too many problems)
-  if (result.result > errorThreshold) {
+  // Normalize: if value looks like a fraction (<=1), convert to percentage.
+  const raw = result.result
+  const percentage = raw <= 1 ? raw * 100 : raw
+
+  if (percentage > errorThreshold) {
     return CheckStatus.FAILED
-  }
-  // Warning: result > warningThreshold but <= errorThreshold
-  else if (result.result > warningThreshold) {
+  } else if (percentage > warningThreshold) {
     return CheckStatus.WARNING
-  }
-  // Passed: result <= warningThreshold (acceptable level)
-  else {
+  } else {
     return CheckStatus.PASSED
   }
 }
@@ -171,4 +170,3 @@ export function formatScore(score) {
 export function formatScoreRounded(score) {
   return Math.round(score * 100)
 }
-

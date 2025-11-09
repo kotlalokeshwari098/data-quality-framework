@@ -2,25 +2,35 @@
   <div class="card border-0 shadow-sm h-100 compact-card">
     <div class="card-body p-3 position-relative">
       <!-- Icon in top right corner -->
-      <div class="position-absolute top-0 end-0 p-3">
+      <div class="position-absolute top-0 end-0 p-3" style="pointer-events: none;">
         <i class="bi bi-clipboard-check-fill text-primary opacity-75" style="font-size: 1.5rem;"></i>
       </div>
 
-      <div class="mb-3">
+      <div class="mb-3 pe-5">
         <div class="d-flex align-items-center gap-2">
-          <p class="text-muted mb-0 fw-bold" style="font-size: 1rem; line-height: 1.3;">
+          <p
+            class="text-muted mb-0 fw-bold text-truncate flex-grow-1"
+            style="font-size: 1rem; line-height: 1.3;"
+            :title="qualityCheck.name || qualityCheck.cql || qualityCheck.hash"
+          >
             {{ qualityCheck.name || qualityCheck.cql || qualityCheck.hash }}
           </p>
           <i
             v-if="qualityCheck.description"
-            class="bi bi-question-circle text-muted"
+            class="bi bi-question-circle text-muted flex-shrink-0"
             style="font-size: 0.9rem; cursor: help;"
             :title="qualityCheck.description"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
           ></i>
         </div>
-        <small class="text-muted font-monospace d-block" style="font-size: 0.7rem; opacity: 0.6;">{{ qualityCheck.hash }}</small>
+        <small
+          class="text-muted font-monospace d-block text-truncate"
+          style="font-size: 0.7rem; opacity: 0.6;"
+          :title="qualityCheck.hash"
+        >
+          {{ qualityCheck.hash }}
+        </small>
       </div>
 
       <!-- No data state -->
@@ -38,8 +48,20 @@
         >
           <div class="d-flex justify-content-between align-items-center">
             <div class="flex-grow-1 me-2" style="min-width: 0;">
-              <div class="text-dark text-truncate" style="font-size: 1.1rem; line-height: 1.3;">{{ agentResult.agentName }}</div>
-              <small class="text-muted d-block text-truncate" style="font-size: 0.85rem; line-height: 1.3;">{{ agentResult.agentId }}</small>
+              <div
+                class="text-dark text-truncate"
+                style="font-size: 1.1rem; line-height: 1.3;"
+                :title="agentResult.agentName"
+              >
+                {{ agentResult.agentName }}
+              </div>
+              <small
+                class="text-muted d-block text-truncate"
+                style="font-size: 0.85rem; line-height: 1.3;"
+                :title="agentResult.agentId"
+              >
+                {{ agentResult.agentId }}
+              </small>
             </div>
             <div class="text-end flex-shrink-0">
               <div
@@ -117,12 +139,16 @@ const agentResults = computed(() => {
     if (result) {
       const agentId = report.agentId || report.agent?.id || 'unknown'
 
-      // Keep the latest (highest) result for each agent
-      if (!resultsMap.has(agentId) || resultsMap.get(agentId).result < result.result) {
+      // Normalize result to fraction (0-1). If backend already provides percentage (0-100), convert.
+      const raw = result.result
+      const fraction = typeof raw === 'number' ? (raw > 1 ? raw / 100 : raw) : 0
+
+      // Keep the worst (highest) result for each agent
+      if (!resultsMap.has(agentId) || resultsMap.get(agentId).result < fraction) {
         resultsMap.set(agentId, {
           agentId,
           agentName: agentMap.value.get(agentId) || agentId,
-          result: result.result,
+          result: fraction,
           timestamp: report.timestamp
         })
       }
@@ -148,15 +174,16 @@ const averageResult = computed(() => {
   return total / worstAgents.value.length
 })
 
-// Get status based on thresholds
+// Get status based on thresholds (higher is worse)
+// Accept result as fraction (0-1) or percentage (0-100)
 const getStatus = (result) => {
-  if (result > props.qualityCheck.errorThreshold) {
+  const percentage = result <= 1 ? result * 100 : result
+  if (percentage > props.qualityCheck.errorThreshold) {
     return CheckStatus.FAILED
-  } else if (result > props.qualityCheck.warningThreshold) {
+  } else if (percentage > props.qualityCheck.warningThreshold) {
     return CheckStatus.WARNING
-  } else {
-    return CheckStatus.PASSED
   }
+  return CheckStatus.PASSED
 }
 
 // Generate formatted tooltip for thresholds
@@ -164,13 +191,16 @@ const getThresholdTooltip = () => {
   return `
     <div style="text-align: left; padding: 4px;">
       <strong style="display: block; margin-bottom: 6px; font-size: 0.9rem;">Quality Check Thresholds</strong>
+      <div style="margin-bottom: 4px; font-size: 0.85rem; opacity: 0.9;">
+        Higher values indicate worse quality
+      </div>
       <div style="margin-bottom: 4px;">
         <span style="color: #ffc107; font-weight: bold;">⚠</span>
-        <strong>Warning:</strong> Results above ${props.qualityCheck.warningThreshold}%
+        <strong>Warning:</strong> ≥ ${props.qualityCheck.warningThreshold}%
       </div>
       <div>
         <span style="color: #dc3545; font-weight: bold;">✖</span>
-        <strong>Error:</strong> Results above ${props.qualityCheck.errorThreshold}%
+        <strong>Error:</strong> ≥ ${props.qualityCheck.errorThreshold}%
       </div>
     </div>
   `
@@ -190,14 +220,9 @@ const getResultColorClass = (result) => {
   }
 }
 
-// Format result as percentage (multiply by 100 if between 0-1, otherwise show as is)
-const formatResultAsPercentage = (result) => {
-  // If result is between 0 and 1, treat it as a decimal percentage
-  if (result >= 0 && result <= 1) {
-    return (result * 100).toFixed(1)
-  }
-  // Otherwise, show the raw value
-  return result.toFixed(1)
+// Format result as percentage from fraction
+const formatResultAsPercentage = (fraction) => {
+  return (fraction * 100).toFixed(1)
 }
 
 // Initialize Bootstrap tooltips

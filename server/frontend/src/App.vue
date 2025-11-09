@@ -22,8 +22,7 @@ onMounted(() => {
   <div id="app">
     <Sidebar v-if="authStore.isAuthenticated" />
     <TopNavbar v-if="authStore.isAuthenticated" />
-
-    <main class="main-content">
+    <main :class="['main-content', { 'no-sidebar': !authStore.isAuthenticated }]">
       <router-view />
     </main>
     <NotificationContainer ref="notificationContainer" />
@@ -76,19 +75,11 @@ body {
 .main-content.no-sidebar {
   margin-left: 0;
   margin-top: 0;
-  min-height: 100vh;
+  min-height: auto;
   width: 100%;
-}
-
-.main-content:has(.login-form) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  margin-left: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  min-height: calc(100vh - 120px);
+  padding: 1.5rem 0 2rem; /* reduced vertical padding */
+  display: block; /* prevent flex child full-height expansion */
+  flex: 0; /* override flex:1 from base */
 }
 
 /* Mobile-specific styles */
@@ -96,17 +87,22 @@ body {
   .main-content {
     margin-left: 0;
     margin-top: 56px;
-    padding: 1rem 0.5rem;
+    padding: 0;
     min-height: calc(100vh - 56px);
+    width: 100%;
   }
 
   .main-content.sidebar-collapsed {
     margin-left: 0;
   }
 
-  .main-content:has(.login-form) {
+  .main-content.no-sidebar {
     margin-top: 0;
-    min-height: calc(100vh - 100px);
+    min-height: auto; /* allow natural height on mobile */
+    width: 100%;
+    padding: 1.25rem 0 1.75rem; /* smaller on mobile */
+    flex: 0;
+    display: block;
   }
 
   .btn {

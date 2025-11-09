@@ -48,6 +48,19 @@
       />
     </div>
 
+    <!-- Privacy Note -->
+    <AppCallout type="info" icon="bi-shield-lock" class="mb-3">
+      <small>
+        Results on this dashboard are obfuscated using differential privacy to protect sensitive information.
+        <a
+          href="https://bbmri-cz.github.io/data-quality-framework/user/privacy.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="fw-semibold"
+        >Learn more</a>.
+      </small>
+    </AppCallout>
+
     <!-- Main Content Grid -->
     <div class="content-grid">
       <!-- Agents Section -->
@@ -75,6 +88,7 @@ import AgentsList from '../components/AgentsList.vue'
 import StatsCard from '../components/StatsCard.vue'
 import PageHeader from '../components/PageHeader.vue'
 import QualityCheckCard from '../components/QualityCheckCard.vue'
+import AppCallout from '../components/AppCallout.vue'
 import { apiService } from '../services/apiService.js'
 import { getReportStatus, CheckStatus } from '../utils/qualityCheckUtils.js'
 

@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
     <div class="row w-100 justify-content-center">
-      <div class="col-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
+      <div class="col-12 col-xl-10">
         <LoginForm />
         <Copyright />
       </div>
@@ -15,5 +15,5 @@ import Copyright from '../components/Copyright.vue'
 </script>
 
 <style scoped>
-/* LoginView styles are minimal since layout is controlled by the container */
+/* Rely on Bootstrap layout to control spacing and height like agent does */
 </style>

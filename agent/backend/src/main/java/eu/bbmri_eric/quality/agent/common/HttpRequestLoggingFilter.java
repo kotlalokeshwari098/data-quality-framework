@@ -29,14 +29,14 @@ class HttpRequestLoggingFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     Instant startTime = Instant.now();
-    logger.info(
+    logger.debug(
         "Request: {} {} from {}", request.getMethod(), getFullUri(request), getClientIp(request));
 
     try {
       filterChain.doFilter(request, response);
     } finally {
       Duration duration = Duration.between(startTime, Instant.now());
-      logger.info(
+      logger.debug(
           "Response: {} {} -> {} ({}ms)",
           request.getMethod(),
           request.getRequestURI(),

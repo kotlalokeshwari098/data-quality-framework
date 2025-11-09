@@ -8,7 +8,7 @@
         </div>
         <div class="brand-text">
           <h4>Data Quality</h4>
-          <small>Dashboard</small>
+          <small>Server</small>
         </div>
       </router-link>
 
