@@ -112,7 +112,7 @@ services:
 
   # Remove this service if you do not want automatic updates
   watchtower:
-    image: containrrr/watchtower:latest
+    image: containrrr/watchtower:1.7.1
     container_name: watchtower
     restart: unless-stopped
     volumes:
@@ -222,23 +222,10 @@ services:
       - "8082:8082"
     volumes:
       - server-data:/app/data
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - SPRING_PROFILES_ACTIVE=production
-      - LOGGING_LEVEL_ROOT=INFO
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    networks:
-      - quality-network
 
   # Remove this service if you do not want automatic updates
   watchtower:
-    image: containrrr/watchtower:latest
+    image: containrrr/watchtower:1.7.1
     container_name: watchtower
     restart: unless-stopped
     volumes:
@@ -252,10 +239,6 @@ services:
 volumes:
   server-data:
     driver: local
-
-networks:
-  quality-network:
-    driver: bridge
 ```
 
 ### Step 3: Start the Services
