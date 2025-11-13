@@ -50,8 +50,13 @@ features:
 
 <div class="institution-logos-home">
   <div class="logos-container">
+    <img src="/bbmri_eric.svg" alt="BBMRI-ERIC" class="institution-logo logo-light" />
+    <img src="/bbmri_eric-white.svg" alt="BBMRI-ERIC" class="institution-logo logo-dark" />
     <img src="/mmci.svg" alt="Masaryk Memorial Cancer Institute" class="institution-logo logo-light" />
     <img src="/mmci-white.svg" alt="Masaryk Memorial Cancer Institute" class="institution-logo logo-dark" />
+    <img src="/BBMRI-CZ.svg" alt="BBMRI.cz" class="institution-logo logo-light" />
+    <img src="/BBMRI-CZ-white.svg" alt="BBMRI.cz" class="institution-logo logo-dark" />
+    <img src="/muni.png" alt="Masaryk University" class="institution-logo" />
   </div>
 </div>
 
@@ -59,7 +64,6 @@ features:
 .institution-logos-home {
   padding: 3rem 1.5rem 2.5rem;
   margin-top: 2rem;
-  border-top: 1px solid var(--vp-c-divider);
 }
 
 .logos-container {
@@ -79,6 +83,12 @@ features:
   height: auto;
   object-fit: contain;
   display: block;
+}
+
+/* Make BBMRI-ERIC logo bigger to match other logos */
+.institution-logo[alt="BBMRI-ERIC"] {
+  max-height: 130px;
+  max-width: 230px;
 }
 
 /* Show/hide logos based on theme */
@@ -108,6 +118,11 @@ features:
     max-height: 70px;
     max-width: 120px;
   }
+  
+  .institution-logo[alt="BBMRI-ERIC"] {
+    max-height: 90px;
+    max-width: 155px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -118,6 +133,11 @@ features:
   .institution-logo {
     max-height: 60px;
     max-width: 100px;
+  }
+  
+  .institution-logo[alt="BBMRI-ERIC"] {
+    max-height: 78px;
+    max-width: 130px;
   }
 }
 </style>
