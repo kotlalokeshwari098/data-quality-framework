@@ -17,14 +17,23 @@
             <i class="bi bi-check-circle me-1"></i>
             Accept
           </button>
-          <button @click="showDetails = !showDetails" class="btn btn-link btn-details">
+          <button
+            @click="showDetails = !showDetails"
+            class="btn btn-link btn-details"
+            :aria-expanded="showDetails"
+            aria-controls="cookie-details-section"
+          >
             {{ showDetails ? 'Hide' : 'Details' }}
           </button>
         </div>
       </div>
 
       <transition name="expand">
-        <div v-if="showDetails" class="cookie-details">
+        <div
+          v-if="showDetails"
+          class="cookie-details"
+          id="cookie-details-section"
+        >
           <div class="detail-section">
             <h6><i class="bi bi-key me-2"></i>Essential Storage</h6>
             <ul>
