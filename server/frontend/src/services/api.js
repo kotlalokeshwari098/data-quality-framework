@@ -58,7 +58,13 @@ api.interceptors.response.use(
         } else {
           isHandling401 = false;
         }
+      } catch (err) {
+        // Reset flag on error
+        isHandling401 = false;
       }
+
+      // Return early to prevent generic error handling for 401s
+      return Promise.reject(error);
     }
 
     // Handle other errors with user-friendly messages
