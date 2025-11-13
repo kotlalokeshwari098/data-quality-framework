@@ -48,3 +48,76 @@ features:
     linkText: Learn More
 ---
 
+<div class="institution-logos-home">
+  <div class="logos-container">
+    <img src="/mmci.svg" alt="Masaryk Memorial Cancer Institute" class="institution-logo logo-light" />
+    <img src="/mmci-white.svg" alt="Masaryk Memorial Cancer Institute" class="institution-logo logo-dark" />
+  </div>
+</div>
+
+<style>
+.institution-logos-home {
+  padding: 3rem 1.5rem 2.5rem;
+  margin-top: 2rem;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.logos-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: nowrap;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.institution-logo {
+  max-height: 100px;
+  max-width: 180px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Show/hide logos based on theme */
+.logo-dark {
+  display: none;
+}
+
+.dark .logo-light {
+  display: none;
+}
+
+.dark .logo-dark {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .institution-logos-home {
+    padding: 2.5rem 1rem 2rem;
+  }
+  
+  .logos-container {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .institution-logo {
+    max-height: 70px;
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logos-container {
+    gap: 1rem;
+  }
+  
+  .institution-logo {
+    max-height: 60px;
+    max-width: 100px;
+  }
+}
+</style>
