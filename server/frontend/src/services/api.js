@@ -52,13 +52,12 @@ api.interceptors.response.use(
           );
 
           // Redirect to login with session expired flag
-          await router.push({ name: 'Login', query: { sessionExpired: 'true' } });
-        }
-      } finally {
-        // Reset the flag after a short delay to allow the redirect to complete
-        setTimeout(() => {
+          await router.push({ name: 'Login', query: { sessionExpired: 'true' } }).finally(() => {
+            isHandling401 = false;
+          });
+        } else {
           isHandling401 = false;
-        }, 1000);
+        }
       }
     }
 
