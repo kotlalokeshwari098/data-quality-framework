@@ -49,15 +49,6 @@ public interface CRUDService<T, CreateDTO, UpdateDTO, ID> {
    */
   List<T> findAll(FilterDTO filter);
 
-  /**
-   * Updates an existing entity.
-   *
-   * @param id the identifier of the entity to update
-   * @param updateDTO the data transfer object containing the updated entity data
-   * @return the updated entity as a DTO
-   * @throws IllegalArgumentException if the id or updateDTO is null or contains invalid data
-   * @throws EntityNotFoundException if the entity with the given id does not exist
-   */
   T update(ID id, UpdateDTO updateDTO);
 
   /**
