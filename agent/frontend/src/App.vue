@@ -4,7 +4,8 @@
     <TopNavbar v-if="isAuth" />
 
     <main class="main-content" :class="{ 'no-sidebar': !isAuth }">
-      <router-view />
+      <router-view v-if="!errorStore.showErrorPage.value" />
+      <NotFound v-else />
     </main>
 
     <NotificationContainer ref="notificationContainer" />
@@ -17,17 +18,22 @@ import { useRouter, useRoute } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
 import TopNavbar from './components/TopNavbar.vue'
 import NotificationContainer from './components/NotificationContainer.vue'
+import NotFound from './views/NotFound.vue'
 import { isAuthenticated } from './js/api.js'
 import { notificationService } from './services/notificationService.js'
+import { useErrorStore } from './stores/errorStore.js'
 
 const router = useRouter()
 const route = useRoute()
 const notificationContainer = ref(null)
 const isAuth = ref(isAuthenticated())
+const errorStore = useErrorStore()
 
 // Watch for route changes to update auth status
 watch(() => route.path, () => {
   isAuth.value = isAuthenticated()
+  // Clear error page when navigating
+  errorStore.hideError()
 })
 
 onMounted(() => {
