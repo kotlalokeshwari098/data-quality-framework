@@ -60,21 +60,16 @@ class SecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/api/auth/login")
                     .permitAll()
                     .requestMatchers(
-                        "/",
-                        "/api",
-                        "/index.html",
-                        "/assets/**",
-                        "/favicon.ico",
-                        "/logo.svg",
-                        "/login",
                         "/api/health",
                         "/api/info",
                         "/api/swagger-ui.html",
                         "/api/swagger-ui/**",
                         "/api/api-docs/**")
                     .permitAll()
+                    .requestMatchers("/api/**")
+                    .authenticated()
                     .anyRequest()
-                    .authenticated())
+                    .permitAll())
         .exceptionHandling(
             ex ->
                 ex.accessDeniedHandler(
