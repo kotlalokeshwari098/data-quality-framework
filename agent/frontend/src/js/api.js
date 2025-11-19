@@ -62,7 +62,7 @@ api.interceptors.response.use(
             clearAuth();
             const redirect = encodeURIComponent(window.location.pathname + window.location.search);
             if (window.location.pathname !== '/login') {
-                window.location.assign(`/login?redirect=${redirect}`);
+                window.location.assign(`/login?redirect=${redirect}&sessionExpired=true`);
             }
         }
         return Promise.reject(err);
