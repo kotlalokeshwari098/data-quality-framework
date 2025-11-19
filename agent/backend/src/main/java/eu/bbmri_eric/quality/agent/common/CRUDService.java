@@ -41,6 +41,15 @@ public interface CRUDService<T, CreateDTO, UpdateDTO, ID> {
   List<T> findAll();
 
   /**
+   * Retrieves entities with pagination and sorting.
+   *
+   * @param filter the filter containing pagination and sorting parameters
+   * @return a list of entities as DTOs matching the filter criteria
+   * @throws IllegalArgumentException if the filter is null or contains invalid data
+   */
+  List<T> findAll(FilterDTO filter);
+
+  /**
    * Updates an existing entity.
    *
    * @param id the identifier of the entity to update
