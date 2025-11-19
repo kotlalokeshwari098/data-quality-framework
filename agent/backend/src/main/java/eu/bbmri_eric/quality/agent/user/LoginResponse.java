@@ -1,6 +1,5 @@
-package eu.bbmri_eric.quality.agent.auth;
+package eu.bbmri_eric.quality.agent.user;
 
-import eu.bbmri_eric.quality.agent.user.UserDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**

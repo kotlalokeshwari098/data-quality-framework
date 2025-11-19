@@ -1,5 +1,10 @@
-package eu.bbmri_eric.quality.agent.user;
+package eu.bbmri_eric.quality.agent.user.impl;
 
+import eu.bbmri_eric.quality.agent.user.AuthenticationContextService;
+import eu.bbmri_eric.quality.agent.user.PasswordChangeRequest;
+import eu.bbmri_eric.quality.agent.user.UserDTO;
+import eu.bbmri_eric.quality.agent.user.UserService;
+import eu.bbmri_eric.quality.agent.user.domain.User;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  * users.
  */
 @Service
-public class UserServiceImpl implements UserService {
+class UserServiceImpl implements UserService {
 
   private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 

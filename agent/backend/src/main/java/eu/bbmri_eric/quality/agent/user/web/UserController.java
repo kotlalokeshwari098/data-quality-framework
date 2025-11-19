@@ -1,5 +1,7 @@
-package eu.bbmri_eric.quality.agent.user;
+package eu.bbmri_eric.quality.agent.user.web;
 
+import eu.bbmri_eric.quality.agent.user.PasswordChangeRequest;
+import eu.bbmri_eric.quality.agent.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "User Management", description = "APIs for user authentication and password management")
-public class UserController {
+class UserController {
 
   private final UserService userService;
 
-  public UserController(UserService userService) {
+  UserController(UserService userService) {
     this.userService = userService;
   }
 

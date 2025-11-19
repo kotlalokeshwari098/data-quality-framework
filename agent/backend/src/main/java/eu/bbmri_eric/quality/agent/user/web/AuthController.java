@@ -1,7 +1,9 @@
-package eu.bbmri_eric.quality.agent.auth;
+package eu.bbmri_eric.quality.agent.user.web;
 
-import eu.bbmri_eric.quality.agent.user.UserDTO;
-import eu.bbmri_eric.quality.agent.user.UserDetailService;
+import eu.bbmri_eric.quality.agent.common.JwtUtil;
+import eu.bbmri_eric.quality.agent.user.CustomUserDetails;
+import eu.bbmri_eric.quality.agent.user.LoginRequest;
+import eu.bbmri_eric.quality.agent.user.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,16 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 /** REST controller for authentication operations. Handles JWT token generation for user login. */
 @RestController
 @Tag(name = "Authentication", description = "Authentication management endpoints")
-public class AuthController {
+class AuthController {
 
   private final AuthenticationManager authenticationManager;
   private final JwtUtil jwtService;
-  private final UserDetailService userDetailService;
+  private final UserDetailsService userDetailService;
 
-  public AuthController(
+  AuthController(
       AuthenticationManager authenticationManager,
       JwtUtil jwtService,
-      UserDetailService userDetailService) {
+      UserDetailsService userDetailService) {
     this.authenticationManager = authenticationManager;
     this.jwtService = jwtService;
     this.userDetailService = userDetailService;
@@ -47,7 +50,9 @@ public class AuthController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.username(), loginRequest.password()));
-    UserDTO user = userDetailService.loadUserByUsername(loginRequest.username()).getUser();
-    return ResponseEntity.ok(new LoginResponse(jwtService.generateToken(authentication), user));
+    CustomUserDetails userDetails =
+        (CustomUserDetails) userDetailService.loadUserByUsername(loginRequest.username());
+    return ResponseEntity.ok(
+        new LoginResponse(jwtService.generateToken(authentication), userDetails.getUser()));
   }
 }

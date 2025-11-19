@@ -1,5 +1,6 @@
-package eu.bbmri_eric.quality.agent.auth;
+package eu.bbmri_eric.quality.agent.config;
 
+import eu.bbmri_eric.quality.agent.common.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

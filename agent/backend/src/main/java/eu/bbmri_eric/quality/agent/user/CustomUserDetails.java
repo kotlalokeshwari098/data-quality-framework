@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.user;
 
+import eu.bbmri_eric.quality.agent.user.domain.User;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +13,7 @@ public class CustomUserDetails implements UserDetails {
   private final UserDTO user;
   private final String password;
 
-  CustomUserDetails(User user) {
+  public CustomUserDetails(User user) {
     this.user = new UserDTO(user.getUsername(), user.getId());
     this.password = user.getPassword();
     this.user.setDefaultPassword(this.password.equals(DEFAULT_ADMIN_PASS));

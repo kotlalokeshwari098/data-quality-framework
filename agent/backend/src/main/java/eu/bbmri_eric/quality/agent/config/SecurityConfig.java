@@ -3,7 +3,6 @@ package eu.bbmri_eric.quality.agent.config;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.bbmri_eric.quality.agent.auth.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

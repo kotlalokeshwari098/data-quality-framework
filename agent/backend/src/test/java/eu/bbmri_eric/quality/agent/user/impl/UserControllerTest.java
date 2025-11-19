@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.user;
+package eu.bbmri_eric.quality.agent.user.impl;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.bbmri_eric.quality.agent.auth.LoginRequest;
+import eu.bbmri_eric.quality.agent.user.LoginRequest;
+import eu.bbmri_eric.quality.agent.user.PasswordChangeRequest;
+import eu.bbmri_eric.quality.agent.user.domain.User;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;

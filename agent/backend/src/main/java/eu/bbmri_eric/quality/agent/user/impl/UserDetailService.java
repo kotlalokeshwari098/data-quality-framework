@@ -1,5 +1,6 @@
-package eu.bbmri_eric.quality.agent.user;
+package eu.bbmri_eric.quality.agent.user.impl;
 
+import eu.bbmri_eric.quality.agent.user.CustomUserDetails;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
  * UserDetailsService interface for integration with Spring Security.
  */
 @Service
-public class UserDetailService implements UserDetailsService {
+class UserDetailService implements UserDetailsService {
 
   private static final Logger logger = LoggerFactory.getLogger(UserDetailService.class);
 

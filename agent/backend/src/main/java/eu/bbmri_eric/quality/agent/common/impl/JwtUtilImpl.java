@@ -1,5 +1,6 @@
-package eu.bbmri_eric.quality.agent.auth;
+package eu.bbmri_eric.quality.agent.common.impl;
 
+import eu.bbmri_eric.quality.agent.common.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -18,14 +19,14 @@ import org.springframework.stereotype.Service;
  * functionality without OAuth2 complexity.
  */
 @Service
-public class JwtUtil {
+class JwtUtilImpl implements JwtUtil {
 
-  private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
+  private static final Logger logger = LoggerFactory.getLogger(JwtUtilImpl.class);
 
   private final SecretKey key;
   private final long jwtExpiration;
 
-  JwtUtil() {
+  JwtUtilImpl() {
     this.key = Jwts.SIG.HS256.key().build();
     this.jwtExpiration = 3600000L;
   }
@@ -36,7 +37,8 @@ public class JwtUtil {
    * @param authentication the authentication object containing user details
    * @return JWT token as a string
    */
-  String generateToken(Authentication authentication) {
+  @Override
+  public String generateToken(Authentication authentication) {
     String authorities =
         authentication.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
@@ -62,7 +64,8 @@ public class JwtUtil {
    * @return username
    * @throws JwtException if token is invalid or signature verification fails
    */
-  String extractUsername(String token) {
+  @Override
+  public String extractUsername(String token) {
     return extractClaims(token).getSubject();
   }
 
@@ -73,7 +76,8 @@ public class JwtUtil {
    * @param username username to validate against
    * @return true if token is valid and signature is verified
    */
-  boolean validateToken(String token, String username) {
+  @Override
+  public boolean validateToken(String token, String username) {
     try {
       String tokenUsername = extractUsername(token);
       boolean isValid = username.equals(tokenUsername) && !isTokenExpired(token);
@@ -97,7 +101,7 @@ public class JwtUtil {
    *
    * @param token JWT token
    * @return JWT claims
-   * @throws JwtException if signature verification fails or token is malformed
+   * @throws io.jsonwebtoken.JwtException if signature verification fails or token is malformed
    */
   private Claims extractClaims(String token) {
     // The .verifyWith(key) call ensures signature verification

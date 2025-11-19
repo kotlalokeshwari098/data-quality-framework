@@ -1,5 +1,8 @@
-package eu.bbmri_eric.quality.agent.user;
+package eu.bbmri_eric.quality.agent.user.impl;
 
+import eu.bbmri_eric.quality.agent.user.AuthenticationContextService;
+import eu.bbmri_eric.quality.agent.user.UserDTO;
+import eu.bbmri_eric.quality.agent.user.domain.User;
 import java.util.Objects;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -16,7 +19,7 @@ import org.springframework.stereotype.Component;
  * Centralizes authentication-related logic and user retrieval.
  */
 @Component
-public class AuthenticationContextServiceImpl implements AuthenticationContextService {
+class AuthenticationContextServiceImpl implements AuthenticationContextService {
 
   private static final Logger logger =
       LoggerFactory.getLogger(AuthenticationContextServiceImpl.class);
