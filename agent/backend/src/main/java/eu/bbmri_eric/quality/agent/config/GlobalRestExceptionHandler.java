@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.config;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +29,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 /** Global handler for translating exceptions into HTTP responses */
 @ControllerAdvice
-public class GlobalRestExceptionHandler {
+class GlobalRestExceptionHandler {
   private static final Logger logger = LoggerFactory.getLogger(GlobalRestExceptionHandler.class);
 
   @ExceptionHandler(org.hibernate.StaleStateException.class)

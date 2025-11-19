@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  * returns a ProblemDetail response for HTTP error 401 (Unauthorized).
  */
 @Component
-public class CustomBearerTokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
+class CustomBearerTokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
   private static final String PROBLEM_JSON_CONTENT_TYPE = "application/problem+json";
   private static final URI AUTH_ERROR_URI =
@@ -27,7 +27,7 @@ public class CustomBearerTokenAuthenticationEntryPoint implements Authentication
 
   private final ObjectMapper objectMapper;
 
-  public CustomBearerTokenAuthenticationEntryPoint(ObjectMapper objectMapper) {
+  CustomBearerTokenAuthenticationEntryPoint(ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
   }
 

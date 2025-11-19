@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 /** Start up message printer */
 @Component
-public class ApplicationReadyListener implements ApplicationListener<ApplicationReadyEvent> {
+class ApplicationReadyListener implements ApplicationListener<ApplicationReadyEvent> {
   public static final String ANSI_GREEN = "\u001B[32m";
   public static final String ANSI_RESET = "\u001B[0m";
 

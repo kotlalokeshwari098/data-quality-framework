@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -30,7 +30,7 @@ class SecurityConfig {
   private final AuthenticationEntryPoint authenticationEntryPoint;
   private final HttpRequestLoggingFilter httpRequestLoggingFilter;
 
-  public SecurityConfig(
+  SecurityConfig(
       JwtAuthenticationFilter jwtAuthenticationFilter,
       AuthenticationEntryPoint authenticationEntryPoint,
       HttpRequestLoggingFilter httpRequestLoggingFilter) {

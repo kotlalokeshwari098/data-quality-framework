@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * <p>Logging is done asynchronously to avoid blocking the main application flow.
  */
 @Component
-public class ApplicationEventLogger {
+class ApplicationEventLogger {
 
   private static final Logger log = LoggerFactory.getLogger(ApplicationEventLogger.class);
 
@@ -27,7 +27,7 @@ public class ApplicationEventLogger {
    */
   @EventListener
   @Async
-  public void logApplicationEvent(ApplicationEvent event) {
+  void logApplicationEvent(ApplicationEvent event) {
     log.debug("EVENT: {}", event.getClass().getSimpleName());
   }
 }

@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

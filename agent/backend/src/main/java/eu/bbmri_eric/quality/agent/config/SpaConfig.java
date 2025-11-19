@@ -20,7 +20,7 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
  * </ul>
  */
 @Configuration
-public class SpaConfig implements WebMvcConfigurer {
+class SpaConfig implements WebMvcConfigurer {
 
   private static final String STATIC_RESOURCE_LOCATION = "classpath:/static/";
   private static final String INDEX_HTML_PATH = "/static/index.html";
