@@ -41,10 +41,10 @@ class DuplicateIdentifierCheck implements DataQualityCheck {
         String patientId = patient.getIdElement().getIdPart();
         List<Identifier> identifiers = patient.getIdentifier();
         for (Identifier ident : identifiers) {
-          log.info(ident.toString());
+          log.debug(ident.toString());
           if (getIdentifierSystem().equals(ident.getSystem())) {
             String identValue = ident.getValue();
-            log.info(identValue);
+            log.debug(identValue);
             if (identValue != null && !identValue.isEmpty()) {
               identifierMap
                   .computeIfAbsent(identValue, k -> new ArrayList<>())
