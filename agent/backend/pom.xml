@@ -253,7 +253,6 @@
                                 <exclude>**/config/**</exclude>
                                 <exclude>**/BlazeFHIRStore.java</exclude>
                                 <exclude>**/FhirDataStore.java</exclude>
-                                <exclude>**/fhir/**</exclude>
                                 <exclude>**/AgentApplication.class</exclude>
                             </excludes>
                         </configuration>
