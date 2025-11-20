@@ -21,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * OncePerRequestFilter to ensure single execution per request.
  */
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
   private final JwtUtil jwtService;
