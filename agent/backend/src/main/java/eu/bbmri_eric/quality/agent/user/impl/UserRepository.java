@@ -1,6 +1,6 @@
 package eu.bbmri_eric.quality.agent.user.impl;
 
-import eu.bbmri_eric.quality.agent.user.domain.User;
+import eu.bbmri_eric.quality.agent.user.model.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -8,7 +8,7 @@ import java.util.Objects;
  * Common data transfer object for filtering, pagination, and sorting.
  *
  * <p>This DTO provides standard fields for querying collections with pagination and sorting
- * capabilities. It can be extended for domain-specific filtering needs.
+ * capabilities. It can be extended for model-specific filtering needs.
  */
 @Schema(description = "Common filter DTO for pagination and sorting")
 public class FilterDTO {

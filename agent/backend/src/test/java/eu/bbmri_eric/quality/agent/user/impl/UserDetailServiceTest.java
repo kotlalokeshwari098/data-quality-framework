@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import eu.bbmri_eric.quality.agent.user.AuthenticationContextService;
 import eu.bbmri_eric.quality.agent.user.UserDTO;
 import eu.bbmri_eric.quality.agent.user.UserService;
-import eu.bbmri_eric.quality.agent.user.domain.User;
+import eu.bbmri_eric.quality.agent.user.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
