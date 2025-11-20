@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.common;
 
+import eu.bbmri_eric.quality.agent.common.dto.FilterDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +20,8 @@ public interface CRUDService<T, CreateDTO, UpdateDTO, ID> {
    * @param createDTO the data transfer object containing the entity data to create
    * @return the created entity as a DTO
    * @throws IllegalArgumentException if the createDTO is null or contains invalid data
-   * @throws EntityAlreadyExistsException if an entity with the same unique identifier already
-   *     exists
+   * @throws eu.bbmri_eric.quality.agent.common.exception.EntityAlreadyExistsException if an entity
+   *     with the same unique identifier already exists
    */
   T create(CreateDTO createDTO);
 
@@ -56,7 +57,8 @@ public interface CRUDService<T, CreateDTO, UpdateDTO, ID> {
    *
    * @param id the identifier of the entity to delete
    * @throws IllegalArgumentException if the id is null
-   * @throws EntityNotFoundException if the entity with the given id does not exist
+   * @throws eu.bbmri_eric.quality.agent.common.exception.EntityNotFoundException if the entity with
+   *     the given id does not exist
    */
   void delete(ID id);
 

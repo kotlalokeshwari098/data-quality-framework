@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.common.impl;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Converter(autoApply = true)
-public class LocalDateTimeStringConverter implements AttributeConverter<LocalDateTime, String> {
+class LocalDateTimeStringConverter implements AttributeConverter<LocalDateTime, String> {
   private static final DateTimeFormatter FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

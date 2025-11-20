@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.common;
+package eu.bbmri_eric.quality.agent.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
