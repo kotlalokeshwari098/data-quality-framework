@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 /** Data Transfer Object for agent registration requests to central servers. */
 @Schema(description = "Agent registration request")
-public class AgentRegistrationRequest {
+class AgentRegistrationRequest {
 
   /** Agent ID that must be a valid UUID. */
   @NotBlank(message = "Agent ID cannot be blank")

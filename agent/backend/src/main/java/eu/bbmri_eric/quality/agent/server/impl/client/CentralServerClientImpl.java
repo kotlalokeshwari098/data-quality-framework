@@ -2,6 +2,7 @@ package eu.bbmri_eric.quality.agent.server.impl.client;
 
 import eu.bbmri_eric.quality.agent.dataquality.dto.ReportDTO;
 import eu.bbmri_eric.quality.agent.server.CentralServerClient;
+import eu.bbmri_eric.quality.agent.server.RegistrationCredentials;
 import eu.bbmri_eric.quality.agent.server.domain.ServerConnectionStatus;
 import java.util.Objects;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
  * Implementation of CentralServerClient for handling communication with central servers. Manages
  * agent registration, status checks, and health verification with remote servers.
  */
-public class CentralServerClientImpl implements CentralServerClient {
+class CentralServerClientImpl implements CentralServerClient {
 
   private static final Logger log = LoggerFactory.getLogger(CentralServerClientImpl.class);
 

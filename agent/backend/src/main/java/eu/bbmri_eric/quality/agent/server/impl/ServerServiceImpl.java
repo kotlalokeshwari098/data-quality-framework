@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.agent.server.impl;
 
+import eu.bbmri_eric.quality.agent.common.EventPublisher;
 import eu.bbmri_eric.quality.agent.server.ServerService;
 import eu.bbmri_eric.quality.agent.server.domain.Server;
 import eu.bbmri_eric.quality.agent.server.dto.DetailedServerDto;
@@ -12,7 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +22,18 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class ServerServiceImpl implements ServerService {
+class ServerServiceImpl implements ServerService {
 
   private final ServerRepository serverRepository;
   private final ModelMapper modelMapper;
   private final SettingsService settingsService;
-  private final ApplicationEventPublisher eventPublisher;
+  private final EventPublisher eventPublisher;
 
   public ServerServiceImpl(
       ServerRepository serverRepository,
       ModelMapper modelMapper,
       SettingsService settingsService,
-      ApplicationEventPublisher eventPublisher) {
+      EventPublisher eventPublisher) {
     this.serverRepository = serverRepository;
     this.modelMapper = modelMapper;
     this.settingsService = settingsService;
@@ -63,7 +63,7 @@ public class ServerServiceImpl implements ServerService {
     Server server = new Server(createDto.getUrl(), createDto.getName());
     Server savedServer = serverRepository.save(server);
     String agentId = settingsService.getSettings().getAgentId();
-    eventPublisher.publishEvent(new ServerRegistrationEvent(this, agentId, savedServer.getUrl()));
+    eventPublisher.publishEvent(new ServerRegistrationEvent(agentId, savedServer.getUrl()));
     return modelMapper.map(savedServer, ServerDto.class);
   }
 

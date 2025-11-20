@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /** Data Transfer Object for agent registration response from central servers. */
 @Schema(description = "Agent registration response")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AgentRegistrationResponse {
+class AgentRegistrationResponse {
 
   @Schema(description = "Agent information")
   private AgentInfo agent;

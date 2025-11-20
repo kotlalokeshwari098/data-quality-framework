@@ -4,7 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Schema(description = "FHIR server configuration settings")
 public class SettingsDTO {
 
@@ -45,37 +49,5 @@ public class SettingsDTO {
     this.fhirUrl = fhirUrl;
     this.fhirUsername = fhirUsername;
     this.fhirPassword = fhirPassword;
-  }
-
-  public String getFhirUrl() {
-    return fhirUrl;
-  }
-
-  public void setFhirUrl(String fhirUrl) {
-    this.fhirUrl = fhirUrl;
-  }
-
-  public String getFhirUsername() {
-    return fhirUsername;
-  }
-
-  public void setFhirUsername(String fhirUsername) {
-    this.fhirUsername = fhirUsername;
-  }
-
-  public String getFhirPassword() {
-    return fhirPassword;
-  }
-
-  public void setFhirPassword(String fhirPassword) {
-    this.fhirPassword = fhirPassword;
-  }
-
-  public String getAgentId() {
-    return agentId;
-  }
-
-  public void setAgentId(String agentId) {
-    this.agentId = agentId;
   }
 }

@@ -1,11 +1,13 @@
-package eu.bbmri_eric.quality.agent.server.impl.client;
+package eu.bbmri_eric.quality.agent.server;
 
 import java.util.Objects;
+import lombok.Getter;
 
 /**
  * Data class representing registration credentials returned from a central server. Contains the
  * clientId and clientSecret needed for authentication.
  */
+@Getter
 public class RegistrationCredentials {
   private final String clientId;
   private final String clientSecret;
@@ -13,14 +15,6 @@ public class RegistrationCredentials {
   public RegistrationCredentials(String clientId, String clientSecret) {
     this.clientId = Objects.requireNonNull(clientId, "ClientId cannot be null");
     this.clientSecret = Objects.requireNonNull(clientSecret, "ClientSecret cannot be null");
-  }
-
-  public String getClientId() {
-    return clientId;
-  }
-
-  public String getClientSecret() {
-    return clientSecret;
   }
 
   @Override

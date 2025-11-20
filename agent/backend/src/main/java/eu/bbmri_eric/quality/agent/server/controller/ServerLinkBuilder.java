@@ -10,7 +10,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class ServerLinkBuilder {
+final class ServerLinkBuilder {
 
   public EntityModel<ServerDto> toModel(ServerDto serverDto) {
     return EntityModel.of(serverDto)

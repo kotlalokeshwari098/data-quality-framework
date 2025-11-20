@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * <p>Provides CRUD operations for managing central server configurations in the database.
  */
 @Repository
-public interface ServerRepository extends CrudRepository<Server, String> {
+interface ServerRepository extends CrudRepository<Server, String> {
   Optional<Server> findByUrl(String url);
 
   List<Server> findAllByStatusIs(ServerConnectionStatus status);

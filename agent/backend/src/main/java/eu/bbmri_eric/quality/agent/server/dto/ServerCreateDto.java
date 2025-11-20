@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 import org.springframework.web.util.HtmlUtils;
 
 /**
@@ -11,10 +12,10 @@ import org.springframework.web.util.HtmlUtils;
  *
  * <p>Contains the essential fields required to create a new server entity.
  */
+@Getter
 @Schema(description = "Data required to create a new server")
 public class ServerCreateDto {
 
-  /** URL of the central server. */
   @NotBlank(message = "URL is required")
   @Size(max = 500, message = "URL must not exceed 500 characters")
   @Pattern(
@@ -26,7 +27,6 @@ public class ServerCreateDto {
       requiredMode = Schema.RequiredMode.REQUIRED)
   private String url;
 
-  /** Display name for the server. */
   @NotBlank(message = "Name is required")
   @Size(max = 255, message = "Name must not exceed 255 characters")
   @Schema(
@@ -50,30 +50,12 @@ public class ServerCreateDto {
   }
 
   /**
-   * Gets the URL.
-   *
-   * @return the URL
-   */
-  public String getUrl() {
-    return url;
-  }
-
-  /**
    * Sets the URL.
    *
    * @param url the URL
    */
   public void setUrl(String url) {
     this.url = url != null ? url.trim() : null;
-  }
-
-  /**
-   * Gets the name.
-   *
-   * @return the name
-   */
-  public String getName() {
-    return name;
   }
 
   /**

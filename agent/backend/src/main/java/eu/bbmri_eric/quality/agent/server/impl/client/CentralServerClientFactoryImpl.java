@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.agent.server.impl.client;
 
 import eu.bbmri_eric.quality.agent.server.CentralServerClient;
+import eu.bbmri_eric.quality.agent.server.CentralServerClientFactory;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -12,12 +13,13 @@ import org.springframework.web.client.RestTemplate;
  * client configured for a specific server without managing dependencies directly.
  */
 @Component
-public class CentralServerClientFactory {
+class CentralServerClientFactoryImpl implements CentralServerClientFactory {
 
   private final RestTemplate restTemplate;
   private final BuildProperties buildProperties;
 
-  public CentralServerClientFactory(RestTemplate restTemplate, BuildProperties buildProperties) {
+  public CentralServerClientFactoryImpl(
+      RestTemplate restTemplate, BuildProperties buildProperties) {
     this.restTemplate = restTemplate;
     this.buildProperties = buildProperties;
   }
@@ -31,6 +33,7 @@ public class CentralServerClientFactory {
    * @param clientSecret the client secret for authentication
    * @return a configured CentralServerClient instance
    */
+  @Override
   public CentralServerClient createClient(
       String agentId, String serverUrl, String clientId, String clientSecret) {
     return new CentralServerClientImpl(

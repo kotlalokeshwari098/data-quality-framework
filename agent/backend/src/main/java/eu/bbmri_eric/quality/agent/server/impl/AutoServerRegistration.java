@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  * registers the server if it's provided and not already registered.
  */
 @Component
-public class AutoServerRegistration implements ApplicationRunner {
+class AutoServerRegistration implements ApplicationRunner {
 
   private static final Logger log = LoggerFactory.getLogger(AutoServerRegistration.class);
 

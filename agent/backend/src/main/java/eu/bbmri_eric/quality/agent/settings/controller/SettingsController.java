@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/settings")
 @Tag(name = "Settings", description = "FHIR server settings management")
-public class SettingsController {
+class SettingsController {
 
   private final SettingsService settingsService;
 

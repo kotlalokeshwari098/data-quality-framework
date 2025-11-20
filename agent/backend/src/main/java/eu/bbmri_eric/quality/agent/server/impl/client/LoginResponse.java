@@ -1,15 +1,12 @@
 package eu.bbmri_eric.quality.agent.server.impl.client;
 
-public class LoginResponse {
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+class LoginResponse {
   private String token;
 
   public LoginResponse() {}
-
-  public String getToken() {
-    return token;
-  }
-
-  public void setToken(String token) {
-    this.token = token;
-  }
 }

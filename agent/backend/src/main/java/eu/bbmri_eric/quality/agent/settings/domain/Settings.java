@@ -5,7 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 public class Settings {
 
@@ -25,10 +29,6 @@ public class Settings {
     this.value = value;
   }
 
-  public String getName() {
-    return name;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
@@ -39,17 +39,5 @@ public class Settings {
   @Override
   public int hashCode() {
     return Objects.hash(name, value);
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 }

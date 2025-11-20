@@ -1,7 +1,7 @@
 package eu.bbmri_eric.quality.agent.server.impl;
 
 import eu.bbmri_eric.quality.agent.server.CentralServerClient;
-import eu.bbmri_eric.quality.agent.server.impl.client.CentralServerClientFactory;
+import eu.bbmri_eric.quality.agent.server.CentralServerClientFactory;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

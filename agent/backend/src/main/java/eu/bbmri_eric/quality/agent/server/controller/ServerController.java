@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/servers")
 @Tag(name = "Server Management", description = "APIs for managing servers")
-public class ServerController {
+class ServerController {
 
   private final ServerService serverService;
   private final ServerLinkBuilder linkBuilder;

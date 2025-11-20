@@ -1,6 +1,6 @@
 package eu.bbmri_eric.quality.agent.server.impl.client;
 
-public enum AgentStatus {
+enum AgentStatus {
   PENDING,
   ACTIVE,
   INACTIVE,

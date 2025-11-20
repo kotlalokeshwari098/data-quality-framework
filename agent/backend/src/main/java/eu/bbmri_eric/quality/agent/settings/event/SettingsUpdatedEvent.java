@@ -1,13 +1,11 @@
 package eu.bbmri_eric.quality.agent.settings.event;
 
 import eu.bbmri_eric.quality.agent.settings.dto.SettingsDTO;
-import org.springframework.context.ApplicationEvent;
 
-public class SettingsUpdatedEvent extends ApplicationEvent {
+public class SettingsUpdatedEvent {
   private final SettingsDTO updatedSettings;
 
-  public SettingsUpdatedEvent(Object source, SettingsDTO settings) {
-    super(source);
+  public SettingsUpdatedEvent(SettingsDTO settings) {
     this.updatedSettings = settings;
   }
 

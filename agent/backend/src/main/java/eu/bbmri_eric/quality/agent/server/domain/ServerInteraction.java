@@ -11,6 +11,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Entity representing a log entry of an interaction with a central server.
@@ -18,31 +20,56 @@ import java.util.Objects;
  * <p>This entity tracks all operations performed on or with a server, including configuration
  * updates and communication attempts. Each interaction is timestamped and categorized by type.
  */
+@Getter
+@Setter
 @Entity
 public class ServerInteraction {
 
-  /** Auto-generated unique identifier for the interaction. */
+  /**
+   * Auto-generated unique identifier for the interaction. -- GETTER -- Gets the unique identifier
+   * of the interaction.
+   *
+   * @return the interaction ID
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  /** Type of interaction performed. */
+  /**
+   * Type of interaction performed. -- GETTER -- Gets the type of interaction.
+   *
+   * @return the interaction type
+   */
   @NotNull
   @Enumerated(EnumType.STRING)
   @Column(name = "type", nullable = false)
   private InteractionType type;
 
-  /** Detailed description of the interaction. */
+  /**
+   * Detailed description of the interaction. -- GETTER -- Gets the description of the interaction.
+   *
+   * @return the interaction description
+   */
   @NotBlank
   @Column(name = "description", nullable = false)
   private String description;
 
-  /** Timestamp when the interaction occurred. */
+  /**
+   * Timestamp when the interaction occurred. -- GETTER -- Gets the timestamp when the interaction
+   * occurred.
+   *
+   * @return the interaction timestamp
+   */
   @NotNull
   @Column(name = "timestamp")
-  private LocalDateTime timestamp = LocalDateTime.now();
+  private final LocalDateTime timestamp = LocalDateTime.now();
 
-  /** The ID of the server this interaction belongs to. */
+  /**
+   * The ID of the server this interaction belongs to. -- GETTER -- Gets the ID of the server this
+   * interaction belongs to.
+   *
+   * @return the server ID
+   */
   @NotNull
   @Column(nullable = false)
   private String serverId;
@@ -61,87 +88,6 @@ public class ServerInteraction {
   public ServerInteraction(InteractionType type, String description) {
     this.type = type;
     this.description = description;
-  }
-
-  /**
-   * Gets the unique identifier of the interaction.
-   *
-   * @return the interaction ID
-   */
-  public Long getId() {
-    return id;
-  }
-
-  /**
-   * Gets the type of interaction.
-   *
-   * @return the interaction type
-   */
-  public InteractionType getType() {
-    return type;
-  }
-
-  /**
-   * Sets the type of interaction.
-   *
-   * @param type the interaction type
-   */
-  public void setType(InteractionType type) {
-    this.type = type;
-  }
-
-  /**
-   * Gets the description of the interaction.
-   *
-   * @return the interaction description
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  /**
-   * Sets the description of the interaction.
-   *
-   * @param description the interaction description
-   */
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  /**
-   * Gets the timestamp when the interaction occurred.
-   *
-   * @return the interaction timestamp
-   */
-  public LocalDateTime getTimestamp() {
-    return timestamp;
-  }
-
-  /**
-   * Sets the timestamp of the interaction.
-   *
-   * @param timestamp the interaction timestamp
-   */
-  public void setTimestamp(LocalDateTime timestamp) {
-    this.timestamp = timestamp;
-  }
-
-  /**
-   * Gets the ID of the server this interaction belongs to.
-   *
-   * @return the server ID
-   */
-  public String getServerId() {
-    return serverId;
-  }
-
-  /**
-   * Sets the ID of the server this interaction belongs to.
-   *
-   * @param serverId the server ID
-   */
-  public void setServerId(String serverId) {
-    this.serverId = serverId;
   }
 
   @Override

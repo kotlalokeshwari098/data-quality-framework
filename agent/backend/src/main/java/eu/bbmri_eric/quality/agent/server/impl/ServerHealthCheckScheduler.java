@@ -1,10 +1,10 @@
 package eu.bbmri_eric.quality.agent.server.impl;
 
+import eu.bbmri_eric.quality.agent.server.CentralServerClientFactory;
 import eu.bbmri_eric.quality.agent.server.domain.InteractionType;
 import eu.bbmri_eric.quality.agent.server.domain.Server;
 import eu.bbmri_eric.quality.agent.server.domain.ServerConnectionStatus;
 import eu.bbmri_eric.quality.agent.server.domain.ServerInteraction;
-import eu.bbmri_eric.quality.agent.server.impl.client.CentralServerClientFactory;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;

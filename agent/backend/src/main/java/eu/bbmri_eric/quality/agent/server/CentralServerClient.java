@@ -2,7 +2,6 @@ package eu.bbmri_eric.quality.agent.server;
 
 import eu.bbmri_eric.quality.agent.dataquality.dto.ReportDTO;
 import eu.bbmri_eric.quality.agent.server.domain.ServerConnectionStatus;
-import eu.bbmri_eric.quality.agent.server.impl.client.RegistrationCredentials;
 
 public interface CentralServerClient {
   RegistrationCredentials register() throws Exception;

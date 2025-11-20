@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.agent.settings.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.bbmri_eric.quality.agent.common.EventPublisher;
 import eu.bbmri_eric.quality.agent.settings.SettingsService;
 import eu.bbmri_eric.quality.agent.settings.domain.Settings;
 import eu.bbmri_eric.quality.agent.settings.dto.SettingsDTO;
@@ -8,7 +9,6 @@ import eu.bbmri_eric.quality.agent.settings.event.SettingsUpdatedEvent;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +18,11 @@ public class SettingsServiceImpl implements SettingsService {
 
   private final ObjectMapper objectMapper;
   private final SettingsRepository settingsRepository;
-  private final ApplicationEventPublisher eventPublisher;
+  private final EventPublisher eventPublisher;
 
   public SettingsServiceImpl(
       SettingsRepository settingsRepository,
-      ApplicationEventPublisher eventPublisher,
+      EventPublisher eventPublisher,
       ObjectMapper objectMapper) {
     this.settingsRepository = settingsRepository;
     this.eventPublisher = eventPublisher;
@@ -39,7 +39,7 @@ public class SettingsServiceImpl implements SettingsService {
   public SettingsDTO updateSettings(SettingsDTO dto) {
     Map<String, Object> dtoMap = objectMapper.convertValue(dto, Map.class);
     dtoMap.forEach((name, value) -> updateSetting(name, value != null ? value.toString() : null));
-    eventPublisher.publishEvent(new SettingsUpdatedEvent(this, dto));
+    eventPublisher.publishEvent(new SettingsUpdatedEvent(dto));
     return dto;
   }
 
