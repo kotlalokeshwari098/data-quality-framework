@@ -251,8 +251,8 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/config/**</exclude>
-                                <exclude>**/datastore/**</exclude>
-                                <exclude>**/server/**</exclude>
+                                <exclude>**/BlazeFHIRStore.java</exclude>
+                                <exclude>**/FhirDataStore.java</exclude>
                                 <exclude>**/fhir/**</exclude>
                                 <exclude>**/AgentApplication.class</exclude>
                             </excludes>
