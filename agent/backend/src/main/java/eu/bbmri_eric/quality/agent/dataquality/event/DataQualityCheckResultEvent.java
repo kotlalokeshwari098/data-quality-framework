@@ -2,9 +2,10 @@ package eu.bbmri_eric.quality.agent.dataquality.event;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import org.springframework.context.ApplicationEvent;
+import lombok.Getter;
 
-public class DataQualityCheckResult extends ApplicationEvent {
+@Getter
+public class DataQualityCheckResultEvent {
 
   private final Long checkId;
   private final String checkName;
@@ -17,8 +18,7 @@ public class DataQualityCheckResult extends ApplicationEvent {
   private final float epsilon;
   private final String stratum;
 
-  public DataQualityCheckResult(
-      Object source,
+  public DataQualityCheckResultEvent(
       Long checkId,
       String checkName,
       int rawValue,
@@ -29,7 +29,6 @@ public class DataQualityCheckResult extends ApplicationEvent {
       int errorThreshold,
       float epsilon,
       String stratum) {
-    super(source);
     this.checkId = checkId;
     this.checkName = checkName;
     this.rawValue = rawValue;
@@ -40,45 +39,5 @@ public class DataQualityCheckResult extends ApplicationEvent {
     this.errorThreshold = errorThreshold;
     this.epsilon = epsilon;
     this.stratum = stratum;
-  }
-
-  public Long getCheckId() {
-    return checkId;
-  }
-
-  public int getRawValue() {
-    return rawValue;
-  }
-
-  public String getError() {
-    return error;
-  }
-
-  public LocalDateTime getFinishedAt() {
-    return finishedAt;
-  }
-
-  public int getWarningThreshold() {
-    return warningThreshold;
-  }
-
-  public int getErrorThreshold() {
-    return errorThreshold;
-  }
-
-  public String getCheckName() {
-    return checkName;
-  }
-
-  public float getEpsilon() {
-    return epsilon;
-  }
-
-  public Set<String> getPatientSet() {
-    return patientSet;
-  }
-
-  public String getStratum() {
-    return stratum;
   }
 }

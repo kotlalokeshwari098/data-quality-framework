@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/entities")
-public class EntityController {
+class EntityController {
   private final DataStore dataStore;
 
   EntityController(DataStore dataStore) {

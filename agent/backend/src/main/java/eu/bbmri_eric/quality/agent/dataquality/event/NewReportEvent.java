@@ -1,16 +1,9 @@
 package eu.bbmri_eric.quality.agent.dataquality.event;
 
-import org.springframework.context.ApplicationEvent;
-
-public class NewReportEvent extends ApplicationEvent {
+public class NewReportEvent {
   private Long reportId;
 
-  public NewReportEvent(Object source) {
-    super(source);
-  }
-
-  public NewReportEvent(Object source, Long reportId) {
-    super(source);
+  public NewReportEvent(Long reportId) {
     this.reportId = reportId;
   }
 

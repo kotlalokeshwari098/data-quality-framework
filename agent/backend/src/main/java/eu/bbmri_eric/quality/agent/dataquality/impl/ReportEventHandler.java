@@ -1,14 +1,12 @@
 package eu.bbmri_eric.quality.agent.dataquality.impl;
 
+import eu.bbmri_eric.quality.agent.common.EventPublisher;
 import eu.bbmri_eric.quality.agent.dataquality.FHIRStore;
 import eu.bbmri_eric.quality.agent.dataquality.domain.Report;
 import eu.bbmri_eric.quality.agent.dataquality.domain.ReportStatus;
-import eu.bbmri_eric.quality.agent.dataquality.event.DQCheckResultsGathered;
+import eu.bbmri_eric.quality.agent.dataquality.event.DQCheckResultsGatheredEvent;
 import eu.bbmri_eric.quality.agent.dataquality.event.NewReportEvent;
 import eu.bbmri_eric.quality.agent.dataquality.event.ReportGeneratedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
@@ -19,13 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RepositoryEventHandler
 class ReportEventHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(ReportEventHandler.class);
-  private final ApplicationEventPublisher publisher;
+  private final EventPublisher publisher;
   private final ReportRepository reportRepository;
   private final FHIRStore fhirStore;
 
   public ReportEventHandler(
-      ApplicationEventPublisher publisher, ReportRepository reportRepository, FHIRStore fhirStore) {
+      EventPublisher publisher, ReportRepository reportRepository, FHIRStore fhirStore) {
     this.publisher = publisher;
     this.reportRepository = reportRepository;
     this.fhirStore = fhirStore;
@@ -34,12 +31,12 @@ class ReportEventHandler {
   @HandleAfterCreate
   @Transactional
   public void onAfterCreate(Report report) {
-    publisher.publishEvent(new NewReportEvent(this, report.getId()));
+    publisher.publishEvent(new NewReportEvent(report.getId()));
   }
 
   @EventListener
   @Transactional
-  void onResultsGathered(DQCheckResultsGathered event) {
+  void onResultsGathered(DQCheckResultsGatheredEvent event) {
     reportRepository
         .findById(event.getReportId())
         .ifPresent(
@@ -47,7 +44,7 @@ class ReportEventHandler {
               int count = fhirStore.countResources("Patient");
               report.setNumberOfEntities(count);
               report.setStatus(ReportStatus.GENERATED);
-              publisher.publishEvent(new ReportGeneratedEvent(this, report.getId()));
+              publisher.publishEvent(new ReportGeneratedEvent(report.getId()));
             });
   }
 }

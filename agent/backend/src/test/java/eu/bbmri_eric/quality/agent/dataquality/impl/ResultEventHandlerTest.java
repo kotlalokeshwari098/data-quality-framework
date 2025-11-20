@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import eu.bbmri_eric.quality.agent.dataquality.domain.Report;
 import eu.bbmri_eric.quality.agent.dataquality.domain.ReportStatus;
 import eu.bbmri_eric.quality.agent.dataquality.domain.Result;
-import eu.bbmri_eric.quality.agent.dataquality.event.DataQualityCheckResult;
+import eu.bbmri_eric.quality.agent.dataquality.event.DataQualityCheckResultEvent;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -28,9 +28,8 @@ class ResultEventHandlerTest {
     when(mockRepo.findAllByStatusIs(ReportStatus.GENERATING)).thenReturn(List.of(mockReport));
     ResultEventHandler handler = new ResultEventHandler(mockRepo);
     Set<String> expectedPatients = Set.of("patientA", "patientB", "patientC");
-    DataQualityCheckResult event =
-        new DataQualityCheckResult(
-            this,
+    DataQualityCheckResultEvent event =
+        new DataQualityCheckResultEvent(
             123L,
             "Patient List Check",
             3,

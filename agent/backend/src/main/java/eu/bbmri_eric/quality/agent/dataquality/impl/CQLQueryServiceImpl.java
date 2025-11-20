@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Service implementation for managing CQL queries. */
 @Service
 @Transactional
-public class CQLQueryServiceImpl implements CQLQueryService {
+class CQLQueryServiceImpl implements CQLQueryService {
 
   private final CQLCheckRepository cqlCheckRepository;
   private final ModelMapper modelMapper;

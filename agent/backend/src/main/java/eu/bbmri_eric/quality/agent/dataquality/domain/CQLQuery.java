@@ -13,10 +13,14 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONObject;
 
 /** A data quality check utilizing the Hl7 Clinical Quality Language queries for evaluation. */
 @Entity(name = "cql_check")
+@Getter
+@Setter
 public class CQLQuery implements DataQualityCheck {
 
   @Id
@@ -30,7 +34,7 @@ public class CQLQuery implements DataQualityCheck {
   private int errorThreshold = 30;
   private float epsilonBudget = 1.0f;
 
-  public CQLQuery() {}
+  protected CQLQuery() {}
 
   public CQLQuery(
       Long id, @NotNull String name, @NotNull String description, @NotNull String query) {
@@ -85,63 +89,5 @@ public class CQLQuery implements DataQualityCheck {
     } catch (Exception | NoSuchMethodError e) {
       return new ResultDTO(e.getMessage());
     }
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
-  }
-
-  public int getWarningThreshold() {
-    return warningThreshold;
-  }
-
-  public void setWarningThreshold(int warningThreshold) {
-    this.warningThreshold = warningThreshold;
-  }
-
-  public int getErrorThreshold() {
-    return errorThreshold;
-  }
-
-  public void setErrorThreshold(int errorThreshold) {
-    this.errorThreshold = errorThreshold;
-  }
-
-  public float getEpsilonBudget() {
-    return epsilonBudget;
-  }
-
-  public void setEpsilonBudget(float epsilonBudget) {
-    this.epsilonBudget = epsilonBudget;
   }
 }

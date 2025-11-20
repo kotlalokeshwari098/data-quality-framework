@@ -12,8 +12,20 @@ import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * Represents a data quality report.
+ *
+ * <p>This entity encapsulates the results of a data quality assessment, including the timestamp of
+ * generation, current status, and a collection of individual quality check results. Each report
+ * tracks the epsilon budget used for differential privacy operations and the number of entities
+ * assessed.
+ */
 @Entity
+@Getter
+@Setter
 public class Report {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,44 +46,8 @@ public class Report {
 
   public Report() {}
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public ReportStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(ReportStatus status) {
-    this.status = status;
-  }
-
   public void addResult(Result result) {
     results.add(result);
-  }
-
-  public List<Result> getResults() {
-    return results;
-  }
-
-  public float getEpsilonBudget() {
-    return epsilonBudget;
-  }
-
-  public void setEpsilonBudget(float epsilonBudget) {
-    this.epsilonBudget = epsilonBudget;
-  }
-
-  public int getNumberOfEntities() {
-    return numberOfEntities;
-  }
-
-  public void setNumberOfEntities(int numberOfEntities) {
-    this.numberOfEntities = numberOfEntities;
   }
 
   @PrePersist

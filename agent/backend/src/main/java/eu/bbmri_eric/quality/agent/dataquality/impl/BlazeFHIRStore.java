@@ -39,8 +39,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class Blaze implements FHIRStore {
-  private static final Logger log = LoggerFactory.getLogger(Blaze.class);
+class BlazeFHIRStore implements FHIRStore {
+  private static final Logger log = LoggerFactory.getLogger(BlazeFHIRStore.class);
   private volatile IGenericClient client;
   private volatile RestTemplate restTemplate;
   private volatile String fhirUrl;
@@ -48,7 +48,7 @@ public class Blaze implements FHIRStore {
   private final HttpHeaders headers;
   private final FhirContext ctx;
 
-  public Blaze(RestTemplateBuilder restTemplateBuilder) {
+  BlazeFHIRStore(RestTemplateBuilder restTemplateBuilder) {
     this.restTemplateBuilder = restTemplateBuilder;
 
     this.ctx =

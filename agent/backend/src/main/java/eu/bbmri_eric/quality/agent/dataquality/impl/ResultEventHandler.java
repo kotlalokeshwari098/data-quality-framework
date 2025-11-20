@@ -4,7 +4,7 @@ import eu.bbmri_eric.quality.agent.dataquality.DifferentialPrivacyUtil;
 import eu.bbmri_eric.quality.agent.dataquality.domain.Report;
 import eu.bbmri_eric.quality.agent.dataquality.domain.ReportStatus;
 import eu.bbmri_eric.quality.agent.dataquality.domain.Result;
-import eu.bbmri_eric.quality.agent.dataquality.event.DataQualityCheckResult;
+import eu.bbmri_eric.quality.agent.dataquality.event.DataQualityCheckResultEvent;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ class ResultEventHandler {
 
   @EventListener
   @Transactional
-  void onNewResult(DataQualityCheckResult event) {
+  void onNewResult(DataQualityCheckResultEvent event) {
     List<Report> reports = reportRepository.findAllByStatusIs(ReportStatus.GENERATING);
     reports.forEach(
         report -> {

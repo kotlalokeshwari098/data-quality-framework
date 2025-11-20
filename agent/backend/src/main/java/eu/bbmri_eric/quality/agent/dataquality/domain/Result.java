@@ -10,8 +10,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * Represents a single data quality check result.
+ *
+ * <p>This entity captures the outcome of executing a data quality check, including the raw and
+ * obfuscated values, threshold comparisons, and any errors encountered. Results can be stratified
+ * and include a collection of affected patient identifiers.
+ */
 @Entity
+@Getter
+@Setter
 public class Result {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,79 +68,11 @@ public class Result {
     this.stratum = stratum;
   }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public String getCheckName() {
-    return checkName;
-  }
-
-  public Long getCheckId() {
-    return checkId;
-  }
-
-  public int getRawValue() {
-    return rawValue;
-  }
-
-  public Double getObfuscatedValue() {
-    return obfuscatedValue;
-  }
-
-  public int getWarningThreshold() {
-    return warningThreshold;
-  }
-
-  public void setWarningThreshold(int warningThreshold) {
-    this.warningThreshold = warningThreshold;
-  }
-
-  public int getErrorThreshold() {
-    return errorThreshold;
-  }
-
-  public void setErrorThreshold(int errorThreshold) {
-    this.errorThreshold = errorThreshold;
-  }
-
-  public float getEpsilon() {
-    return epsilon;
-  }
-
-  public void setEpsilon(float epsilon) {
-    this.epsilon = epsilon;
-  }
-
-  public void setObfuscatedValue(Double obfuscatedValue) {
-    this.obfuscatedValue = obfuscatedValue;
-  }
-
-  public String getError() {
-    return error;
-  }
-
   public void setError(String error) {
     if (error != null && error.length() > MAX_ERROR_LENGTH) {
       this.error = error.substring(0, MAX_ERROR_LENGTH - 20) + "...[truncated]";
     } else {
       this.error = error;
     }
-  }
-
-  public void setPatients(Set<String> patients) {
-    this.patients = patients;
-  }
-
-  public Set<String> getPatients() {
-    return patients;
-  }
-
-  public String getStratum() {
-    return stratum;
   }
 }

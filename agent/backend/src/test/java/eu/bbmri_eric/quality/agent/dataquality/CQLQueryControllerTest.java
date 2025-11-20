@@ -27,10 +27,7 @@ class CQLQueryControllerTest {
   @Test
   @WithUserDetails("admin")
   void post_validCQLQuery_createdAndRetrievable() throws Exception {
-    CQLQuery check = new CQLQuery();
-    check.setName("Test CQL");
-    check.setDescription("Checks patients with diabetes");
-    check.setQuery("define Test: true");
+    CQLQuery check = new CQLQuery("Test CQL", "Checks patients with diabetes", "define Test: true");
 
     String location =
         mockMvc
@@ -56,10 +53,7 @@ class CQLQueryControllerTest {
   @Test
   @WithUserDetails("admin")
   void put_existingCQLQuery_updatedSuccessfully() throws Exception {
-    CQLQuery check = new CQLQuery();
-    check.setName("UpdateTest");
-    check.setDescription("Initial");
-    check.setQuery("define Test: false");
+    CQLQuery check = new CQLQuery("UpdateTest", "Initial", "define Test: false");
 
     String location =
         mockMvc
@@ -88,10 +82,7 @@ class CQLQueryControllerTest {
   @Test
   @WithUserDetails("admin")
   void delete_existingCQLQuery_deletedSuccessfully() throws Exception {
-    CQLQuery check = new CQLQuery();
-    check.setName("DeleteTest");
-    check.setDescription("To be deleted");
-    check.setQuery("define Test: exists [Patient]");
+    CQLQuery check = new CQLQuery("DeleteTest", "To be deleted", "define Test: exists [Patient]");
 
     String location =
         mockMvc
@@ -111,24 +102,16 @@ class CQLQueryControllerTest {
   @Test
   @WithUserDetails("admin")
   void post_invalidCQLQuery_missingFields_returnsBadRequest() throws Exception {
-    CQLQuery invalidCheck = new CQLQuery();
-    invalidCheck.setName("Invalid Query");
+    String invalidJson = "{\"name\": \"Invalid Query\"}";
     mockMvc
-        .perform(
-            post(CQLEndpoint)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidCheck)))
+        .perform(post(CQLEndpoint).contentType(MediaType.APPLICATION_JSON).content(invalidJson))
         .andExpect(status().isConflict());
   }
 
   @Test
   @WithUserDetails("admin")
   void put_nonExistingCQLQuery_returnsNotFound() throws Exception {
-    CQLQuery check = new CQLQuery();
-    check.setId(9999L);
-    check.setName("Nonexistent");
-    check.setDescription("No such ID");
-    check.setQuery("define Test: false");
+    CQLQuery check = new CQLQuery(9999L, "Nonexistent", "No such ID", "define Test: false");
 
     mockMvc
         .perform(

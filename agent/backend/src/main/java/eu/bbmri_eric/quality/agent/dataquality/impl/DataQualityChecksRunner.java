@@ -1,10 +1,11 @@
 package eu.bbmri_eric.quality.agent.dataquality.impl;
 
+import eu.bbmri_eric.quality.agent.common.EventPublisher;
 import eu.bbmri_eric.quality.agent.dataquality.FHIRStore;
 import eu.bbmri_eric.quality.agent.dataquality.domain.DataQualityCheck;
 import eu.bbmri_eric.quality.agent.dataquality.dto.ResultDTO;
-import eu.bbmri_eric.quality.agent.dataquality.event.DQCheckResultsGathered;
-import eu.bbmri_eric.quality.agent.dataquality.event.DataQualityCheckResult;
+import eu.bbmri_eric.quality.agent.dataquality.event.DQCheckResultsGatheredEvent;
+import eu.bbmri_eric.quality.agent.dataquality.event.DataQualityCheckResultEvent;
 import eu.bbmri_eric.quality.agent.dataquality.event.NewReportEvent;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +21,11 @@ class DataQualityChecksRunner {
 
   private static final Logger log = LoggerFactory.getLogger(DataQualityChecksRunner.class);
   private final CQLCheckRepository repository;
-  private final ApplicationEventPublisher eventPublisher;
+  private final EventPublisher eventPublisher;
   private final FHIRStore fhirStore;
 
   DataQualityChecksRunner(
-      CQLCheckRepository repository,
-      ApplicationEventPublisher eventPublisher,
-      FHIRStore fhirStore) {
+      CQLCheckRepository repository, EventPublisher eventPublisher, FHIRStore fhirStore) {
     this.repository = repository;
     this.eventPublisher = eventPublisher;
     this.fhirStore = fhirStore;
@@ -49,8 +47,7 @@ class DataQualityChecksRunner {
         for (Map.Entry<String, ResultDTO> result : results.entrySet()) {
           String stratum = result.getKey();
           eventPublisher.publishEvent(
-              new DataQualityCheckResult(
-                  this,
+              new DataQualityCheckResultEvent(
                   dataQualityCheck.getId(),
                   dataQualityCheck.getName() + " (%s)".formatted(result.getKey()),
                   result.getValue().rawResult(),
@@ -65,8 +62,7 @@ class DataQualityChecksRunner {
       } else {
         ResultDTO result = dataQualityCheck.execute(fhirStore);
         eventPublisher.publishEvent(
-            new DataQualityCheckResult(
-                this,
+            new DataQualityCheckResultEvent(
                 dataQualityCheck.getId(),
                 dataQualityCheck.getName(),
                 result.rawResult(),
@@ -79,6 +75,6 @@ class DataQualityChecksRunner {
                 null));
       }
     }
-    eventPublisher.publishEvent(new DQCheckResultsGathered(this, event.getReportId()));
+    eventPublisher.publishEvent(new DQCheckResultsGatheredEvent(event.getReportId()));
   }
 }

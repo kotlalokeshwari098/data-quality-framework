@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReportServiceImpl implements ReportService {
+class ReportServiceImpl implements ReportService {
 
   private static final Logger log = LoggerFactory.getLogger(ReportServiceImpl.class);
   private final ReportRepository reportRepository;

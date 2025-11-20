@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FhirDataStore implements DataStore {
+class FhirDataStore implements DataStore {
   private final FHIRStore fhirStore;
 
   public FhirDataStore(FHIRStore fhirStore) {
