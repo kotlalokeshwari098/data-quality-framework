@@ -1,5 +1,7 @@
-package eu.bbmri_eric.quality.agent.settings;
+package eu.bbmri_eric.quality.agent.settings.controller;
 
+import eu.bbmri_eric.quality.agent.settings.SettingsService;
+import eu.bbmri_eric.quality.agent.settings.dto.SettingsDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

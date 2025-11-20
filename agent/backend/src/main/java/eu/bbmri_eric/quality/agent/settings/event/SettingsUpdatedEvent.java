@@ -1,5 +1,6 @@
-package eu.bbmri_eric.quality.agent.settings;
+package eu.bbmri_eric.quality.agent.settings.event;
 
+import eu.bbmri_eric.quality.agent.settings.dto.SettingsDTO;
 import org.springframework.context.ApplicationEvent;
 
 public class SettingsUpdatedEvent extends ApplicationEvent {

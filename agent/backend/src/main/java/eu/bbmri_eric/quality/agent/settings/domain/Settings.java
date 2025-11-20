@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.settings;
+package eu.bbmri_eric.quality.agent.settings.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

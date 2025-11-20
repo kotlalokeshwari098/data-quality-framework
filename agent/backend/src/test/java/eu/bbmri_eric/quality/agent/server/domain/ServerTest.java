@@ -1,14 +1,10 @@
-package eu.bbmri_eric.quality.agent.server;
+package eu.bbmri_eric.quality.agent.server.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import eu.bbmri_eric.quality.agent.server.domain.InteractionType;
-import eu.bbmri_eric.quality.agent.server.domain.Server;
-import eu.bbmri_eric.quality.agent.server.domain.ServerConnectionStatus;
-import eu.bbmri_eric.quality.agent.server.domain.ServerInteraction;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

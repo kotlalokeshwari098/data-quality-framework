@@ -1,5 +1,8 @@
-package eu.bbmri_eric.quality.agent.settings;
+package eu.bbmri_eric.quality.agent.settings.impl;
 
+import eu.bbmri_eric.quality.agent.settings.SettingsService;
+import eu.bbmri_eric.quality.agent.settings.dto.SettingsDTO;
+import eu.bbmri_eric.quality.agent.settings.event.SettingsUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
