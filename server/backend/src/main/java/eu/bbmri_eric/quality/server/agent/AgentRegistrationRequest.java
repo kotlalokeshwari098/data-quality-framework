@@ -18,7 +18,7 @@ public class AgentRegistrationRequest {
   private String version = "unknown";
 
   protected AgentRegistrationRequest() {
-    // for model mapper
+    // for domain mapper
   }
 
   public AgentRegistrationRequest(String id) {

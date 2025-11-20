@@ -1,6 +1,6 @@
 package eu.bbmri_eric.quality.agent.user.impl;
 
-import eu.bbmri_eric.quality.agent.user.CustomUserDetails;
+import eu.bbmri_eric.quality.agent.user.dto.CustomUserDetails;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

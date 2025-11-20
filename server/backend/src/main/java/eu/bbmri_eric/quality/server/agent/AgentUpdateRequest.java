@@ -9,7 +9,7 @@ public class AgentUpdateRequest {
   private String version;
 
   public AgentUpdateRequest() {
-    // For model mapper
+    // For domain mapper
   }
 
   public AgentUpdateRequest(String name, AgentStatus status) {

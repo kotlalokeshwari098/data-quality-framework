@@ -1,6 +1,6 @@
-package eu.bbmri_eric.quality.agent.user;
+package eu.bbmri_eric.quality.agent.user.dto;
 
-import eu.bbmri_eric.quality.agent.user.model.User;
+import eu.bbmri_eric.quality.agent.user.domain.User;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;

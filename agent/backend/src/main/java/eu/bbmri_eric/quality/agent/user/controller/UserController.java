@@ -1,7 +1,7 @@
 package eu.bbmri_eric.quality.agent.user.controller;
 
-import eu.bbmri_eric.quality.agent.user.PasswordChangeRequest;
 import eu.bbmri_eric.quality.agent.user.UserService;
+import eu.bbmri_eric.quality.agent.user.dto.PasswordChangeRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * User entity representing a user account in the system. Follows model-driven design principles
+ * User entity representing a user account in the system. Follows domain-driven design principles
  * with proper encapsulation.
  */
 @Entity

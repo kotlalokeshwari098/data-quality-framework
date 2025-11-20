@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.agent.user.model;
+package eu.bbmri_eric.quality.agent.user.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

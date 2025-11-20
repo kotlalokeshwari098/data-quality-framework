@@ -1,9 +1,9 @@
 package eu.bbmri_eric.quality.agent.user.controller;
 
 import eu.bbmri_eric.quality.agent.common.JwtUtil;
-import eu.bbmri_eric.quality.agent.user.CustomUserDetails;
-import eu.bbmri_eric.quality.agent.user.LoginRequest;
-import eu.bbmri_eric.quality.agent.user.LoginResponse;
+import eu.bbmri_eric.quality.agent.user.dto.CustomUserDetails;
+import eu.bbmri_eric.quality.agent.user.dto.LoginRequest;
+import eu.bbmri_eric.quality.agent.user.dto.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

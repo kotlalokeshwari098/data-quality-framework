@@ -7,9 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.bbmri_eric.quality.agent.user.LoginRequest;
-import eu.bbmri_eric.quality.agent.user.PasswordChangeRequest;
-import eu.bbmri_eric.quality.agent.user.model.User;
+import eu.bbmri_eric.quality.agent.user.domain.User;
+import eu.bbmri_eric.quality.agent.user.dto.LoginRequest;
+import eu.bbmri_eric.quality.agent.user.dto.PasswordChangeRequest;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;

@@ -1,10 +1,10 @@
 package eu.bbmri_eric.quality.agent.user.impl;
 
 import eu.bbmri_eric.quality.agent.user.AuthenticationContextService;
-import eu.bbmri_eric.quality.agent.user.PasswordChangeRequest;
-import eu.bbmri_eric.quality.agent.user.UserDTO;
 import eu.bbmri_eric.quality.agent.user.UserService;
-import eu.bbmri_eric.quality.agent.user.model.User;
+import eu.bbmri_eric.quality.agent.user.domain.User;
+import eu.bbmri_eric.quality.agent.user.dto.PasswordChangeRequest;
+import eu.bbmri_eric.quality.agent.user.dto.UserDTO;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
