@@ -3,7 +3,6 @@ package eu.bbmri_eric.quality.agent.server.impl.client;
 import eu.bbmri_eric.quality.agent.dataquality.dto.ReportDTO;
 import eu.bbmri_eric.quality.agent.server.CentralServerClient;
 import eu.bbmri_eric.quality.agent.server.domain.ServerConnectionStatus;
-import eu.bbmri_eric.quality.agent.user.LoginRequest;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
