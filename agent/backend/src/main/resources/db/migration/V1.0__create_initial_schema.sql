@@ -244,7 +244,11 @@ context Patient
 define ConditionsWithoutOnset:
   [Condition] C
     where C.subject.reference = ''Patient/'' + Patient.id
-      and C.onset is null
+      and C.onsetDateTime is null
+      and C.onsetAge is null
+      and C.onsetPeriod is null
+      and C.onsetRange is null
+      and C.onsetString is null
 
 define InInitialPopulation:
   exists ConditionsWithoutOnset',
