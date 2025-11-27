@@ -244,11 +244,7 @@ context Patient
 define ConditionsWithoutOnset:
   [Condition] C
     where C.subject.reference = ''Patient/'' + Patient.id
-      and C.onsetDateTime is null
-      and C.onsetAge is null
-      and C.onsetPeriod is null
-      and C.onsetRange is null
-      and C.onsetString is null
+      and C.onset is null
 
 define InInitialPopulation:
   exists ConditionsWithoutOnset',
@@ -298,8 +294,7 @@ context Patient
 define SpecimensWithoutCollectionDate:
   [Specimen] S
     where S.subject.reference = ''Patient/'' + Patient.id
-      and S.collection.collectedDateTime is null
-      and S.collection.collectedPeriod is null
+      and S.collection.collected is null
 
 define InInitialPopulation:
   exists SpecimensWithoutCollectionDate',
