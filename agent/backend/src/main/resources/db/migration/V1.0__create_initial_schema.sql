@@ -294,7 +294,8 @@ context Patient
 define SpecimensWithoutCollectionDate:
   [Specimen] S
     where S.subject.reference = ''Patient/'' + Patient.id
-      and S.collection.collected is null
+      and S.collection.collectedDateTime is null
+      and S.collection.collectedPeriod is null
 
 define InInitialPopulation:
   exists SpecimensWithoutCollectionDate',
