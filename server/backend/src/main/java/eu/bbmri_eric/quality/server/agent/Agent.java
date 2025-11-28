@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.server.agent;
 
+import eu.bbmri_eric.quality.server.report.Report;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,8 +24,12 @@ public class Agent {
   private String version = "Unknown";
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "agent_id")
+  @JoinColumn(name = "agent_id", nullable = false)
   private List<AgentInteraction> interactions = new ArrayList<>();
+
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "agent_id", nullable = false)
+  private List<Report> reports = new ArrayList<>();
 
   public Agent(String id) {
     this.id = id;
@@ -74,6 +79,14 @@ public class Agent {
     }
     AgentInteraction interaction = new AgentInteraction(this.id, type);
     interactions.add(interaction);
+  }
+
+  public List<Report> getReports() {
+    return reports;
+  }
+
+  public void setReports(List<Report> reports) {
+    this.reports = reports;
   }
 
   @Override

@@ -15,7 +15,7 @@ import java.util.UUID;
  * <p>Each interaction is automatically assigned a unique identifier and timestamp upon creation.
  * Interactions are associated with an agent and have a type (e.g., REPORT, PING).
  */
-@Entity
+@Entity(name = "agent_interaction")
 public class AgentInteraction {
   @Id private final String id = UUID.randomUUID().toString();
 
@@ -24,7 +24,7 @@ public class AgentInteraction {
   @Enumerated(EnumType.STRING)
   private AgentInteractionType type;
 
-  @Column(name = "agent_id")
+  @Column(name = "agent_id", insertable = false, updatable = false)
   private String agentId;
 
   /** Default constructor for JPA. */

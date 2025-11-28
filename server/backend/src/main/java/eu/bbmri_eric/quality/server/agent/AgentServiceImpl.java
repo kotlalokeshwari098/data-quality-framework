@@ -112,6 +112,16 @@ public class AgentServiceImpl implements AgentService {
     return agentRepository.count();
   }
 
+  @Override
+  public void delete(String id) {
+    Agent agent =
+        agentRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Agent with ID %s not found".formatted(id)));
+    agentRepository.delete(agent);
+  }
+
   private boolean isAuthorizedToUpdate(UserDTO user, String agentId) {
     boolean isAdmin = user.getRoles() != null && user.getRoles().contains(UserRole.ADMIN);
     boolean isLinkedToAgent = agentId.equals(user.getAgentId());

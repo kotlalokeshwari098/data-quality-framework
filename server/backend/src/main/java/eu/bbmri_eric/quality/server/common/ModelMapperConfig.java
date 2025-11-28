@@ -2,6 +2,8 @@ package eu.bbmri_eric.quality.server.common;
 
 import eu.bbmri_eric.quality.server.agent.Agent;
 import eu.bbmri_eric.quality.server.agent.AgentDTO;
+import eu.bbmri_eric.quality.server.report.QualityCheckResult;
+import eu.bbmri_eric.quality.server.report.QualityCheckResultDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +32,17 @@ class ModelMapperConfig {
           @Override
           protected void configure() {
             skip(destination.getInteractions());
+          }
+        });
+
+    // Configure mapping from QualityCheckResult to QualityCheckResultDTO
+    // Map the hash from the nested qualityCheck object
+    modelMapper.addMappings(
+        new PropertyMap<QualityCheckResult, QualityCheckResultDTO>() {
+          @Override
+          protected void configure() {
+            map(source.getQualityCheck().getHash(), destination.getHash());
+            map(source.getResult(), destination.getResult());
           }
         });
 

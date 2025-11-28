@@ -136,7 +136,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "HUMAN_USER")
+  @WithUserDetails("admin")
   void findByAgentId_shouldReturnEmptyListWithHateoasLinksWhenNoReports() throws Exception {
     mockMvc
         .perform(get(API_V1_AGENTS_REPORTS, testAgentId))
@@ -146,7 +146,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "HUMAN_USER")
+  @WithUserDetails("admin")
   void findByAgentId_shouldReturnAllReportsForAgentWithHateoasLinks() throws Exception {
     Report report1 = new Report(testAgentId);
     Report report2 = new Report(testAgentId);
@@ -166,7 +166,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "HUMAN_USER")
+  @WithUserDetails("admin")
   void findByAgentId_shouldNotReturnReportsFromOtherAgents() throws Exception {
     String otherAgentId = UUID.randomUUID().toString();
     Agent otherAgent = new Agent(otherAgentId);
@@ -287,7 +287,7 @@ class ReportControllerTest {
   }
 
   @Test
-  @WithMockUser(roles = "ADMIN")
+  @WithUserDetails("admin")
   void findByAgentId_shouldAllowAdminRole() throws Exception {
     Report report = new Report(testAgentId);
     reportRepository.save(report);

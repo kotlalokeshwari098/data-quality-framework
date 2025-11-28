@@ -1,6 +1,7 @@
 package eu.bbmri_eric.quality.server.report;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -24,6 +25,7 @@ public class Report {
 
   private final LocalDateTime timestamp = LocalDateTime.now();
 
+  @Column(name = "agent_id", insertable = false, updatable = false)
   private String agentId;
 
   @OneToMany(

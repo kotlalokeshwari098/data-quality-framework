@@ -1,10 +1,12 @@
 package eu.bbmri_eric.quality.server.report;
 
+import eu.bbmri_eric.quality.server.agent.AgentService;
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
 import eu.bbmri_eric.quality.server.user.AuthenticationContextService;
 import eu.bbmri_eric.quality.server.user.UserDTO;
 import eu.bbmri_eric.quality.server.user.UserRole;
 import java.util.List;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -19,16 +21,22 @@ public class ReportServiceImpl implements ReportService {
   private final QualityCheckRepository qualityCheckRepository;
   private final AuthenticationContextService authenticationContextService;
   private final ApplicationEventPublisher eventPublisher;
+  private final ModelMapper modelMapper;
+  private final AgentService agentService;
 
   public ReportServiceImpl(
       ReportRepository reportRepository,
       QualityCheckRepository qualityCheckRepository,
       AuthenticationContextService authenticationContextService,
-      ApplicationEventPublisher eventPublisher) {
+      ApplicationEventPublisher eventPublisher,
+      ModelMapper modelMapper,
+      AgentService agentService) {
     this.reportRepository = reportRepository;
     this.qualityCheckRepository = qualityCheckRepository;
     this.authenticationContextService = authenticationContextService;
     this.eventPublisher = eventPublisher;
+    this.modelMapper = modelMapper;
+    this.agentService = agentService;
   }
 
   @Override
@@ -43,15 +51,15 @@ public class ReportServiceImpl implements ReportService {
       for (QualityCheckResultDTO resultDTO : createRequest.results()) {
         QualityCheck qualityCheck =
             qualityCheckRepository
-                .findById(resultDTO.hash())
+                .findById(resultDTO.getHash())
                 .orElseGet(
                     () -> {
                       // Create a new quality check if it doesn't exist
-                      QualityCheck newCheck = new QualityCheck(resultDTO.hash(), "", "");
+                      QualityCheck newCheck = new QualityCheck(resultDTO.getHash(), "", "");
                       return qualityCheckRepository.save(newCheck);
                     });
 
-        report.addQualityCheckResult(qualityCheck, resultDTO.result());
+        report.addQualityCheckResult(qualityCheck, resultDTO.getResult());
       }
     }
     Report savedReport = reportRepository.save(report);
@@ -79,6 +87,7 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public List<ReportDTO> findByAgentId(String agentId) {
+    agentService.findById(agentId);
     return reportRepository.findByAgentId(agentId).stream().map(this::convertToDTO).toList();
   }
 
@@ -95,23 +104,6 @@ public class ReportServiceImpl implements ReportService {
   }
 
   private ReportDTO convertToDTO(Report report) {
-    ReportDTO dto = new ReportDTO();
-    dto.setId(report.getId());
-    dto.setTimestamp(report.getTimestamp());
-    dto.setAgentId(report.getAgentId());
-
-    // Map quality check results manually
-    if (report.getQualityCheckResults() != null && !report.getQualityCheckResults().isEmpty()) {
-      List<QualityCheckResultDTO> resultDTOs =
-          report.getQualityCheckResults().stream()
-              .map(
-                  result ->
-                      new QualityCheckResultDTO(
-                          result.getQualityCheck().getHash(), result.getResult()))
-              .toList();
-      dto.setResults(resultDTOs);
-    }
-
-    return dto;
+    return modelMapper.map(report, ReportDTO.class);
   }
 }

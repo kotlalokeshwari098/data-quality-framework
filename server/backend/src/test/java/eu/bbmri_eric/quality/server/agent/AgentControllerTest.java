@@ -4,6 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.bbmri_eric.quality.server.report.Report;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 class AgentControllerIntegrationTest {
   public static final String API_V_1_AGENTS = "/api/v1/agents";
   public static final String API_V_1_AGENTS_ID = "/api/v1/agents/{id}";
+  public static final String API_V1_AGENTS_REPORTS = "/api/v1/agents/{agentId}/reports";
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
 
@@ -360,5 +363,109 @@ class AgentControllerIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(agentId))
         .andExpect(jsonPath("$.interactions").doesNotExist());
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void delete_shouldDeleteAgentWhenUserIsAdmin() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    assert agentRepository.findById(agentId).isPresent();
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
+
+    assert agentRepository.findById(agentId).isEmpty();
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void delete_shouldDeleteAgentInteractionsAndReportsWhenAgentIsDeleted() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agent.addInteraction(AgentInteractionType.PING);
+    agent.addInteraction(AgentInteractionType.REPORT);
+    agent.setReports(List.of(new Report(agentId)));
+    agentRepository.save(agent);
+
+    Agent savedAgent = agentRepository.findById(agentId).orElseThrow();
+    assert savedAgent.getInteractions().size() == 3; // REGISTRATION + PING + REPORT
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
+    mockMvc.perform(get(API_V1_AGENTS_REPORTS, agentId)).andExpect(status().isNotFound());
+    assert agentRepository.findById(agentId).isEmpty();
+  }
+
+  @Test
+  @WithMockUser(roles = "HUMAN_USER")
+  void delete_shouldReturnForbiddenWhenUserIsNotAdmin() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isForbidden());
+
+    assert agentRepository.findById(agentId).isPresent();
+  }
+
+  @Test
+  void delete_shouldRequireAuthentication() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isUnauthorized());
+
+    assert agentRepository.findById(agentId).isPresent();
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void delete_shouldReturnNotFoundWhenAgentDoesNotExist() throws Exception {
+    String nonExistentAgentId = UUID.randomUUID().toString();
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, nonExistentAgentId)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void delete_shouldBeIdempotent() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    Agent agent = new Agent(agentId);
+    agentRepository.save(agent);
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
+    assert agentRepository.findById(agentId).isEmpty();
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void endToEndFlow_createUpdateAndDeleteAgent() throws Exception {
+    String agentId = UUID.randomUUID().toString();
+    AgentRegistrationRequest createDto = new AgentRegistrationRequest(agentId);
+
+    mockMvc
+        .perform(
+            post(API_V_1_AGENTS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createDto)))
+        .andExpect(status().isCreated());
+
+    assert agentRepository.findById(agentId).isPresent();
+
+    AgentUpdateRequest updateRequest = new AgentUpdateRequest("Test Agent", AgentStatus.ACTIVE);
+    mockMvc
+        .perform(
+            patch(API_V_1_AGENTS_ID, agentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+        .andExpect(status().isOk());
+
+    mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
+
+    assert agentRepository.findById(agentId).isEmpty();
   }
 }

@@ -14,4 +14,6 @@ public interface AgentService {
   List<AgentDTO> listAll();
 
   long countAll();
+
+  void delete(String id);
 }

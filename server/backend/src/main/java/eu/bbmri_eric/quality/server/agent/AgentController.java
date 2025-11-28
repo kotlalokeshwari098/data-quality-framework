@@ -56,4 +56,12 @@ public class AgentController {
     CollectionModel<EntityModel<AgentDTO>> agentsModel = linkBuilder.toCollectionModel(agents);
     return ResponseEntity.ok(agentsModel);
   }
+
+  @DeleteMapping("/{id}")
+  @SecurityRequirement(name = "bearerAuth")
+  @Schema(name = "Delete an agent")
+  public ResponseEntity<Void> delete(@PathVariable String id) {
+    agentService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 }
