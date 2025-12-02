@@ -37,7 +37,7 @@
         <commons.compress.version>1.26.1</commons.compress.version>
         <testcontainers.version>1.21.3</testcontainers.version>
         <bouncycastle.version>1.83</bouncycastle.version>
-        <sqlite.jdbc.version>3.47.1.0</sqlite.jdbc.version>
+        <sqlite.jdbc.version>3.51.1.0</sqlite.jdbc.version>
         <modelmapper.version>3.2.6</modelmapper.version>
         <jjwt.version>0.13.0</jjwt.version>
         <lombok.version>1.18.30</lombok.version>
