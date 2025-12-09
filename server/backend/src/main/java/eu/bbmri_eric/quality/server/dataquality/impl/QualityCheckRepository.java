@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository;
 
 /** Repository for managing QualityCheck entities. */
 @Repository
-public interface QualityCheckRepository extends JpaRepository<QualityCheck, String> {}
+interface QualityCheckRepository extends JpaRepository<QualityCheck, String> {}

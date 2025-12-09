@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Service implementation for managing reports. */
 @Service
 @Transactional
-public class ReportServiceImpl implements ReportService {
+class ReportServiceImpl implements ReportService {
   private final AgentRepository agentRepository;
   private final ReportRepository reportRepository;
   private final QualityCheckRepository qualityCheckRepository;

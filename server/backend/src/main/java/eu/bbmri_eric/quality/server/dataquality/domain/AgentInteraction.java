@@ -37,7 +37,7 @@ public class AgentInteraction {
    * @param type the type of interaction
    * @throws IllegalArgumentException if agentId or type is null
    */
-  public AgentInteraction(String agentId, AgentInteractionType type) {
+  AgentInteraction(String agentId, AgentInteractionType type) {
     if (agentId == null || agentId.trim().isEmpty()) {
       throw new IllegalArgumentException("Agent ID cannot be null or empty");
     }

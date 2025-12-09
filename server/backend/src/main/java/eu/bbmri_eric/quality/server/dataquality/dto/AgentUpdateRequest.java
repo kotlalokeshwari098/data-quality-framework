@@ -3,10 +3,17 @@ package eu.bbmri_eric.quality.server.dataquality.dto;
 import eu.bbmri_eric.quality.server.dataquality.domain.AgentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "Agent update Request")
+@Schema(
+    name = "Agent update Request",
+    description = "Request object for updating agent information")
 public class AgentUpdateRequest {
+  @Schema(description = "Name of the agent", example = "My Biobank Agent")
   private String name;
+
+  @Schema(description = "Current status of the agent")
   private AgentStatus status;
+
+  @Schema(description = "Version of the agent software", example = "1.0.0")
   private String version;
 
   public AgentUpdateRequest() {

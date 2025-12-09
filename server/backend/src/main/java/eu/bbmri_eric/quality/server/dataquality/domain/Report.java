@@ -35,11 +35,7 @@ public class Report {
       fetch = FetchType.EAGER)
   private List<QualityCheckResult> qualityCheckResults = new ArrayList<>();
 
-  /**
-   * Creates a new report for the specified agent.
-   *
-   * @throws IllegalArgumentException if agentId is null or empty
-   */
+  /** Creates a new report. */
   public Report() {}
 
   /**

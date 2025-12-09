@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class AgentServiceImpl implements AgentService {
+class AgentServiceImpl implements AgentService {
 
   private final AgentRepository agentRepository;
   private final ModelMapper modelMapper;

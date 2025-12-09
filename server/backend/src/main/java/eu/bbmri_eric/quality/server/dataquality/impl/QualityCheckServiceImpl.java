@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Service implementation for managing quality checks. */
 @Service
 @Transactional
-public class QualityCheckServiceImpl implements QualityCheckService {
+class QualityCheckServiceImpl implements QualityCheckService {
 
   private final QualityCheckRepository qualityCheckRepository;
   private final ModelMapper modelMapper;
