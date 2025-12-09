@@ -157,6 +157,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <artifactId>fmt-maven-plugin</artifactId>
