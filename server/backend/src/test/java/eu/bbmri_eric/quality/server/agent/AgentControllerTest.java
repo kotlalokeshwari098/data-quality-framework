@@ -1,5 +1,7 @@
 package eu.bbmri_eric.quality.server.agent;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -390,7 +392,7 @@ class AgentControllerIntegrationTest {
     agentRepository.save(agent);
 
     Agent savedAgent = agentRepository.findById(agentId).orElseThrow();
-    assert savedAgent.getInteractions().size() == 3; // REGISTRATION + PING + REPORT
+    assertEquals(3, savedAgent.getInteractions().size()); // REGISTRATION + PING + REPORT
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
     mockMvc.perform(get(API_V1_AGENTS_REPORTS, agentId)).andExpect(status().isNotFound());
@@ -417,7 +419,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isUnauthorized());
 
-    assert agentRepository.findById(agentId).isPresent();
+    assertTrue(agentRepository.findById(agentId).isPresent());
   }
 
   @Test
@@ -466,6 +468,6 @@ class AgentControllerIntegrationTest {
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
 
-    assert agentRepository.findById(agentId).isEmpty();
+    assertTrue(agentRepository.findById(agentId).isEmpty());
   }
 }

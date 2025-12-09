@@ -1,5 +1,6 @@
 package eu.bbmri_eric.quality.server.report;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,8 +40,6 @@ class ReportControllerTest {
 
   @BeforeEach
   void setUp() {
-    reportRepository.deleteAll();
-    qualityCheckRepository.deleteAll();
     agentRepository.deleteAll();
     testAgentId = UUID.randomUUID().toString();
     Agent agent = new Agent(testAgentId);
@@ -557,8 +556,8 @@ class ReportControllerTest {
         .andExpect(jsonPath("$.results[?(@.hash == 'consistency-check')].result").value(0.85))
         .andExpect(jsonPath("$.results[?(@.hash == 'accuracy-check')].result").value(0.92));
 
-    assert qualityCheckRepository.findById("completeness-check").isPresent();
-    assert qualityCheckRepository.findById("consistency-check").isPresent();
-    assert qualityCheckRepository.findById("accuracy-check").isPresent();
+    assertTrue(qualityCheckRepository.findById("completeness-check").isPresent());
+    assertTrue(qualityCheckRepository.findById("consistency-check").isPresent());
+    assertTrue(qualityCheckRepository.findById("accuracy-check").isPresent());
   }
 }
