@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.server.agent;
+package eu.bbmri_eric.quality.server.dataquality.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,7 +12,6 @@ import eu.bbmri_eric.quality.server.dataquality.domain.AgentStatus;
 import eu.bbmri_eric.quality.server.dataquality.domain.Report;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistrationRequest;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentUpdateRequest;
-import eu.bbmri_eric.quality.server.dataquality.impl.AgentRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +52,7 @@ class AgentControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.agent.id").value(agentId));
-    assert agentRepository.findById(agentId).isPresent();
+    assertTrue(agentRepository.findById(agentId).isPresent());
   }
 
   @Test
@@ -379,11 +378,11 @@ class AgentControllerIntegrationTest {
     Agent agent = new Agent(agentId);
     agentRepository.save(agent);
 
-    assert agentRepository.findById(agentId).isPresent();
+    assertTrue(agentRepository.findById(agentId).isPresent());
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
 
-    assert agentRepository.findById(agentId).isEmpty();
+    assertTrue(agentRepository.findById(agentId).isEmpty());
   }
 
   @Test
@@ -401,7 +400,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
     mockMvc.perform(get(API_V1_AGENTS_REPORTS, agentId)).andExpect(status().isNotFound());
-    assert agentRepository.findById(agentId).isEmpty();
+    assertTrue(agentRepository.findById(agentId).isEmpty());
   }
 
   @Test
@@ -413,7 +412,7 @@ class AgentControllerIntegrationTest {
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isForbidden());
 
-    assert agentRepository.findById(agentId).isPresent();
+    assertTrue(agentRepository.findById(agentId).isPresent());
   }
 
   @Test
@@ -443,7 +442,7 @@ class AgentControllerIntegrationTest {
     agentRepository.save(agent);
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNoContent());
-    assert agentRepository.findById(agentId).isEmpty();
+    assertTrue(agentRepository.findById(agentId).isEmpty());
 
     mockMvc.perform(delete(API_V_1_AGENTS_ID, agentId)).andExpect(status().isNotFound());
   }
@@ -461,7 +460,7 @@ class AgentControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(createDto)))
         .andExpect(status().isCreated());
 
-    assert agentRepository.findById(agentId).isPresent();
+    assertTrue(agentRepository.findById(agentId).isPresent());
 
     AgentUpdateRequest updateRequest = new AgentUpdateRequest("Test Agent", AgentStatus.ACTIVE);
     mockMvc

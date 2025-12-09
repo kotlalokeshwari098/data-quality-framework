@@ -1,4 +1,4 @@
-package eu.bbmri_eric.quality.server.report;
+package eu.bbmri_eric.quality.server.dataquality.impl;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -10,9 +10,6 @@ import eu.bbmri_eric.quality.server.dataquality.domain.QualityCheck;
 import eu.bbmri_eric.quality.server.dataquality.domain.Report;
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckResultDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.ReportCreateRequest;
-import eu.bbmri_eric.quality.server.dataquality.impl.AgentRepository;
-import eu.bbmri_eric.quality.server.dataquality.impl.QualityCheckRepository;
-import eu.bbmri_eric.quality.server.dataquality.impl.ReportRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;

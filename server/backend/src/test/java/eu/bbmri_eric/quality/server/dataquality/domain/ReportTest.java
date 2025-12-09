@@ -1,8 +1,7 @@
-package eu.bbmri_eric.quality.server.report;
+package eu.bbmri_eric.quality.server.dataquality.domain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import eu.bbmri_eric.quality.server.dataquality.domain.Report;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
