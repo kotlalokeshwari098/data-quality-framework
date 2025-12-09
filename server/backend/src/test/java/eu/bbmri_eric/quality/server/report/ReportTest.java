@@ -3,6 +3,8 @@ package eu.bbmri_eric.quality.server.report;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+
+import eu.bbmri_eric.quality.server.dataquality.domain.Report;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

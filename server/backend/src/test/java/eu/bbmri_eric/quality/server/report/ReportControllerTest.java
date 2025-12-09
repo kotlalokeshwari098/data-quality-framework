@@ -5,11 +5,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.bbmri_eric.quality.server.agent.Agent;
-import eu.bbmri_eric.quality.server.agent.AgentRepository;
+import eu.bbmri_eric.quality.server.dataquality.domain.Agent;
+import eu.bbmri_eric.quality.server.dataquality.impl.AgentRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import eu.bbmri_eric.quality.server.dataquality.domain.QualityCheck;
+import eu.bbmri_eric.quality.server.dataquality.domain.Report;
+import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckResultDTO;
+import eu.bbmri_eric.quality.server.dataquality.dto.ReportCreateRequest;
+import eu.bbmri_eric.quality.server.dataquality.impl.QualityCheckRepository;
+import eu.bbmri_eric.quality.server.dataquality.impl.ReportRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

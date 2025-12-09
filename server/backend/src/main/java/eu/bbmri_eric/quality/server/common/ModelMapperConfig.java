@@ -1,9 +1,9 @@
 package eu.bbmri_eric.quality.server.common;
 
-import eu.bbmri_eric.quality.server.agent.Agent;
-import eu.bbmri_eric.quality.server.agent.AgentDTO;
-import eu.bbmri_eric.quality.server.report.QualityCheckResult;
-import eu.bbmri_eric.quality.server.report.QualityCheckResultDTO;
+import eu.bbmri_eric.quality.server.dataquality.domain.Agent;
+import eu.bbmri_eric.quality.server.dataquality.dto.AgentDTO;
+import eu.bbmri_eric.quality.server.dataquality.domain.QualityCheckResult;
+import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckResultDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
