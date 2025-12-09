@@ -35,20 +35,12 @@ public class Report {
       fetch = FetchType.EAGER)
   private List<QualityCheckResult> qualityCheckResults = new ArrayList<>();
 
-  /** Default constructor for JPA. */
-  protected Report() {}
-
   /**
    * Creates a new report for the specified agent.
    *
-   * @param agentId the unique identifier of the agent generating this report
    * @throws IllegalArgumentException if agentId is null or empty
    */
-  public Report(String agentId) {
-    if (agentId == null || agentId.trim().isEmpty()) {
-      throw new IllegalArgumentException("Agent ID cannot be null or empty");
-    }
-    this.agentId = agentId;
+  public Report() {
   }
 
   /**

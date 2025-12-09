@@ -2,6 +2,7 @@ package eu.bbmri_eric.quality.server.dataquality.impl;
 
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
 import eu.bbmri_eric.quality.server.dataquality.ReportService;
+import eu.bbmri_eric.quality.server.dataquality.domain.Agent;
 import eu.bbmri_eric.quality.server.dataquality.domain.QualityCheck;
 import eu.bbmri_eric.quality.server.dataquality.domain.Report;
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckResultDTO;
@@ -51,7 +52,7 @@ public class ReportServiceImpl implements ReportService {
       throw new AccessDeniedException(
           "User is not authorized to create reports for agent: " + agentId);
     }
-    Report report = new Report(agentId);
+    Report report = new Report();
     if (createRequest.results() != null && !createRequest.results().isEmpty()) {
       for (QualityCheckResultDTO resultDTO : createRequest.results()) {
         QualityCheck qualityCheck =
@@ -66,10 +67,11 @@ public class ReportServiceImpl implements ReportService {
         report.addQualityCheckResult(qualityCheck, resultDTO.getResult());
       }
     }
-    agentRepository
+    Agent agent = agentRepository
         .findById(agentId)
-        .orElseThrow(() -> new EntityNotFoundException(agentId))
-        .addReport(report);
+        .orElseThrow(() -> new EntityNotFoundException(agentId));
+    agent.addReport(report);
+    agentRepository.saveAndFlush(agent);
     eventPublisher.publishEvent(new ReportSubmittedEvent(this, agentId, report.getId()));
     return convertToDTO(report);
   }

@@ -394,7 +394,7 @@ class AgentControllerIntegrationTest {
     Agent agent = new Agent(agentId);
     agent.addInteraction(AgentInteractionType.PING);
     agent.addInteraction(AgentInteractionType.REPORT);
-    agent.setReports(List.of(new Report(agentId)));
+    agent.addReport(new Report());
     agentRepository.save(agent);
 
     Agent savedAgent = agentRepository.findById(agentId).orElseThrow();

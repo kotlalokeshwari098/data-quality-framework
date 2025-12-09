@@ -85,11 +85,8 @@ public class Agent {
   }
 
   public void addReport(Report report) {
+    report.setAgentId(getId());
     reports.add(report);
-  }
-
-  public void setReports(List<Report> reports) {
-    this.reports = reports;
   }
 
   @Override
