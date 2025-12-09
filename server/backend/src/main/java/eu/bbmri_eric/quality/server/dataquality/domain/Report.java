@@ -40,8 +40,7 @@ public class Report {
    *
    * @throws IllegalArgumentException if agentId is null or empty
    */
-  public Report() {
-  }
+  public Report() {}
 
   /**
    * Gets the unique identifier of this report.

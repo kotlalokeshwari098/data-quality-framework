@@ -67,9 +67,8 @@ public class ReportServiceImpl implements ReportService {
         report.addQualityCheckResult(qualityCheck, resultDTO.getResult());
       }
     }
-    Agent agent = agentRepository
-        .findById(agentId)
-        .orElseThrow(() -> new EntityNotFoundException(agentId));
+    Agent agent =
+        agentRepository.findById(agentId).orElseThrow(() -> new EntityNotFoundException(agentId));
     agent.addReport(report);
     agentRepository.saveAndFlush(agent);
     eventPublisher.publishEvent(new ReportSubmittedEvent(this, agentId, report.getId()));
