@@ -2,9 +2,8 @@ package eu.bbmri_eric.quality.server.dataquality.controller;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
-import java.util.List;
-
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckDTO;
+import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Component;

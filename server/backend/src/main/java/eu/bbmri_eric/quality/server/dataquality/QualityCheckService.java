@@ -2,7 +2,6 @@ package eu.bbmri_eric.quality.server.dataquality;
 
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckUpdateDTO;
-
 import java.util.List;
 
 /** Service interface for managing quality checks. */

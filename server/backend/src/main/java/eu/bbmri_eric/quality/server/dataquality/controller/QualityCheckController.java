@@ -1,7 +1,7 @@
 package eu.bbmri_eric.quality.server.dataquality.controller;
 
-import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckDTO;
 import eu.bbmri_eric.quality.server.dataquality.QualityCheckService;
+import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckUpdateDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

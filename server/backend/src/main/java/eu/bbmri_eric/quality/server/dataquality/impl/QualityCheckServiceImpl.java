@@ -1,12 +1,11 @@
 package eu.bbmri_eric.quality.server.dataquality.impl;
 
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
-import java.util.List;
-
 import eu.bbmri_eric.quality.server.dataquality.QualityCheckService;
 import eu.bbmri_eric.quality.server.dataquality.domain.QualityCheck;
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckUpdateDTO;
+import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

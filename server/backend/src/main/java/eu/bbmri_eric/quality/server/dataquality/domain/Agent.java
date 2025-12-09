@@ -81,7 +81,11 @@ public class Agent {
   }
 
   public List<Report> getReports() {
-    return reports;
+    return reports.stream().toList();
+  }
+
+  public void addReport(Report report) {
+    reports.add(report);
   }
 
   public void setReports(List<Report> reports) {

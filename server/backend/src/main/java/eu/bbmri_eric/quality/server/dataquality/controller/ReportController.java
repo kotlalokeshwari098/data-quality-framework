@@ -1,8 +1,8 @@
 package eu.bbmri_eric.quality.server.dataquality.controller;
 
+import eu.bbmri_eric.quality.server.dataquality.ReportService;
 import eu.bbmri_eric.quality.server.dataquality.dto.ReportCreateRequest;
 import eu.bbmri_eric.quality.server.dataquality.dto.ReportDTO;
-import eu.bbmri_eric.quality.server.dataquality.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

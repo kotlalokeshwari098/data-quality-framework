@@ -1,10 +1,9 @@
 package eu.bbmri_eric.quality.server.dataquality;
 
-import eu.bbmri_eric.quality.server.dataquality.dto.AgentUpdateRequest;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistration;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistrationRequest;
-
+import eu.bbmri_eric.quality.server.dataquality.dto.AgentUpdateRequest;
 import java.util.List;
 
 public interface AgentService {

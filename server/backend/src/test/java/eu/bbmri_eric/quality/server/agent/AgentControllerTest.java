@@ -10,12 +10,11 @@ import eu.bbmri_eric.quality.server.dataquality.domain.Agent;
 import eu.bbmri_eric.quality.server.dataquality.domain.AgentInteractionType;
 import eu.bbmri_eric.quality.server.dataquality.domain.AgentStatus;
 import eu.bbmri_eric.quality.server.dataquality.domain.Report;
-import java.util.List;
-import java.util.UUID;
-
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistrationRequest;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentUpdateRequest;
 import eu.bbmri_eric.quality.server.dataquality.impl.AgentRepository;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

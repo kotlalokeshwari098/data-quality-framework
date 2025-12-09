@@ -6,17 +6,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bbmri_eric.quality.server.dataquality.domain.Agent;
-import eu.bbmri_eric.quality.server.dataquality.impl.AgentRepository;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
 import eu.bbmri_eric.quality.server.dataquality.domain.QualityCheck;
 import eu.bbmri_eric.quality.server.dataquality.domain.Report;
 import eu.bbmri_eric.quality.server.dataquality.dto.QualityCheckResultDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.ReportCreateRequest;
+import eu.bbmri_eric.quality.server.dataquality.impl.AgentRepository;
 import eu.bbmri_eric.quality.server.dataquality.impl.QualityCheckRepository;
 import eu.bbmri_eric.quality.server.dataquality.impl.ReportRepository;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -44,13 +43,14 @@ class ReportControllerTest {
   @Autowired private QualityCheckRepository qualityCheckRepository;
 
   private String testAgentId;
+  private Agent testAgent;
 
   @BeforeEach
   void setUp() {
     agentRepository.deleteAll();
     testAgentId = UUID.randomUUID().toString();
     Agent agent = new Agent(testAgentId);
-    agentRepository.save(agent);
+    testAgent = agentRepository.save(agent);
   }
 
   @Test
@@ -156,9 +156,7 @@ class ReportControllerTest {
   void findByAgentId_shouldReturnAllReportsForAgentWithHateoasLinks() throws Exception {
     Report report1 = new Report(testAgentId);
     Report report2 = new Report(testAgentId);
-    reportRepository.save(report1);
-    reportRepository.save(report2);
-
+    testAgent.setReports(List.of(report1, report2));
     mockMvc
         .perform(get(API_V1_AGENTS_REPORTS, testAgentId))
         .andExpect(status().isOk())
@@ -176,18 +174,16 @@ class ReportControllerTest {
   void findByAgentId_shouldNotReturnReportsFromOtherAgents() throws Exception {
     String otherAgentId = UUID.randomUUID().toString();
     Agent otherAgent = new Agent(otherAgentId);
-    agentRepository.save(otherAgent);
-
-    Report reportForTestAgent = new Report(testAgentId);
-    Report reportForOtherAgent = new Report(otherAgentId);
-    reportRepository.save(reportForTestAgent);
-    reportRepository.save(reportForOtherAgent);
-
+    otherAgent.addReport(new Report(otherAgentId));
+    Agent testAgent = agentRepository.findById(testAgentId).get();
+    testAgent.addReport(new Report(testAgentId));
+    agentRepository.save(testAgent);
+    String reportId = testAgent.getReports().getFirst().getId();
     mockMvc
         .perform(get(API_V1_AGENTS_REPORTS, testAgentId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$._embedded.reports.length()").value(1))
-        .andExpect(jsonPath("$._embedded.reports[0].id").value(reportForTestAgent.getId()))
+        .andExpect(jsonPath("$._embedded.reports[0].id").value(reportId))
         .andExpect(jsonPath("$._embedded.reports[0].agentId").value(testAgentId));
   }
 
@@ -295,8 +291,7 @@ class ReportControllerTest {
   @Test
   @WithUserDetails("admin")
   void findByAgentId_shouldAllowAdminRole() throws Exception {
-    Report report = new Report(testAgentId);
-    reportRepository.save(report);
+    testAgent.addReport(new Report("dik"));
     mockMvc
         .perform(get(API_V1_AGENTS_REPORTS, testAgentId))
         .andExpect(status().isOk())

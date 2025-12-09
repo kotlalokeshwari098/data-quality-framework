@@ -1,9 +1,9 @@
 package eu.bbmri_eric.quality.server.dataquality.controller;
 
+import eu.bbmri_eric.quality.server.dataquality.AgentService;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistration;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistrationRequest;
-import eu.bbmri_eric.quality.server.dataquality.AgentService;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentUpdateRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

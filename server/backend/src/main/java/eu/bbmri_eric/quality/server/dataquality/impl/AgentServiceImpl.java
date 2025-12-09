@@ -1,6 +1,5 @@
 package eu.bbmri_eric.quality.server.dataquality.impl;
 
-import eu.bbmri_eric.quality.server.dataquality.dto.AgentUpdateRequest;
 import eu.bbmri_eric.quality.server.common.EntityAlreadyExistsException;
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
 import eu.bbmri_eric.quality.server.dataquality.AgentService;
@@ -10,6 +9,7 @@ import eu.bbmri_eric.quality.server.dataquality.dto.AgentDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentInteractionDTO;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistration;
 import eu.bbmri_eric.quality.server.dataquality.dto.AgentRegistrationRequest;
+import eu.bbmri_eric.quality.server.dataquality.dto.AgentUpdateRequest;
 import eu.bbmri_eric.quality.server.user.AuthenticationContextService;
 import eu.bbmri_eric.quality.server.user.UserCreateDTO;
 import eu.bbmri_eric.quality.server.user.UserDTO;

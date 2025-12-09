@@ -2,7 +2,6 @@ package eu.bbmri_eric.quality.server.dataquality;
 
 import eu.bbmri_eric.quality.server.dataquality.dto.ReportCreateRequest;
 import eu.bbmri_eric.quality.server.dataquality.dto.ReportDTO;
-
 import java.util.List;
 
 /** Service interface for managing reports. */

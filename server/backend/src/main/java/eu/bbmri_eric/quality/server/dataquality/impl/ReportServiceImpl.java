@@ -1,6 +1,5 @@
 package eu.bbmri_eric.quality.server.dataquality.impl;
 
-import eu.bbmri_eric.quality.server.dataquality.AgentService;
 import eu.bbmri_eric.quality.server.common.EntityNotFoundException;
 import eu.bbmri_eric.quality.server.dataquality.ReportService;
 import eu.bbmri_eric.quality.server.dataquality.domain.QualityCheck;
@@ -23,27 +22,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class ReportServiceImpl implements ReportService {
-
+  private final AgentRepository agentRepository;
   private final ReportRepository reportRepository;
   private final QualityCheckRepository qualityCheckRepository;
   private final AuthenticationContextService authenticationContextService;
   private final ApplicationEventPublisher eventPublisher;
   private final ModelMapper modelMapper;
-  private final AgentService agentService;
 
   public ReportServiceImpl(
+      AgentRepository agentRepository,
       ReportRepository reportRepository,
       QualityCheckRepository qualityCheckRepository,
       AuthenticationContextService authenticationContextService,
       ApplicationEventPublisher eventPublisher,
-      ModelMapper modelMapper,
-      AgentService agentService) {
+      ModelMapper modelMapper) {
+    this.agentRepository = agentRepository;
     this.reportRepository = reportRepository;
     this.qualityCheckRepository = qualityCheckRepository;
     this.authenticationContextService = authenticationContextService;
     this.eventPublisher = eventPublisher;
     this.modelMapper = modelMapper;
-    this.agentService = agentService;
   }
 
   @Override
@@ -61,7 +59,6 @@ public class ReportServiceImpl implements ReportService {
                 .findById(resultDTO.getHash())
                 .orElseGet(
                     () -> {
-                      // Create a new quality check if it doesn't exist
                       QualityCheck newCheck = new QualityCheck(resultDTO.getHash(), "", "");
                       return qualityCheckRepository.save(newCheck);
                     });
@@ -69,9 +66,12 @@ public class ReportServiceImpl implements ReportService {
         report.addQualityCheckResult(qualityCheck, resultDTO.getResult());
       }
     }
-    Report savedReport = reportRepository.save(report);
+    agentRepository
+        .findById(agentId)
+        .orElseThrow(() -> new EntityNotFoundException(agentId))
+        .addReport(report);
     eventPublisher.publishEvent(new ReportSubmittedEvent(this, agentId, report.getId()));
-    return convertToDTO(savedReport);
+    return convertToDTO(report);
   }
 
   private boolean isAuthorizedToCreateReport(UserDTO user, String agentId) {
@@ -94,8 +94,13 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public List<ReportDTO> findByAgentId(String agentId) {
-    agentService.findById(agentId);
-    return reportRepository.findByAgentId(agentId).stream().map(this::convertToDTO).toList();
+    return agentRepository
+        .findById(agentId)
+        .orElseThrow(() -> new EntityNotFoundException(agentId))
+        .getReports()
+        .stream()
+        .map(this::convertToDTO)
+        .toList();
   }
 
   @Override
