@@ -22,7 +22,7 @@ env:
 
 jobs:
   lint:
-    name: Check Code Format (Agent)
+    name: Code Format (Agent)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -48,7 +48,7 @@ jobs:
         run: mvn --quiet clean com.spotify.fmt:fmt-maven-plugin:check
 
   lint-server:
-    name: Check Code Format (Server)
+    name: Code Format (Server)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -74,7 +74,7 @@ jobs:
         run: mvn --quiet clean com.spotify.fmt:fmt-maven-plugin:check
 
   test:
-    name: Run Tests (Agent)
+    name: Unit & Integration Tests (Agent)
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -110,7 +110,7 @@ jobs:
           fail_ci_if_error: false
 
   test-server:
-    name: Run Tests (Server)
+    name: Unit & Integration Tests (Server)
     runs-on: ubuntu-latest
     needs: lint-server
     steps:
@@ -136,8 +136,8 @@ jobs:
       - working-directory: server/backend
         run: mvn --quiet test
 
-  migration:
-    name: Build Docker Image (Agent)
+  build-agent-image:
+    name: Docker Image Build (Agent)
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -148,10 +148,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
-
-#      - run: docker compose up -d quality-agent
-#        name: Spin up latest stable image
-
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         name: Build new image
         with:
@@ -161,27 +157,6 @@ jobs:
           outputs: type=docker,dest=/tmp/agent-image.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-#      - run: docker compose down
-#        name: Down the container
-#
-#      - run: docker compose up -d quality-agent
-#        name: Spin up new image
-#
-#      - name: Check container health
-#        run: |
-#          for i in {1..20}; do
-#          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-agent)
-#          echo "Health status: $STATUS"
-#          if [ "$STATUS" == "healthy" ]; then
-#          echo "Container is healthy"
-#          exit 0
-#          fi
-#          sleep 3
-#          done
-#          echo "Container is not healthy"
-#          docker logs quality-agent
-#          exit 1
 
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         name: Build new image artifact
@@ -198,8 +173,49 @@ jobs:
           name: agent-image
           path: /tmp/agent-image.tar
 
-  migration-server:
-    name: Build Docker Image (Server)
+  test-agent-migration:
+    name: Agent DB Migration Test
+    runs-on: ubuntu-latest
+    needs: build-agent-image
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      - run: docker compose up -d quality-agent
+        name: Spin up latest stable image
+
+      - run: docker compose down
+        name: Down the container
+
+      - name: Download agent image artifact
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: agent-image
+          path: /tmp
+
+      - name: Load Docker images
+        run: |
+          docker load -i /tmp/agent-image.tar
+
+      - run: docker compose up -d quality-agent
+        name: Spin up latest stable image
+
+      - name: Check agent health
+        run: |
+          for i in {1..20}; do
+          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-agent)
+          echo "Health status: $STATUS"
+          if [ "$STATUS" == "healthy" ]; then
+          echo "Container is healthy"
+          exit 0
+          fi
+          sleep 3
+          done
+          echo "Container is not healthy"
+          docker logs quality-agent
+          exit 1
+
+  build-server-image:
+    name: Docker Image Build (Server)
     runs-on: ubuntu-latest
     needs: lint-server
     steps:
@@ -224,27 +240,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-#      - run: docker compose down
-#        name: Down the container
-#
-#      - run: docker compose up -d quality-server
-#        name: Spin up new image
-#
-#      - name: Check container health
-#        run: |
-#          for i in {1..20}; do
-#          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-server)
-#          echo "Health status: $STATUS"
-#          if [ "$STATUS" == "healthy" ]; then
-#          echo "Container is healthy"
-#          exit 0
-#          fi
-#          sleep 3
-#          done
-#          echo "Container is not healthy"
-#          docker logs quality-server
-#          exit 1
-#
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         name: Build new image artifact
         with:
@@ -260,8 +255,48 @@ jobs:
           name: server-image
           path: /tmp/server-image.tar
 
+  test-server-migration:
+    name: Server DB Migration Test
+    runs-on: ubuntu-latest
+    needs: build-server-image
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      - run: docker compose up -d quality-server
+        name: Spin up latest stable image
+
+      - run: docker compose down
+        name: Down the container
+
+      - name: Download agent image artifact
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: server-image
+          path: /tmp
+
+      - name: Load Docker images
+        run: |
+          docker load -i /tmp/server-image.tar
+
+      - run: docker compose up -d quality-server
+        name: Spin up latest stable image
+
+      - name: Check server health
+        run: |
+          for i in {1..20}; do
+          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-server)
+          echo "Health status: $STATUS"
+          if [ "$STATUS" == "healthy" ]; then
+          echo "Container is healthy"
+          exit 0
+          fi
+          sleep 3
+          done
+          echo "Container is not healthy"
+          docker logs quality-server
+          exit 1
   docs:
-    name: Build and Deploy Documentation
+    name: Documentation Build and Deployment
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     permissions:
@@ -301,11 +336,10 @@ jobs:
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
 
   build:
-    name: Publish Agent Image
+    name: Agent Image Publishing
     runs-on: ubuntu-latest
     needs:
-      - test
-      - migration
+      - integration-test
     permissions:
       packages: write
       contents: read
@@ -347,9 +381,7 @@ jobs:
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
         run: |
-          # The loaded image has the tag from migration job
           LOADED_IMAGE="ghcr.io/bbmri-cz/data-quality-agent:latest"
-          
           # Tag and push each generated tag
           echo "$TAGS" | while read -r tag; do
             if [ -n "$tag" ]; then
@@ -371,12 +403,11 @@ jobs:
             fi
           done
 
-  build-server:
-    name: Publish Server Image
+  publish-server-image:
+    name: Server Image Publishing
     runs-on: ubuntu-latest
     needs:
-      - test-server
-      - migration-server
+      - integration-test
     permissions:
       packages: write
       contents: read
@@ -418,9 +449,7 @@ jobs:
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
         run: |
-          # The loaded image has the tag from migration job
           LOADED_IMAGE="ghcr.io/bbmri-cz/data-quality-server:latest"
-          
           # Tag and push each generated tag
           echo "$TAGS" | while read -r tag; do
             if [ -n "$tag" ]; then
@@ -443,11 +472,11 @@ jobs:
           done
 
   integration-test:
-    name: Run System Test
+    name: System Test
     runs-on: ubuntu-latest
     needs:
-      - build
-      - build-server
+      - build-agent-image
+      - build-server-image
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
