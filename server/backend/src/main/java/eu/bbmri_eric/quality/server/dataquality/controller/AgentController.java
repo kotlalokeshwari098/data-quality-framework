@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/agents")
-public class AgentController {
+class AgentController {
 
   private final AgentService agentService;
   private final AgentLinkBuilder linkBuilder;

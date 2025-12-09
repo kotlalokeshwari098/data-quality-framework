@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Reports", description = "API for managing data quality reports")
-public class ReportController {
+class ReportController {
 
   private final ReportService reportService;
   private final ReportLinkBuilder linkBuilder;

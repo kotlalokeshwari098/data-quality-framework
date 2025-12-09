@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 /** HATEOAS link builder for Report resources. */
 @Component
-public final class ReportLinkBuilder {
+final class ReportLinkBuilder {
 
   public EntityModel<ReportDTO> toModel(ReportDTO reportDto) {
     return EntityModel.of(reportDto)

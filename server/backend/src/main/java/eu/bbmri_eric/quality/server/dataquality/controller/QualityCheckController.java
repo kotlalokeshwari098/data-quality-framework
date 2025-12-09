@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Quality Checks", description = "API for managing quality check definitions")
-public class QualityCheckController {
+class QualityCheckController {
 
   private final QualityCheckService qualityCheckService;
   private final QualityCheckLinkBuilder linkBuilder;

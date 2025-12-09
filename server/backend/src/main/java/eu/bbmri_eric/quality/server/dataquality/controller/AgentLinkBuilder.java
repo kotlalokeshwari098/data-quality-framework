@@ -10,7 +10,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class AgentLinkBuilder {
+final class AgentLinkBuilder {
 
   public EntityModel<AgentDTO> toModel(AgentDTO agentDto) {
     String selfHref =

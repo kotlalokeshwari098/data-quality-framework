@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 /** HATEOAS link builder for QualityCheck resources. */
 @Component
-public final class QualityCheckLinkBuilder {
+final class QualityCheckLinkBuilder {
 
   public EntityModel<QualityCheckDTO> toModel(QualityCheckDTO qualityCheckDto) {
     return EntityModel.of(qualityCheckDto)
