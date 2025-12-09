@@ -22,7 +22,7 @@ env:
 
 jobs:
   lint:
-    name: Check Code Format (Agent)
+    name: Code Format (Agent)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -48,7 +48,7 @@ jobs:
         run: mvn --quiet clean com.spotify.fmt:fmt-maven-plugin:check
 
   lint-server:
-    name: Check Code Format (Server)
+    name: Code Format (Server)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -74,7 +74,7 @@ jobs:
         run: mvn --quiet clean com.spotify.fmt:fmt-maven-plugin:check
 
   test:
-    name: Run Tests (Agent)
+    name: Unit & Integration Tests (Agent)
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -110,7 +110,7 @@ jobs:
           fail_ci_if_error: false
 
   test-server:
-    name: Run Tests (Server)
+    name: Unit & Integration Tests (Server)
     runs-on: ubuntu-latest
     needs: lint-server
     steps:
@@ -137,7 +137,7 @@ jobs:
         run: mvn --quiet test
 
   build-agent-image:
-    name: Build Docker Image (Agent)
+    name: Docker Image Build (Agent)
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -148,10 +148,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
-
-#      - run: docker compose up -d quality-agent
-#        name: Spin up latest stable image
-
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         name: Build new image
         with:
@@ -161,27 +157,6 @@ jobs:
           outputs: type=docker,dest=/tmp/agent-image.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-#      - run: docker compose down
-#        name: Down the container
-#
-#      - run: docker compose up -d quality-agent
-#        name: Spin up new image
-#
-#      - name: Check container health
-#        run: |
-#          for i in {1..20}; do
-#          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-agent)
-#          echo "Health status: $STATUS"
-#          if [ "$STATUS" == "healthy" ]; then
-#          echo "Container is healthy"
-#          exit 0
-#          fi
-#          sleep 3
-#          done
-#          echo "Container is not healthy"
-#          docker logs quality-agent
-#          exit 1
 
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         name: Build new image artifact
@@ -199,7 +174,7 @@ jobs:
           path: /tmp/agent-image.tar
 
   test-agent-migration:
-    name: Test Agent DB Migration
+    name: Agent DB Migration Test
     runs-on: ubuntu-latest
     needs: build-agent-image
     steps:
@@ -240,7 +215,7 @@ jobs:
           exit 1
 
   build-server-image:
-    name: Build Docker Image (Server)
+    name: Docker Image Build (Server)
     runs-on: ubuntu-latest
     needs: lint-server
     steps:
@@ -265,27 +240,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-#      - run: docker compose down
-#        name: Down the container
-#
-#      - run: docker compose up -d quality-server
-#        name: Spin up new image
-#
-#      - name: Check container health
-#        run: |
-#          for i in {1..20}; do
-#          STATUS=$(docker inspect --format='{{.State.Health.Status}}' quality-server)
-#          echo "Health status: $STATUS"
-#          if [ "$STATUS" == "healthy" ]; then
-#          echo "Container is healthy"
-#          exit 0
-#          fi
-#          sleep 3
-#          done
-#          echo "Container is not healthy"
-#          docker logs quality-server
-#          exit 1
-#
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         name: Build new image artifact
         with:
@@ -302,7 +256,7 @@ jobs:
           path: /tmp/server-image.tar
 
   test-server-migration:
-    name: Test Server DB Migration
+    name: Server DB Migration Test
     runs-on: ubuntu-latest
     needs: build-server-image
     steps:
@@ -342,7 +296,7 @@ jobs:
           docker logs quality-server
           exit 1
   docs:
-    name: Build and Deploy Documentation
+    name: Documentation Build and Deployment
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     permissions:
@@ -382,7 +336,7 @@ jobs:
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
 
   build:
-    name: Publish Agent Image
+    name: Agent Image Publishing
     runs-on: ubuntu-latest
     needs:
       - integration-test
@@ -450,7 +404,7 @@ jobs:
           done
 
   publish-server-image:
-    name: Publish Server Image
+    name: Server Image Publishing
     runs-on: ubuntu-latest
     needs:
       - integration-test
@@ -518,7 +472,7 @@ jobs:
           done
 
   integration-test:
-    name: Run System Test
+    name: System Test
     runs-on: ubuntu-latest
     needs:
       - build-agent-image
