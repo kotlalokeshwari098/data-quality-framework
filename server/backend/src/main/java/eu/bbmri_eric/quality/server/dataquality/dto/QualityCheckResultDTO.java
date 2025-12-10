@@ -43,7 +43,7 @@ public class QualityCheckResultDTO {
 
   public QualityCheckResultDTO(String hash, String name, Double result) {
     this.hash = hash;
-    this.name = name;
+    this.name = name != null ? name : "";
     this.result = result;
   }
 
