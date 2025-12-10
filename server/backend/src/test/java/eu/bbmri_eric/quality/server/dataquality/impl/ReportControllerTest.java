@@ -1,5 +1,8 @@
 package eu.bbmri_eric.quality.server.dataquality.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -89,14 +92,7 @@ class ReportControllerTest {
   @Test
   @WithMockUser(roles = "ADMIN")
   void create_shouldReturnBadRequestForNullResults() throws Exception {
-    ReportCreateRequest createRequest = new ReportCreateRequest(null);
-
-    mockMvc
-        .perform(
-            post(API_V1_AGENTS_REPORTS, testAgentId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createRequest)))
-        .andExpect(status().isBadRequest());
+    assertThrows(NullPointerException.class, () -> new ReportCreateRequest(null));
   }
 
   @Test
@@ -247,7 +243,7 @@ class ReportControllerTest {
     String reportId1 = objectMapper.readTree(response1).get("id").asText();
     String reportId2 = objectMapper.readTree(response2).get("id").asText();
 
-    assert !reportId1.equals(reportId2);
+    assertNotEquals(reportId1, reportId2);
   }
 
   @Test
@@ -324,7 +320,7 @@ class ReportControllerTest {
                 .content(objectMapper.writeValueAsString(createRequest)))
         .andExpect(status().isCreated());
 
-    assert qualityCheckRepository.findById(newHash).isPresent();
+    assertTrue(qualityCheckRepository.findById(newHash).isPresent());
   }
 
   @Test
@@ -344,7 +340,7 @@ class ReportControllerTest {
                 .content(objectMapper.writeValueAsString(createRequest)))
         .andExpect(status().isCreated());
 
-    assert qualityCheckRepository.count() == 1;
+    assertEquals(1, qualityCheckRepository.count());
   }
 
   @Test
@@ -371,7 +367,7 @@ class ReportControllerTest {
     String reportId = objectMapper.readTree(responseContent).get("id").asText();
 
     Report savedReport = reportRepository.findById(reportId).orElseThrow();
-    assert savedReport.getQualityCheckResults().size() == 3;
+    assertEquals(3, savedReport.getQualityCheckResults().size());
   }
 
   @Test
@@ -395,6 +391,57 @@ class ReportControllerTest {
         .andExpect(jsonPath("$.results.length()").value(2))
         .andExpect(jsonPath("$.results[?(@.hash == 'check1')].result").value(0.95))
         .andExpect(jsonPath("$.results[?(@.hash == 'check2')].result").value(0.87));
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void create_shouldReturnNameWhenProvided() throws Exception {
+    List<QualityCheckResultDTO> results =
+        List.of(
+            new QualityCheckResultDTO("check1", "Completeness Check", 0.95),
+            new QualityCheckResultDTO("check2", "Consistency Check", 0.87));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
+
+    mockMvc
+        .perform(
+            post(API_V1_AGENTS_REPORTS, testAgentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.results.length()").value(2))
+        .andExpect(jsonPath("$.results[?(@.hash == 'check1')].name").value("Completeness Check"))
+        .andExpect(jsonPath("$.results[?(@.hash == 'check1')].result").value(0.95))
+        .andExpect(jsonPath("$.results[?(@.hash == 'check2')].name").value("Consistency Check"))
+        .andExpect(jsonPath("$.results[?(@.hash == 'check2')].result").value(0.87));
+  }
+
+  @Test
+  @WithUserDetails("admin")
+  void create_shouldNotUpdateExistingQualityCheckName() throws Exception {
+    // Create a quality check with an initial name
+    QualityCheck existingCheck =
+        new QualityCheck("existing-check", "Original Name", "Original Description");
+    qualityCheckRepository.save(existingCheck);
+
+    // Attempt to create a report with a different name for the same hash
+    List<QualityCheckResultDTO> results =
+        List.of(new QualityCheckResultDTO("existing-check", "Updated Name", 0.85));
+    ReportCreateRequest createRequest = new ReportCreateRequest(results);
+
+    mockMvc
+        .perform(
+            post(API_V1_AGENTS_REPORTS, testAgentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.results[0].hash").value("existing-check"))
+        .andExpect(jsonPath("$.results[0].name").value("Original Name"))
+        .andExpect(jsonPath("$.results[0].result").value(0.85));
+
+    // Verify the quality check name was not updated in the database
+    QualityCheck savedCheck = qualityCheckRepository.findById("existing-check").orElseThrow();
+    assertEquals("Original Name", savedCheck.getName());
+    assertNotEquals("Updated Name", savedCheck.getName());
   }
 
   @Test

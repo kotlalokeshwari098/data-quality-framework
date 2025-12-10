@@ -20,6 +20,13 @@ public class QualityCheckResultDTO {
       requiredMode = Schema.RequiredMode.REQUIRED)
   private String hash;
 
+  @Size(max = 255, message = "Name must be at most 255 characters")
+  @Schema(
+      description = "Optional name for the quality check",
+      example = "Completeness Check",
+      requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  private String name = "";
+
   @NotNull(message = "Result cannot be null")
   @Schema(
       description = "Numeric result of the quality check",
@@ -34,12 +41,26 @@ public class QualityCheckResultDTO {
     this.result = result;
   }
 
+  public QualityCheckResultDTO(String hash, String name, Double result) {
+    this.hash = hash;
+    this.name = name != null ? name : "";
+    this.result = result;
+  }
+
   public String getHash() {
     return hash;
   }
 
   public void setHash(String hash) {
     this.hash = hash;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public Double getResult() {
@@ -55,16 +76,27 @@ public class QualityCheckResultDTO {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     QualityCheckResultDTO that = (QualityCheckResultDTO) o;
-    return Objects.equals(hash, that.hash) && Objects.equals(result, that.result);
+    return Objects.equals(hash, that.hash)
+        && Objects.equals(name, that.name)
+        && Objects.equals(result, that.result);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(hash, result);
+    return Objects.hash(hash, name, result);
   }
 
   @Override
   public String toString() {
-    return "QualityCheckResultDTO{" + "hash='" + hash + '\'' + ", result=" + result + '}';
+    return "QualityCheckResultDTO{"
+        + "hash='"
+        + hash
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + ", result="
+        + result
+        + '}';
   }
 }
