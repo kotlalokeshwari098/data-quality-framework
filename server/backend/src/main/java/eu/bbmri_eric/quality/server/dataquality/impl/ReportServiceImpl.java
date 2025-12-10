@@ -13,6 +13,7 @@ import eu.bbmri_eric.quality.server.user.AuthenticationContextService;
 import eu.bbmri_eric.quality.server.user.UserDTO;
 import eu.bbmri_eric.quality.server.user.UserRole;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
@@ -47,32 +48,44 @@ class ReportServiceImpl implements ReportService {
 
   @Override
   public ReportDTO create(String agentId, ReportCreateRequest createRequest) {
-    UserDTO currentUser = authenticationContextService.getCurrentUser();
-    if (!isAuthorizedToCreateReport(currentUser, agentId)) {
-      throw new AccessDeniedException(
-          "User is not authorized to create reports for agent: " + agentId);
-    }
-    Report report = new Report();
-    if (createRequest.results() != null && !createRequest.results().isEmpty()) {
-      for (QualityCheckResultDTO resultDTO : createRequest.results()) {
-        QualityCheck qualityCheck =
-            qualityCheckRepository
-                .findById(resultDTO.getHash())
-                .orElseGet(
-                    () -> {
-                      QualityCheck newCheck = new QualityCheck(resultDTO.getHash(), "", "");
-                      return qualityCheckRepository.save(newCheck);
-                    });
+    verifyAuthorization(agentId);
+    Report report = parseReportDTO(createRequest);
+    saveReport(agentId, report);
+    return convertToDTO(report);
+  }
 
-        report.addQualityCheckResult(qualityCheck, resultDTO.getResult());
-      }
-    }
+  private void saveReport(String agentId, Report report) {
     Agent agent =
         agentRepository.findById(agentId).orElseThrow(() -> new EntityNotFoundException(agentId));
     agent.addReport(report);
     agentRepository.saveAndFlush(agent);
     eventPublisher.publishEvent(new ReportSubmittedEvent(this, agentId, report.getId()));
-    return convertToDTO(report);
+  }
+
+  private @NonNull Report parseReportDTO(ReportCreateRequest createRequest) {
+    Report report = new Report();
+    for (QualityCheckResultDTO resultDTO : createRequest.getResults()) {
+      QualityCheck qualityCheck =
+          qualityCheckRepository
+              .findById(resultDTO.getHash())
+              .orElseGet(
+                  () -> {
+                    QualityCheck newCheck =
+                        new QualityCheck(resultDTO.getHash(), resultDTO.getName(), "");
+                    return qualityCheckRepository.save(newCheck);
+                  });
+
+      report.addQualityCheckResult(qualityCheck, resultDTO.getResult());
+    }
+    return report;
+  }
+
+  private void verifyAuthorization(String agentId) {
+    UserDTO currentUser = authenticationContextService.getCurrentUser();
+    if (!isAuthorizedToCreateReport(currentUser, agentId)) {
+      throw new AccessDeniedException(
+          "User is not authorized to create reports for agent: " + agentId);
+    }
   }
 
   private boolean isAuthorizedToCreateReport(UserDTO user, String agentId) {

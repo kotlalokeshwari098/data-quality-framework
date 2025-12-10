@@ -2,6 +2,7 @@ package eu.bbmri_eric.quality.server.dataquality.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,8 +14,7 @@ import java.util.Objects;
 @Entity
 public class QualityCheck {
   @Id private String hash;
-
-  private String name;
+  @NotNull private String name;
 
   private String description;
 
