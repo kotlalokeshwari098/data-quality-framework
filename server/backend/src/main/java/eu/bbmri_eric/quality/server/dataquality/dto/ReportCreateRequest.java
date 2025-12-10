@@ -16,7 +16,12 @@ public final class ReportCreateRequest {
   @NotEmpty(message = "Results cannot be empty")
   private final List<QualityCheckResultDTO> results;
 
-  /** */
+  /**
+   * Constructs a new {@code ReportCreateRequest} with the specified list of quality check results.
+   *
+   * @param results the list of quality check results to include in the report; must not be null
+   * @throws NullPointerException if {@code results} is null
+   */
   public ReportCreateRequest(List<QualityCheckResultDTO> results) {
     Objects.requireNonNull(results);
     this.results = results;
