@@ -12,8 +12,9 @@ public final class ReportCreateRequest {
   @Schema(
       description = "List of quality check results",
       requiredMode = Schema.RequiredMode.REQUIRED)
-  private final @Valid @NotEmpty(message = "Results cannot be empty") List<QualityCheckResultDTO>
-      results;
+  @Valid
+  @NotEmpty(message = "Results cannot be empty")
+  private final List<QualityCheckResultDTO> results;
 
   /** */
   public ReportCreateRequest(List<QualityCheckResultDTO> results) {
