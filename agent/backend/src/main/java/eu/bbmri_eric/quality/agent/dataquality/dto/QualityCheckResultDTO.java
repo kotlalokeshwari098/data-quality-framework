@@ -46,7 +46,7 @@ public final class QualityCheckResultDTO {
   /** Constructor with hash, name, and result. */
   public QualityCheckResultDTO(String hash, String name, Double result) {
     this.hash = hash;
-    this.name = name;
+    this.name = name != null ? name : "";
     this.result = result;
   }
 
