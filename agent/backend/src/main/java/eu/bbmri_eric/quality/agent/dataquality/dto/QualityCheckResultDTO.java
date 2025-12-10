@@ -40,6 +40,7 @@ public final class QualityCheckResultDTO {
   /** Constructor with hash and result only. */
   public QualityCheckResultDTO(String hash, Double result) {
     this.hash = hash;
+    this.name = "";
     this.result = result;
   }
 
