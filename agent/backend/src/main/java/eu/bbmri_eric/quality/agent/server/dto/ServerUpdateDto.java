@@ -3,6 +3,8 @@ package eu.bbmri_eric.quality.agent.server.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Data Transfer Object for updating an existing Server.
@@ -10,6 +12,8 @@ import jakarta.validation.constraints.Size;
  * <p>Contains only the fields that can be updated: name, URL, clientId, and clientSecret. All
  * fields are optional to allow partial updates.
  */
+@Getter
+@Setter
 @Schema(description = "Data for updating an existing server (all fields optional)")
 public class ServerUpdateDto {
 
@@ -53,78 +57,6 @@ public class ServerUpdateDto {
     this.url = url;
     this.name = name;
     this.clientId = clientId;
-    this.clientSecret = clientSecret;
-  }
-
-  /**
-   * Gets the URL.
-   *
-   * @return the URL
-   */
-  public String getUrl() {
-    return url;
-  }
-
-  /**
-   * Sets the URL.
-   *
-   * @param url the URL
-   */
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-  /**
-   * Gets the name.
-   *
-   * @return the name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Sets the name.
-   *
-   * @param name the name
-   */
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  /**
-   * Gets the client ID.
-   *
-   * @return the client ID
-   */
-  public String getClientId() {
-    return clientId;
-  }
-
-  /**
-   * Sets the client ID.
-   *
-   * @param clientId the client ID
-   */
-  public void setClientId(String clientId) {
-    this.clientId = clientId;
-  }
-
-  /**
-   * Gets the client secret.
-   *
-   * @return the client secret
-   */
-  public String getClientSecret() {
-    return clientSecret;
-  }
-
-  /**
-   * Sets the client secret.
-   *
-   * @param clientSecret the client secret
-   */
-  public void setClientSecret(String clientSecret) {
     this.clientSecret = clientSecret;
   }
 }

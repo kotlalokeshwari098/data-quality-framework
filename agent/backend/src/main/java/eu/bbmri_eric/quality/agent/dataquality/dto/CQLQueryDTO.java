@@ -1,9 +1,17 @@
 package eu.bbmri_eric.quality.agent.dataquality.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /** DTO for CQL Query entity. */
 @Schema(name = "CQL Query", description = "A CQL-based data quality check")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class CQLQueryDTO {
 
   @Schema(description = "Unique identifier of the CQL query", example = "1")
@@ -31,78 +39,4 @@ public class CQLQueryDTO {
   @Schema(description = "Epsilon budget for differential privacy", example = "1.0")
   private float epsilonBudget;
 
-  public CQLQueryDTO() {}
-
-  public CQLQueryDTO(
-      Long id,
-      String name,
-      String description,
-      String query,
-      int warningThreshold,
-      int errorThreshold,
-      float epsilonBudget) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.query = query;
-    this.warningThreshold = warningThreshold;
-    this.errorThreshold = errorThreshold;
-    this.epsilonBudget = epsilonBudget;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
-  }
-
-  public int getWarningThreshold() {
-    return warningThreshold;
-  }
-
-  public void setWarningThreshold(int warningThreshold) {
-    this.warningThreshold = warningThreshold;
-  }
-
-  public int getErrorThreshold() {
-    return errorThreshold;
-  }
-
-  public void setErrorThreshold(int errorThreshold) {
-    this.errorThreshold = errorThreshold;
-  }
-
-  public float getEpsilonBudget() {
-    return epsilonBudget;
-  }
-
-  public void setEpsilonBudget(float epsilonBudget) {
-    this.epsilonBudget = epsilonBudget;
-  }
 }

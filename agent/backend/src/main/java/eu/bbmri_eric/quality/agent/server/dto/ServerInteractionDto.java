@@ -3,6 +3,9 @@ package eu.bbmri_eric.quality.agent.server.dto;
 import eu.bbmri_eric.quality.agent.server.domain.InteractionType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.hateoas.server.core.Relation;
 
 /**
@@ -10,6 +13,8 @@ import org.springframework.hateoas.server.core.Relation;
  *
  * <p>Contains interaction details that should be exposed to the client.
  */
+@Getter
+@Setter
 @Schema(description = "Server interaction log entry")
 @Relation(itemRelation = "server-interaction", collectionRelation = "server-interactions")
 public class ServerInteractionDto {
@@ -49,78 +54,6 @@ public class ServerInteractionDto {
     this.id = id;
     this.type = type;
     this.description = description;
-    this.timestamp = timestamp;
-  }
-
-  /**
-   * Gets the ID.
-   *
-   * @return the ID
-   */
-  public Long getId() {
-    return id;
-  }
-
-  /**
-   * Sets the ID.
-   *
-   * @param id the ID
-   */
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  /**
-   * Gets the type.
-   *
-   * @return the type
-   */
-  public InteractionType getType() {
-    return type;
-  }
-
-  /**
-   * Sets the type.
-   *
-   * @param type the type
-   */
-  public void setType(InteractionType type) {
-    this.type = type;
-  }
-
-  /**
-   * Gets the description.
-   *
-   * @return the description
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  /**
-   * Sets the description.
-   *
-   * @param description the description
-   */
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  /**
-   * Gets the timestamp.
-   *
-   * @return the timestamp
-   */
-  public LocalDateTime getTimestamp() {
-    return timestamp;
-  }
-
-  /**
-   * Sets the timestamp.
-   *
-   * @param timestamp the timestamp
-   */
-  public void setTimestamp(LocalDateTime timestamp) {
     this.timestamp = timestamp;
   }
 }

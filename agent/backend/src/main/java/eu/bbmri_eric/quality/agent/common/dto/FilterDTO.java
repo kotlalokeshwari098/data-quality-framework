@@ -2,6 +2,11 @@ package eu.bbmri_eric.quality.agent.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Objects;
 
 /**
@@ -11,6 +16,10 @@ import java.util.Objects;
  * capabilities. It can be extended for domain-specific filtering needs.
  */
 @Schema(description = "Common filter DTO for pagination and sorting")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class FilterDTO {
 
   @Schema(description = "Page number (zero-based)", example = "0", defaultValue = "0")
@@ -30,56 +39,6 @@ public class FilterDTO {
       allowableValues = {"ASC", "DESC"},
       defaultValue = "ASC")
   private SortOrder order = SortOrder.ASC;
-
-  /** Default constructor. */
-  public FilterDTO() {}
-
-  /**
-   * Constructor with all fields.
-   *
-   * @param page the page number (zero-based)
-   * @param size the page size
-   * @param sort the field name to sort by
-   * @param order the sort order
-   */
-  public FilterDTO(int page, int size, String sort, SortOrder order) {
-    this.page = page;
-    this.size = size;
-    this.sort = sort;
-    this.order = order;
-  }
-
-  public int getPage() {
-    return page;
-  }
-
-  public void setPage(int page) {
-    this.page = page;
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public void setSize(int size) {
-    this.size = size;
-  }
-
-  public String getSort() {
-    return sort;
-  }
-
-  public void setSort(String sort) {
-    this.sort = sort;
-  }
-
-  public SortOrder getOrder() {
-    return order;
-  }
-
-  public void setOrder(SortOrder order) {
-    this.order = order;
-  }
 
   @Override
   public boolean equals(Object o) {

@@ -1,9 +1,14 @@
 package eu.bbmri_eric.quality.agent.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
 @Schema(description = "User data transfer object containing user information")
+@Getter
+@Setter
 public class UserDTO {
 
   @Schema(description = "Username of the user", example = "admin")
@@ -28,30 +33,6 @@ public class UserDTO {
   public UserDTO(String username, boolean defaultPassword, Long userId) {
     this.userId = userId;
     this.username = username;
-    this.defaultPassword = defaultPassword;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
-
-  public boolean isDefaultPassword() {
-    return defaultPassword;
-  }
-
-  public void setDefaultPassword(boolean defaultPassword) {
     this.defaultPassword = defaultPassword;
   }
 

@@ -3,9 +3,13 @@ package eu.bbmri_eric.quality.agent.server.impl.client;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
 
 /** Data Transfer Object for agent registration requests to central servers. */
 @Schema(description = "Agent registration request")
+@Getter
+@Setter
 class AgentRegistrationRequest {
 
   /** Agent ID that must be a valid UUID. */
@@ -35,32 +39,6 @@ class AgentRegistrationRequest {
 
   public AgentRegistrationRequest(String id, String version) {
     this.id = id;
-    this.version = version;
-  }
-
-  /**
-   * Gets the agent ID.
-   *
-   * @return the agent ID
-   */
-  public String getId() {
-    return id;
-  }
-
-  /**
-   * Sets the agent ID.
-   *
-   * @param id the agent ID
-   */
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
     this.version = version;
   }
 }
